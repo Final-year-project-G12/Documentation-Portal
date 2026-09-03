@@ -1,0 +1,147 @@
+
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+.conda/
+
+# Packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+# ============================================================
+# Jupyter Notebook
+# ============================================================
+
+.ipynb_checkpoints/
+
+# ============================================================
+# Environment / Secrets
+# ============================================================
+
+.env
+.env.*
+!.env.example
+
+# ============================================================
+# IDEs / Editors
+# ============================================================
+
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ============================================================
+# OS Files
+# ============================================================
+
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ============================================================
+# Logs
+# ============================================================
+
+*.log
+logs/
+
+# ============================================================
+# Python Testing / Coverage
+# ============================================================
+
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.mypy_cache/
+.ruff_cache/
+
+# ============================================================
+# Machine Learning / Experiments
+# ============================================================
+
+# Model outputs
+models/
+checkpoints/
+runs/
+wandb/
+mlruns/
+
+# Experiment outputs
+experiments/output/
+outputs/
+results/
+
+# ============================================================
+# Large / Generated Data
+# ============================================================
+
+# Raw datasets
+data/raw/
+
+# Processed/generated datasets
+data/processed/
+
+# Large temporary files
+*.h5
+*.hdf5
+*.parquet
+*.feather
+
+# ============================================================
+# Temporary / Cache Files
+# ============================================================
+
+tmp/
+temp/
+.cache/
+
+# ============================================================
+# Documentation Build Files
+# ============================================================
+
+_site/
+site/
+docs/_build/
+docs/.cache/
+
+# ============================================================
+# Generated Reports / Figures
+# ============================================================
+
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.out
+*.synctex.gz
+*.toc
+
+# ============================================================
+# Project-Specific Temporary Files
+# ============================================================
+
+scratch/
+backup/
+backups/
+*.bak
+*.tmp
+*.temp
+
+# Claude / AI coding assistant temporary files
+.claude/
