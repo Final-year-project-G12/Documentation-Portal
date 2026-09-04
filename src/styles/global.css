@@ -1,0 +1,141 @@
+:root {
+  color: #1f2937;
+  background: #f7faf9;
+  font-family: Arial, Helvetica, sans-serif;
+  font-synthesis: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+}
+
+.portal-shell {
+  display: grid;
+  grid-template-columns: 250px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  padding: 28px 20px;
+  background: #103c3a;
+  color: #ecfdf5;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.brand-mark {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 1px solid #7dd3c7;
+  color: #a7f3d0;
+  font-size: 0.72rem;
+}
+
+.navigation {
+  display: grid;
+  gap: 4px;
+}
+
+.nav-link {
+  padding: 10px 12px;
+  border-left: 2px solid transparent;
+  color: #cbded9;
+  font-size: 0.92rem;
+  text-decoration: none;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  border-left-color: #5eead4;
+  background: #18524e;
+  color: #ffffff;
+}
+
+.portal-main {
+  padding: 72px clamp(28px, 7vw, 112px);
+}
+
+.content {
+  max-width: 820px;
+}
+
+.eyebrow {
+  margin: 0 0 12px;
+  color: #0f766e;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+h1,
+h2,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  max-width: 720px;
+  margin-bottom: 20px;
+  color: #17312e;
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  line-height: 1.1;
+}
+
+h2 {
+  color: #17312e;
+  font-size: 1.3rem;
+}
+
+.intro {
+  max-width: 680px;
+  color: #4b5f5d;
+  font-size: 1.08rem;
+  line-height: 1.7;
+}
+
+.content-section {
+  margin-top: 52px;
+  padding-top: 28px;
+  border-top: 1px solid #c9dbd7;
+  line-height: 1.65;
+}
+
+@media (max-width: 720px) {
+  .portal-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    gap: 20px;
+    padding: 20px;
+  }
+
+  .navigation {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .portal-main {
+    padding: 48px 24px;
+  }
+}

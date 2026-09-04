@@ -770,3 +770,14 @@ At the highest level, the project can be represented as:
 ```
 
 **This documentation portal exists to make every stage of that pipeline explainable, auditable, reproducible, and academically defensible.**
+
+## Run the React portal
+
+From the repository root, install dependencies and start the development server:
+
+```bash
+npm install
+npm start
+```
+
+The portal will be available at `http://localhost:3000`.
