@@ -62,9 +62,14 @@ jobs:
         fi
       shell: bash
     
+    - name: Configure git identity
+      run: |
+        git config --global user.email "action@github.com"
+        git config --global user.name "GitHub Action"
+    
     - name: Deploy to GitHub Pages
       run: |
         npm install --save-dev gh-pages
         npx gh-pages -d build
       env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
