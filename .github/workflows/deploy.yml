@@ -62,14 +62,9 @@ jobs:
         fi
       shell: bash
     
-    - name: Deploy to production
+    - name: Deploy to GitHub Pages
       run: |
-        echo "Ready to deploy!"
-        echo "Build directory size: $(du -sh build/ 2>/dev/null || echo 'N/A')"
-        # Add your deployment command here:
-        # Examples:
-        # npm run deploy
-        # netlify deploy --prod --dir=build
-        # vercel --prod
-        # aws s3 sync build/ s3://my-bucket/ --delete
-        # gh-pages -d build
+        npm install --save-dev gh-pages
+        npx gh-pages -d build
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
