@@ -1,0 +1,75 @@
+name: Deploy PCM Documentation Portal
+
+on:
+  push:
+    branches: [ main ]
+  workflow_run:
+    workflows: ["Build PCM Documentation Portal"]
+    types:
+      - completed
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success' || github.event_name == 'push'
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Use Node.js 20.x
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+    
+    - name: Configure npm registry and retry settings
+      run: |
+        npm config set registry https://registry.npmjs.org/
+        npm config set fetch-retry-mintimeout 20000
+        npm config set fetch-retry-maxtimeout 120000
+        npm config set fetch-retries 5
+    
+    - name: Clear npm cache
+      run: npm cache clean --force
+    
+    - name: Remove node_modules and lock file
+      run: rm -rf node_modules package-lock.json
+    
+    - name: Install dependencies with retries
+      run: npm install --prefer-offline --no-audit || npm install --prefer-offline --no-audit || npm install --prefer-offline --no-audit
+    
+    - name: Build
+      run: npm run build
+      env:
+        CI: false
+        GENERATE_SOURCEMAP: false
+    
+    - name: Download build artifacts
+      if: github.event_name == 'workflow_run'
+      uses: actions/download-artifact@v4
+      with:
+        name: build-artifacts
+        path: build/
+      continue-on-error: true
+    
+    - name: Verify build directory
+      run: |
+        if [ -d "build" ] && [ "$(ls -A build)" ]; then
+          echo "Build directory exists and contains files"
+          ls -la build/
+        else
+          echo "Warning: Build directory is empty or missing"
+        fi
+      shell: bash
+    
+    - name: Configure git identity
+      run: |
+        git config --global user.email "action@github.com"
+        git config --global user.name "GitHub Action"
+    
+    - name: Deploy to GitHub Pages
+      run: |
+        npm install --save-dev gh-pages
+        npx gh-pages -d build --repo https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+      env:
+        CI: false
