@@ -67,14 +67,9 @@ jobs:
         git config --global user.email "action@github.com"
         git config --global user.name "GitHub Action"
     
-    - name: Configure git credentials
-      run: |
-        git config --global url."https://${{ secrets.DEPLOY_TOKEN }}@github.com/".insteadOf "https://github.com/"
-    
     - name: Deploy to GitHub Pages
       run: |
         npm install --save-dev gh-pages
-        npx gh-pages -d build
+        npx gh-pages -d build --repo https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
       env:
-        GH_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
-        GITHUB_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+        CI: false
