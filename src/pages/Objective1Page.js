@@ -727,6 +727,59 @@ const STATES_CONFIG = {
       },
     ],
   },
+  all: {
+    name: "All 4 States",
+    short: "ALL",
+    icon: "🇮🇳",
+    climateType: "Multi-State Cross-Comparison (Coastal, Arid, Subtropical, Montane)",
+    tag: "637 Grid Points · 16 Regimes · 100% Complete",
+    stats: [
+      { value: "4 States", label: "Tamil Nadu, Rajasthan, Assam, Uttarakhand" },
+      { value: "637", label: "Total Population-Weighted Grid Points" },
+      { value: "10 Years", label: "Continuous Hourly ERA5 + POWER (2016–2025)" },
+      { value: "16", label: "Total Climate Regimes Discovered (GMM)" },
+      { value: "62", label: "Screened PCM Candidate Records" },
+      { value: "100%", label: "Verified Data Completeness Post-QC" },
+    ],
+    overview:
+      "A comprehensive cross-state research framework synthesizing 637 population-weighted coordinates across India's four macro-climatic extremes: Tamil Nadu (Tropical Humid / Marine), Rajasthan (Hot Arid Continental), Assam (Subtropical Monsoon Attenuated), and Uttarakhand (Himalayan Montane Elevation Stratified).",
+    spearmanSummary: "Positive Concordance Across All Regimes",
+    recommendations: [
+      {
+        cluster: "Tamil Nadu (Tropical Marine)",
+        pcm: "n-Octacosane (C28) & RT64HC",
+        tm: "61.4°C / 64.0°C",
+        latentHeat: "253 kJ/kg",
+        mc: "95.6% (Top-3)",
+        region: "Coastal / Plains / Ghats",
+      },
+      {
+        cluster: "Rajasthan (Hot Arid)",
+        pcm: "savE® OM50 & RT50",
+        tm: "50.0°C",
+        latentHeat: "218 kJ/kg",
+        mc: "90.8% (Top-3)",
+        region: "Thar Desert / Shekhawati",
+      },
+      {
+        cluster: "Assam (Subtropical Valley)",
+        pcm: "RT44HC & RT45HC",
+        tm: "44.0°C / 45.0°C",
+        latentHeat: "250 kJ/kg",
+        mc: "95.3% (Top-3)",
+        region: "Brahmaputra / Barak Valleys",
+      },
+      {
+        cluster: "Uttarakhand (Montane)",
+        pcm: "RT60 & savE® OM55",
+        tm: "60.0°C / 55.0°C",
+        latentHeat: "160 kJ/kg",
+        mc: "93.4% (Top-3)",
+        region: "Tarai Plains to High Himalayas",
+      },
+    ],
+    plots: [],
+  },
 };
 
 /* ─────────────────────────────────────────────────────────
@@ -735,60 +788,112 @@ const STATES_CONFIG = {
 const CROSS_STATE_PLOTS = [
   {
     id: "comp-01",
+    num: "C-01",
     title: "Cluster GHI Comparison Across States",
     desc: "Direct comparison of solar irradiance distributions across clusters in Tamil Nadu, Rajasthan, Assam, and Uttarakhand.",
     static: "comparison/01_comparison_cluster_ghi.png",
     category: "Cross-State Irradiance",
+    phase: "Phase 2–3 Preprocessing",
   },
   {
     id: "comp-02",
+    num: "C-02",
     title: "Ambient Temperature vs. Target Melting Point",
     desc: "Correlation between regional ambient temperature signatures and derived PCM melting point targets (Tm_target).",
     static: "comparison/02_comparison_temp_vs_tm_target.png",
     category: "Thermal Target Synthesis",
+    phase: "Phase 4 Clustering",
   },
   {
     id: "comp-03",
+    num: "C-03",
     title: "MCDM Methods Cross-State Consistency",
     desc: "Evaluation of TOPSIS, GRA, PROMETHEE II, and VIKOR stability across the 4 distinct geographic environments.",
     static: "comparison/03_comparison_mcdm_methods.png",
     category: "MCDM Sensitivity",
+    phase: "Phase 5–6 MCDM",
   },
   {
     id: "comp-04",
+    num: "C-04",
     title: "Monte Carlo Stability vs. Final Rank",
     desc: "Assessment of Monte Carlo Top-3 inclusion probabilities across candidate pools in all 4 states.",
     static: "comparison/04_comparison_mc_vs_rank.png",
     category: "Uncertainty Quantification",
+    phase: "Phase 5–6 MCDM",
   },
   {
     id: "comp-05",
+    num: "C-05",
     title: "Latent Heat Distribution of Surviving PCMs",
     desc: "Comparison of storage enthalpy capacities among feasible candidate survivors across all 4 state regimes.",
     static: "comparison/05_comparison_latent_heat_distribution.png",
     category: "Material Screening",
+    phase: "Phase 5 Feasibility",
   },
   {
     id: "comp-06",
+    num: "C-06",
     title: "Physics Simulation vs. MCDM Rank (All States)",
     desc: "Spearman rank correlation comparison between grey-box simulated annual performance and MCDM ranking across all 4 pipelines.",
     static: "comparison/06_comparison_physics_vs_rank.png",
     category: "Physics Validation",
+    phase: "Phase 7 Physics",
   },
   {
     id: "comp-07",
+    num: "C-07",
     title: "Cross-Cluster Top Recommended PCMs",
     desc: "Synthesis matrix displaying the winning PCM candidates across all 16 total climate regimes discovered across India.",
     static: "comparison/07_comparison_cross_cluster_top_pcm.png",
     category: "Recommendation Matrix",
+    phase: "Phase 8 Output",
   },
   {
     id: "comp-08",
+    num: "C-08",
     title: "Rank Sensitivity to Weight Variations",
     desc: "Sensitivity analysis of PCM rankings under varying stakeholder criterion weight configurations.",
     static: "comparison/08_comparison_rank_sensitivity.png",
     category: "Robustness Assessment",
+    phase: "Phase 5–6 MCDM",
   },
+];
+
+/* ─────────────────────────────────────────────────────────
+   Comprehensive Multi-State Plots Registry (All 60 Plots)
+   ───────────────────────────────────────────────────────── */
+const ALL_STATE_PLOTS = [
+  ...CROSS_STATE_PLOTS.map((p) => ({
+    ...p,
+    stateKey: "comparison",
+    stateName: "Comparison",
+    stateIcon: "🇮🇳",
+  })),
+  ...STATES_CONFIG.tamilnadu.plots.map((p) => ({
+    ...p,
+    stateKey: "tamilnadu",
+    stateName: "Tamil Nadu",
+    stateIcon: "🌴",
+  })),
+  ...STATES_CONFIG.rajasthan.plots.map((p) => ({
+    ...p,
+    stateKey: "rajasthan",
+    stateName: "Rajasthan",
+    stateIcon: "🏜️",
+  })),
+  ...STATES_CONFIG.assam.plots.map((p) => ({
+    ...p,
+    stateKey: "assam",
+    stateName: "Assam",
+    stateIcon: "🌿",
+  })),
+  ...STATES_CONFIG.uttarakhand.plots.map((p) => ({
+    ...p,
+    stateKey: "uttarakhand",
+    stateName: "Uttarakhand",
+    stateIcon: "🏔️",
+  })),
 ];
 
 /* ─────────────────────────────────────────────────────────
@@ -859,12 +964,17 @@ const methods = [
 function PlotCard({ plot, stateKey }) {
   const [showInteractive, setShowInteractive] = useState(!!plot.interactive);
 
+  const effectiveState = plot.stateKey || stateKey;
   const interactiveUrl = plot.interactive
-    ? `${process.env.PUBLIC_URL}/plots/${stateKey}/${plot.interactive}`
+    ? `${process.env.PUBLIC_URL}/plots/${effectiveState}/${plot.interactive}`
     : null;
   const staticUrl = `${process.env.PUBLIC_URL}/plots/${
-    stateKey === "comparison" ? "" : stateKey + "/"
+    effectiveState === "comparison" ? "" : effectiveState + "/"
   }${plot.static}`;
+
+  const stateBadge = plot.stateName
+    ? `${plot.stateIcon || ""} ${plot.stateName}`.trim()
+    : effectiveState.toUpperCase();
 
   return (
     <div className="plot-card" id={plot.id}>
@@ -881,7 +991,7 @@ function PlotCard({ plot, stateKey }) {
               <span className="tag tag-amber">⚡ Plotly / Folium Interactive</span>
             )}
             <span className="tag tag-brand">
-              {stateKey.toUpperCase()}
+              {stateBadge.toUpperCase()}
             </span>
           </div>
         </div>
@@ -955,30 +1065,50 @@ function PlotCard({ plot, stateKey }) {
 function Objective1Page() {
   const [selectedState, setSelectedState] = useState("all");
   const [activePlotCategory, setActivePlotCategory] = useState("All");
+  const [allStateScope, setAllStateScope] = useState("all");
 
-  const currentState = STATES_CONFIG[selectedState] || null;
+  const currentState = STATES_CONFIG[selectedState] || STATES_CONFIG.all;
 
-  // Filter plots for active state or cross-state comparison
-  const currentPlots =
-    selectedState === "all"
-      ? CROSS_STATE_PLOTS
-      : currentState
-      ? currentState.plots
-      : [];
+  // Determine base plots for current state selection
+  let currentPlots = [];
+  if (selectedState === "all") {
+    if (allStateScope === "all") {
+      currentPlots = ALL_STATE_PLOTS;
+    } else if (allStateScope === "comparison") {
+      currentPlots = ALL_STATE_PLOTS.filter((p) => p.stateKey === "comparison");
+    } else {
+      currentPlots = ALL_STATE_PLOTS.filter((p) => p.stateKey === allStateScope);
+    }
+  } else {
+    currentPlots = (currentState?.plots || []).map((p) => ({
+      ...p,
+      stateKey: selectedState,
+      stateName: currentState.name,
+      stateIcon: currentState.icon,
+    }));
+  }
 
+  // Filter by phase category
   const filteredPlots =
     activePlotCategory === "All"
       ? currentPlots
       : currentPlots.filter((p) =>
-          selectedState === "all"
-            ? p.category === activePlotCategory
-            : p.phase && p.phase.includes(activePlotCategory)
+          p.phase
+            ? p.phase.toLowerCase().includes(activePlotCategory.toLowerCase())
+            : p.category
+            ? p.category.toLowerCase().includes(activePlotCategory.toLowerCase())
+            : false
         );
 
-  const plotCategories =
-    selectedState === "all"
-      ? ["All", "Cross-State Irradiance", "MCDM Sensitivity", "Physics Validation", "Recommendation Matrix"]
-      : ["All", "Preprocessing", "Clustering", "Feasibility", "MCDM", "Physics", "Output"];
+  const plotCategories = [
+    "All",
+    "Preprocessing",
+    "Clustering",
+    "Feasibility",
+    "MCDM",
+    "Physics",
+    "Output",
+  ];
 
   return (
     <section className="content" id="top">
@@ -1077,7 +1207,7 @@ function Objective1Page() {
       </div>
 
       {/* ── Active State Profile Banner ───────────────────── */}
-      {selectedState !== "all" && currentState && (
+      {currentState && (
         <div className="state-profile-card">
           <div className="state-profile-item">
             <span className="state-profile-label">Selected Territory</span>
@@ -1090,7 +1220,7 @@ function Objective1Page() {
           <div className="state-profile-item">
             <span className="state-profile-label">Physics Spearman ρ</span>
             <span className="state-profile-val" style={{ color: "#ffffff" }}>
-              {currentState.spearmanSummary.split("·")[0]}
+              {currentState.spearmanSummary ? currentState.spearmanSummary.split("·")[0] : "Positive Concordance"}
             </span>
             <span className="state-profile-sub">Grey-Box vs MCDM Concordance</span>
           </div>
@@ -1098,7 +1228,7 @@ function Objective1Page() {
           <div className="state-profile-item">
             <span className="state-profile-label">Primary Consensus Winner</span>
             <span className="state-profile-val" style={{ color: "#ffffff" }}>
-              {currentState.stats[5].value}
+              {selectedState === "all" ? "Regional Borda Leaders (RT44HC / OM50 / C28 / RT60)" : currentState.stats[5].value}
             </span>
             <span className="state-profile-sub">4-Method Borda Leader</span>
           </div>
@@ -1112,6 +1242,7 @@ function Objective1Page() {
           </div>
         </div>
       )}
+
 
       {/* ── Key Metrics Grid ──────────────────────────────── */}
       <div className="results-grid" style={{ marginBottom: 56 }}>
@@ -1362,7 +1493,7 @@ function Objective1Page() {
             <h2>
               Interactive Plots —{" "}
               {selectedState === "all"
-                ? "Cross-State Comparison Suite"
+                ? "All 4 States (Cross-Comparison & Regional Suites)"
                 : currentState?.name}
             </h2>
             <span className="plots-count-badge">
@@ -1379,7 +1510,7 @@ function Objective1Page() {
           Explore interactive HTML visualizations and high-resolution figures for{" "}
           <strong>
             {selectedState === "all"
-              ? "cross-state comparative metrics"
+              ? "all four states & cross-state comparative metrics"
               : currentState?.name}
           </strong>
           . Use the quick controls below to switch between states or filter by pipeline phase.
@@ -1389,10 +1520,10 @@ function Objective1Page() {
         <div className="plots-controls-bar">
           <div className="plots-state-bar">
             <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "var(--neutral-400)" }}>
-              STATE:
+              TERRITORY:
             </span>
             {[
-              { id: "all", label: "🇮🇳 All States" },
+              { id: "all", label: "🇮🇳 All 4 States" },
               { id: "tamilnadu", label: "🌴 Tamil Nadu" },
               { id: "rajasthan", label: "🏜️ Rajasthan" },
               { id: "assam", label: "🌿 Assam" },
@@ -1404,6 +1535,7 @@ function Objective1Page() {
                 onClick={() => {
                   setSelectedState(st.id);
                   setActivePlotCategory("All");
+                  setAllStateScope("all");
                 }}
               >
                 {st.label}
@@ -1411,7 +1543,32 @@ function Objective1Page() {
             ))}
           </div>
 
-          <div className="plots-tab-bar">
+          {selectedState === "all" && (
+            <div className="plots-state-bar" style={{ marginTop: 10, flexWrap: "wrap", gap: 6 }}>
+              <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "var(--neutral-400)" }}>
+                FILTER VIEW:
+              </span>
+              {[
+                { id: "all", label: `🌐 All Plots (${ALL_STATE_PLOTS.length})` },
+                { id: "comparison", label: `🇮🇳 Comparison Suite (${CROSS_STATE_PLOTS.length})` },
+                { id: "tamilnadu", label: "🌴 Tamil Nadu (13)" },
+                { id: "rajasthan", label: "🏜️ Rajasthan (13)" },
+                { id: "assam", label: "🌿 Assam (13)" },
+                { id: "uttarakhand", label: "🏔️ Uttarakhand (13)" },
+              ].map((sc) => (
+                <button
+                  key={sc.id}
+                  className={`tab-btn ${allStateScope === sc.id ? "active" : ""}`}
+                  onClick={() => setAllStateScope(sc.id)}
+                  style={{ fontSize: "0.76rem", padding: "4px 10px" }}
+                >
+                  {sc.label}
+                </button>
+              ))}
+            </div>
+          )}
+
+          <div className="plots-tab-bar" style={{ marginTop: selectedState === "all" ? 10 : 0 }}>
             {plotCategories.map((cat) => (
               <button
                 key={cat}
@@ -1431,9 +1588,10 @@ function Objective1Page() {
           <PlotCard
             key={plot.id}
             plot={plot}
-            stateKey={selectedState === "all" ? "comparison" : selectedState}
+            stateKey={plot.stateKey || (selectedState === "all" ? "comparison" : selectedState)}
           />
         ))}
+
       </div>
 
       {/* ── Cross-State Technical Findings ── */}
