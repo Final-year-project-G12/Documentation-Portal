@@ -508,8 +508,8 @@ const STATES_CONFIG = {
       {
         id: "as-07",
         num: "07",
-        title: "Bump Chart — MCDM Rank Evolution",
-        desc: "Bump chart tracing candidate rankings across TOPSIS, GRA, PROMETHEE II, and VIKOR for Assam clusters.",
+        title: "Bump Chart — MCDM Rank Evolution (Cluster 0)",
+        desc: "Bump chart tracing 6 feasible candidate rankings (RT44HC, RT45HC, C22H46, savE® OM50, savE® OM42, savE® OM46) across TOPSIS, GRA, PROMETHEE II, and VIKOR for Assam Cluster 0.",
         interactive: "07_bump_chart_ranks.html",
         static: "07_bump_chart_ranks.png",
         phase: "Phase 6 MCDM",
