@@ -1153,10 +1153,165 @@ function Objective1Page() {
         )}
       </div>
 
-      {/* ── Slide 15: Cross-State Preprocessing Verification Table ── */}
+      {/* ── Implementation Flow (Detailed) ─────────────────── */}
+      <div className="content-section" id="implementation-flow">
+        <div className="plots-section-header">
+          <h2>End-to-End Implementation Pipeline</h2>
+          <span className="plots-count-badge">7 Phases</span>
+        </div>
+        <p className="section-desc">
+          A reproducible multi-phase ML &amp; MCDM framework deployed across four Indian climate zones to
+          deliver data-driven, physics-validated PCM recommendations for solar water heating systems.
+        </p>
+        <div className="section-divider" />
+
+        <div className="impl-detail-flow">
+          {[
+            {
+              num: "01",
+              icon: "🛰️",
+              phase: "Data Ingestion",
+              tag: "ERA5 + NASA POWER",
+              details: [
+                "10-year hourly reanalysis data (2016–2025) from ECMWF ERA5 and NASA POWER",
+                "Population-weighted grid point selection: 637 total across 4 states",
+                "36–37 meteorological variables ingested per grid point",
+                "Covers GHI, DNI, DHI, Tₐₘɓ, RH, wind speed, pressure, and cloud fraction",
+              ],
+              input: "Raw ERA5 / POWER NetCDF & CSV",
+              output: "Structured hourly time-series per grid point",
+            },
+            {
+              num: "02",
+              icon: "🧹",
+              phase: "Preprocessing & QC",
+              tag: "Hampel · MICE · Bias Correction",
+              details: [
+                "Physical bounds gating: GHI clamped to [0, 1400] W/m², RH to [0, 100]%",
+                "Hampel filter (MAD-based, k=3σ window) for outlier suppression—GHI channel excluded from spike removal",
+                "MICE multivariate imputation for residual missing values",
+                "Quantile-mapping bias correction against NASA POWER baseline",
+                "45 engineered features added (lag, rolling stats, diurnal, seasonal harmonics)",
+              ],
+              input: "Raw time-series with missing data & outliers",
+              output: "Clean 89-feature matrices; ≥99.2% data retention",
+            },
+            {
+              num: "03",
+              icon: "🔬",
+              phase: "GMM Clustering",
+              tag: "Climate Regime Discovery",
+              details: [
+                "Gaussian Mixture Model (GMM) with BIC-optimised k selection",
+                "Fitted on PCA-reduced feature space (95% variance explained)",
+                "k=5 for Tamil Nadu &amp; Uttarakhand; k=3 for Rajasthan &amp; Assam",
+                "16 total climate regimes discovered across all 4 states",
+                "Each cluster assigned a geographic label (e.g. Thar Core, Brahmaputra Valley, Tarai)",
+              ],
+              input: "Clean 89-feature hourly matrices",
+              output: "Cluster-labelled grid points + per-cluster climate signatures",
+            },
+            {
+              num: "04",
+              icon: "🧪",
+              phase: "Feasibility Screening",
+              tag: "κ-Calibrated Thresholds",
+              details: [
+                "62 PCM candidate records evaluated per state",
+                "Hard constraints: Tm∈[Tₐₘɓ₊10, GHI_peak/3], latent heat ≥80 kJ/kg, no toxic/flammable flags",
+                "κ-calibrated thresholds adjust for climate severity (arid vs. montane vs. subtropical)",
+                "Sub-zero activation for Uttarakhand: eliminates PCMs with Tm&lt;5°C in high-altitude regimes",
+                "Survivors: 39 (Rajasthan), 41 (Tamil Nadu), 38 (Assam), 35 (Uttarakhand)",
+              ],
+              input: "Per-cluster climate signatures + PCM property database",
+              output: "Feasible candidate shortlist per cluster",
+            },
+            {
+              num: "05",
+              icon: "📊",
+              phase: "MCDM Consensus Ranking",
+              tag: "TOPSIS · GRA · PROMETHEE II · VIKOR",
+              details: [
+                "TOPSIS: Euclidean distance from ideal/anti-ideal solution",
+                "GRA (Grey Relational Analysis): relational grade-based ranking under uncertainty",
+                "PROMETHEE II: pairwise preference flow with Gaussian preference functions",
+                "VIKOR: compromise ranking minimising regret and group utility simultaneously",
+                "Borda count aggregation across all 4 methods for consensus ranking",
+                "Kendall’s W concordance measured per cluster (W=0.842 C1 Tamil Nadu; W=0.784 Assam)",
+              ],
+              input: "Feasible PCM shortlist + normalised criterion weights",
+              output: "Borda consensus ranked PCM list per cluster",
+            },
+            {
+              num: "06",
+              icon: "⚛️",
+              phase: "Physics Validation",
+              tag: "Grey-Box Lumped Enthalpy Solver",
+              details: [
+                "2-node lumped-enthalpy energy balance ODE solved over 8760 hourly timesteps",
+                "Nodes: PCM tank and domestic hot water draw loop",
+                "Solar fraction SF = Q_delivered / Q_demand computed per annual cycle",
+                "Target band: 54–84% solar fraction benchmark",
+                "Spearman ρ between MCDM rank and simulated SF computed per cluster",
+                "VIKOR sign-inversion bug detected via bump chart cross-verification (ρ=−0.86 vs TOPSIS)",
+              ],
+              input: "Top-ranked PCMs + cluster solar/thermal signatures",
+              output: "Annual solar fractions + Spearman ρ concordance per cluster",
+            },
+            {
+              num: "07",
+              icon: "🏆",
+              phase: "PCM Recommendation",
+              tag: "Borda + Monte Carlo Stability",
+              details: [
+                "Final recommendation = Borda consensus leader per cluster",
+                "Monte Carlo stability: 1,000 Dirichlet weight draws, Top-3 inclusion rate computed",
+                "Threshold: ≥75% MC Top-3 inclusion for high-confidence recommendation",
+                "Outputs: recommended PCM, Tm, latent heat, MC certainty, and target geographic region",
+                "Example winners: savE® OM50 (Rajasthan C1/C2), n-Octacosane C28 (Tamil Nadu C1), RT44HC (Assam)",
+              ],
+              input: "Borda-ranked list + Monte Carlo draws",
+              output: "Final region-specific PCM recommendations with confidence scores",
+            },
+          ].map((step, i, arr) => (
+            <div key={step.num} className="impl-detail-item">
+              <div className="impl-detail-connector">
+                <div className="impl-detail-badge">{step.num}</div>
+                {i < arr.length - 1 && <div className="impl-detail-line" />}
+              </div>
+              <div className="impl-detail-card">
+                <div className="impl-detail-header">
+                  <span className="impl-detail-icon">{step.icon}</span>
+                  <div>
+                    <div className="impl-detail-phase">{step.phase}</div>
+                    <span className="tag tag-zinc" style={{ marginTop: 4, display: "inline-block" }}>{step.tag}</span>
+                  </div>
+                </div>
+                <ul className="impl-detail-bullets">
+                  {step.details.map((d, di) => (
+                    <li key={di} dangerouslySetInnerHTML={{ __html: d }} />
+                  ))}
+                </ul>
+                <div className="impl-detail-io">
+                  <div className="impl-io-row">
+                    <span className="impl-io-label">Input</span>
+                    <span className="impl-io-val">{step.input}</span>
+                  </div>
+                  <div className="impl-io-row">
+                    <span className="impl-io-label" style={{ color: "#4ade80" }}>Output</span>
+                    <span className="impl-io-val">{step.output}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Cross-State Preprocessing Verification Table ── */}
       <div className="content-section" id="preprocessing">
         <div className="plots-section-header">
-          <h2>4-State Data Preprocessing & Quality Control (Slide 15)</h2>
+          <h2>4-State Data Preprocessing & Quality Control</h2>
           <span className="plots-count-badge">Presentation Audit</span>
         </div>
         <p className="section-desc">
@@ -1295,10 +1450,10 @@ function Objective1Page() {
         ))}
       </div>
 
-      {/* ── Slide 18, 19, 20: Cross-State Technical Findings ── */}
+      {/* ── Cross-State Technical Findings ── */}
       <div className="content-section" id="clustering">
         <div className="plots-section-header">
-          <h2>Clustering & MCDM Cross-State Findings (Slides 18–20 & 28)</h2>
+          <h2>Clustering & MCDM Cross-State Findings</h2>
           <span className="plots-count-badge">Review 2 Synthesis</span>
         </div>
         <p className="section-desc">
@@ -1362,10 +1517,10 @@ function Objective1Page() {
         </div>
       </div>
 
-      {/* ── Methods & Mathematical Formulations (Slide 24, 25, 26) ── */}
+      {/* ── Methods & Mathematical Formulations ── */}
       <div className="content-section" id="methods">
         <div className="plots-section-header">
-          <h2>Theoretical & Mathematical Foundations (Slides 24–26)</h2>
+          <h2>Theoretical & Mathematical Foundations</h2>
           <span className="plots-count-badge">8 Core Algorithms</span>
         </div>
         <p className="section-desc">

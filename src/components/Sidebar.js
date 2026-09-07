@@ -41,7 +41,7 @@ function Sidebar() {
           <div className="brand-mark">PCM</div>
           <div className="brand-text">
             <span className="brand-title">Documentation Portal</span>
-            <span className="brand-subtitle">FYP Group 12 · Review 2</span>
+
           </div>
         </a>
 
