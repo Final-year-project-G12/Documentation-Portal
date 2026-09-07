@@ -112,7 +112,7 @@ const TERRITORIES = [
     name: "Assam",
     tag: "Subtropical · Monsoon Attenuated",
     gridPoints: 129,
-    records: "129 Decadal Signatures",
+    records: "1,402,101",
     regimes: "k=3 GMM Regimes",
     primaryPCM: "RT44HC & RT45HC",
     summary: "Brahmaputra Valley and Barak Valley. Relative humidity > 70% with heavy monsoon cloud attenuation favoring moderate melting point paraffins.",
