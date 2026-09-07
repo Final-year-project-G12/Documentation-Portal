@@ -101,51 +101,47 @@ function Sidebar({ currentPage, onNavigate }) {
           </div>
         </button>
 
-        {/* Primary Page Navigation */}
-        <div className="sidebar-page-switcher">
-          <div className="page-switcher-list">
-            {PAGES.map((page) => (
-              <button
-                key={page.id}
-                className={`page-switcher-btn ${currentPage === page.id ? "active" : ""}`}
-                onClick={() => onNavigate(page.id)}
-              >
-                <div className="page-btn-main">
-                  <span className="page-btn-icon">{page.icon}</span>
-                  <span className="page-btn-label">{page.label}</span>
-                </div>
-                <span className={`page-badge badge-${page.badgeType}`}>{page.badge}</span>
-              </button>
-            ))}
-          </div>
-        </div>
+        {/* Grouped Page + Section Navigation */}
+        <nav className="navigation" style={{ flex: 1 }}>
+          {Object.entries(SECTIONS_BY_PAGE).map(([pageId, sections]) => {
+            const page = PAGES.find((p) => p.id === pageId);
+            const isActivePage = currentPage === pageId;
+            return (
+              <div key={pageId} className="nav-page-group">
+                {/* Page heading — clicking navigates to the page */}
+                <button
+                  className={`nav-page-heading ${isActivePage ? "active" : ""}`}
+                  onClick={() => onNavigate(pageId)}
+                >
+                  <span className="nav-page-label">{page.label}</span>
+                </button>
 
-        {/* Dynamic In-Page Anchor Navigation */}
-        <nav className="navigation">
-          <div className="nav-section-label">
-            {currentPage === "overview" && "Overview Sections"}
-            {currentPage === "objective1" && "Objective 1 Sections"}
-            {currentPage === "objective2" && "Objective 2 Sections"}
-          </div>
-
-          {currentSections.map((item) => (
-            <a
-              key={item.id}
-              className={`nav-link ${activeSection === item.id ? "active" : ""}`}
-              href={`#${item.id}`}
-              onClick={(e) => {
-                e.preventDefault();
-                const target = document.getElementById(item.id);
-                if (target) {
-                  target.scrollIntoView({ behavior: "smooth", block: "start" });
-                  setActiveSection(item.id);
-                }
-              }}
-            >
-              <span className="nav-link-dot" />
-              <span>{item.label}</span>
-            </a>
-          ))}
+                {/* Sub-topics — only visible for the active page */}
+                {isActivePage && (
+                  <div className="nav-page-sections">
+                    {sections.map((item) => (
+                      <a
+                        key={item.id}
+                        className={`nav-link ${activeSection === item.id ? "active" : ""}`}
+                        href={`#${item.id}`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          const target = document.getElementById(item.id);
+                          if (target) {
+                            target.scrollIntoView({ behavior: "smooth", block: "start" });
+                            setActiveSection(item.id);
+                          }
+                        }}
+                      >
+                        <span className="nav-link-dot" />
+                        <span>{item.label}</span>
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </nav>
 
         {/* Sidebar Footer */}

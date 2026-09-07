@@ -210,6 +210,59 @@ body {
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
 }
 
+/* ─── Grouped sidebar nav ─────────────────────────────────── */
+.nav-page-group {
+  margin-bottom: 4px;
+}
+
+.nav-page-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  background: none;
+  color: var(--neutral-300);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+}
+
+.nav-page-heading:hover {
+  background: var(--surface-card-hover);
+  color: #ffffff;
+}
+
+.nav-page-heading.active {
+  color: #ffffff;
+}
+
+.nav-page-icon {
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.nav-page-label {
+  flex: 1;
+}
+
+.nav-page-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding-left: 8px;
+}
+
+.nav-page-sections .nav-link {
+  font-size: 0.79rem;
+  padding: 6px 10px;
+}
+
 /* ─── Main Content ───────────────────────────────────────── */
 .portal-main {
   padding: 48px clamp(20px, 5vw, 84px) 96px;
@@ -1463,7 +1516,7 @@ h3 {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 12px clamp(16px, 3vw, 48px);
+  padding: 16px clamp(16px, 3vw, 48px);
   background: rgba(9, 9, 11, 0.88);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -1508,10 +1561,10 @@ h3 {
 .top-nav-pills {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   background: rgba(24, 24, 27, 0.8);
-  padding: 4px;
-  border-radius: 10px;
+  padding: 5px;
+  border-radius: 12px;
   border: 1px solid var(--surface-border);
 }
 
@@ -1519,12 +1572,12 @@ h3 {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 14px;
-  border-radius: 8px;
+  padding: 9px 22px;
+  border-radius: 9px;
   border: none;
   background: transparent;
   color: var(--neutral-400);
-  font-size: 0.8rem;
+  font-size: 0.97rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;

@@ -27,23 +27,21 @@ function PortalLayout({ currentPage, onNavigate, children }) {
                 className={`top-nav-btn ${currentPage === "overview" ? "active" : ""}`}
                 onClick={() => onNavigate("overview")}
               >
-                <span>🏠 Overview</span>
+                <span>Overview</span>
               </button>
 
               <button
                 className={`top-nav-btn ${currentPage === "objective1" ? "active" : ""}`}
                 onClick={() => onNavigate("objective1")}
               >
-                <span>🎯 Objective 1</span>
-                <span className="top-nav-tag complete">100%</span>
+                <span>Objective 1</span>
               </button>
 
               <button
                 className={`top-nav-btn ${currentPage === "objective2" ? "active" : ""}`}
                 onClick={() => onNavigate("objective2")}
               >
-                <span>⚡ Objective 2</span>
-                <span className="top-nav-tag progress">~92%</span>
+                <span>Objective 2</span>
               </button>
             </nav>
           </div>
