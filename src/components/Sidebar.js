@@ -1,17 +1,13 @@
 import { useState, useEffect } from "react";
 
 const sections = [
-  { id: "top", label: "Overview", group: "main" },
-  { id: "pipeline-flow", label: "Pipeline Flow", group: "objective1" },
-  { id: "methods", label: "Methods", group: "objective1" },
-  { id: "data-collection", label: "Data Collection", group: "objective1" },
+  { id: "top", label: "Project Overview", group: "main" },
+  { id: "state-selector", label: "State Selection", group: "main" },
   { id: "preprocessing", label: "Preprocessing & QC", group: "objective1" },
-  { id: "clustering", label: "Climate Clustering", group: "objective1" },
-  { id: "feasibility", label: "Feasibility Filter", group: "objective1" },
-  { id: "mcdm", label: "MCDM Ranking", group: "objective1" },
-  { id: "physics", label: "Physics Validation", group: "objective1" },
-  { id: "interactive-plots", label: "Interactive Plots", group: "objective1" },
-  { id: "results", label: "Results & Recommendations", group: "objective1" },
+  { id: "interactive-plots", label: "Interactive Plots (All 4 States)", group: "objective1" },
+  { id: "clustering", label: "Clustering & Cross-State Analysis", group: "objective1" },
+  { id: "methods", label: "Methods & Mathematical Models", group: "objective1" },
+  { id: "results", label: "Recommendations & Findings", group: "objective1" },
 ];
 
 function Sidebar() {
@@ -26,7 +22,7 @@ function Sidebar() {
           }
         });
       },
-      { rootMargin: "-30% 0px -65% 0px" }
+      { rootMargin: "-25% 0px -65% 0px" }
     );
     sections.forEach(({ id }) => {
       const el = document.getElementById(id);
@@ -45,11 +41,12 @@ function Sidebar() {
           <div className="brand-mark">PCM</div>
           <div className="brand-text">
             <span className="brand-title">Documentation Portal</span>
-            <span className="brand-subtitle">FYP Group 12</span>
+            <span className="brand-subtitle">FYP Group 12 · Review 2</span>
           </div>
         </a>
 
         <nav className="navigation">
+          <div className="nav-section-label">Navigation</div>
           {mainSections.map((item) => (
             <a
               key={item.id}
@@ -61,7 +58,7 @@ function Sidebar() {
             </a>
           ))}
 
-          <div className="nav-section-label">Objective 1 — PCM Selection</div>
+          <div className="nav-section-label">Objective 1 — 4 States</div>
           {obj1Sections.map((item) => (
             <a
               key={item.id}
