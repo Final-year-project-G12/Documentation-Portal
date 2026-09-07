@@ -1534,11 +1534,7 @@ function Objective1Page() {
       {/* ── Recommendation Cards Section ──────────────────── */}
       <div className="content-section" id="results">
         <div className="plots-section-header">
-          <h2>
-            {selectedState === "all"
-              ? "State-by-State Recommended PCMs"
-              : `${currentState?.name} Recommended PCMs`}
-          </h2>
+          <h2>State-by-State Recommended PCMs</h2>
           <span className="plots-count-badge">Borda Consensus Leaders</span>
         </div>
         <p className="section-desc">
@@ -1547,73 +1543,42 @@ function Objective1Page() {
         </p>
         <div className="section-divider" />
 
-        {selectedState === "all" ? (
-          // Display recommendations for all 4 states grouped
-          Object.entries(STATES_CONFIG).map(([key, st]) => (
-            <div key={key} style={{ marginBottom: 36 }}>
-              <h3 style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
-                <span>{st.icon}</span>
-                <span>{st.name}</span>
-                <span className="tag tag-zinc">{st.tag}</span>
-              </h3>
+        {Object.entries(STATES_CONFIG).map(([key, st]) => (
+          <div key={key} style={{ marginBottom: 36 }}>
+            <h3 style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
+              <span>{st.icon}</span>
+              <span>{st.name}</span>
+              <span className="tag tag-zinc">{st.tag}</span>
+            </h3>
 
-              <div className="recommendation-cards-grid">
-                {st.recommendations.map((r) => (
-                  <div key={r.cluster} className="rec-card">
-                    <div className="rec-card-cluster">{r.cluster}</div>
-                    <div className="rec-card-pcm">{r.pcm}</div>
-                    <div className="rec-card-props">
-                      <div className="rec-prop">
-                        <span className="rec-prop-label">Melting Temp (Tm)</span>
-                        <span className="rec-prop-value">{r.tm}</span>
-                      </div>
-                      <div className="rec-prop">
-                        <span className="rec-prop-label">Latent Heat</span>
-                        <span className="rec-prop-value">{r.latentHeat}</span>
-                      </div>
-                      <div className="rec-prop">
-                        <span className="rec-prop-label">MC Top-3 Certainty</span>
-                        <span className="rec-prop-value">{r.mc}</span>
-                      </div>
-                      <div className="rec-prop">
-                        <span className="rec-prop-label">Target Region</span>
-                        <span className="rec-prop-value">{r.region}</span>
-                      </div>
+            <div className="recommendation-cards-grid">
+              {st.recommendations.map((r) => (
+                <div key={r.cluster} className="rec-card">
+                  <div className="rec-card-cluster">{r.cluster}</div>
+                  <div className="rec-card-pcm">{r.pcm}</div>
+                  <div className="rec-card-props">
+                    <div className="rec-prop">
+                      <span className="rec-prop-label">Melting Temp (Tm)</span>
+                      <span className="rec-prop-value">{r.tm}</span>
+                    </div>
+                    <div className="rec-prop">
+                      <span className="rec-prop-label">Latent Heat</span>
+                      <span className="rec-prop-value">{r.latentHeat}</span>
+                    </div>
+                    <div className="rec-prop">
+                      <span className="rec-prop-label">MC Top-3 Certainty</span>
+                      <span className="rec-prop-value">{r.mc}</span>
+                    </div>
+                    <div className="rec-prop">
+                      <span className="rec-prop-label">Target Region</span>
+                      <span className="rec-prop-value">{r.region}</span>
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
-          ))
-        ) : (
-          // Display recommendations for currently selected state
-          <div className="recommendation-cards-grid">
-            {currentState.recommendations.map((r) => (
-              <div key={r.cluster} className="rec-card">
-                <div className="rec-card-cluster">{r.cluster}</div>
-                <div className="rec-card-pcm">{r.pcm}</div>
-                <div className="rec-card-props">
-                  <div className="rec-prop">
-                    <span className="rec-prop-label">Melting Temp (Tm)</span>
-                    <span className="rec-prop-value">{r.tm}</span>
-                  </div>
-                  <div className="rec-prop">
-                    <span className="rec-prop-label">Latent Heat</span>
-                    <span className="rec-prop-value">{r.latentHeat}</span>
-                  </div>
-                  <div className="rec-prop">
-                    <span className="rec-prop-label">MC Top-3 Certainty</span>
-                    <span className="rec-prop-value">{r.mc}</span>
-                  </div>
-                  <div className="rec-prop">
-                    <span className="rec-prop-label">Target Region</span>
-                    <span className="rec-prop-value">{r.region}</span>
-                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        )}
+        ))}
       </div>
     </section>
   );
