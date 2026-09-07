@@ -996,17 +996,7 @@ function Objective1Page() {
 
   return (
     <section className="content" id="top">
-      {/* ── Presentation Metadata Header (Referencing Review 2 PDF) ── */}
-      <div className="project-meta-banner">
-        <div className="project-meta-left">
-          <span className="project-badge">{PROJECT_INFO.course}</span>
-          <span style={{ color: "#ffffff", fontWeight: 600 }}>{PROJECT_INFO.group}</span>
-          <span className="project-guide">
-            Guide: <strong>{PROJECT_INFO.guide}</strong>
-          </span>
-        </div>
-        <div className="project-status-tag">{PROJECT_INFO.status}</div>
-      </div>
+
 
       {/* ── Page Hero ────────────────────────────────────── */}
       <div className="page-hero">
@@ -1025,14 +1015,7 @@ function Objective1Page() {
           physics validation, the framework delivers region-specific thermal storage recommendations.
         </p>
 
-        {/* Team Members from PDF Presentation */}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 4 }}>
-          {PROJECT_INFO.team.map((student) => (
-            <span key={student} className="tag tag-zinc">
-              👤 {student}
-            </span>
-          ))}
-        </div>
+
       </div>
 
       {/* ── State Selector Bar (Prominent & Interactive) ─── */}
