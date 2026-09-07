@@ -132,18 +132,7 @@ const TERRITORIES = [
 function OverviewPage({ onNavigate }) {
   return (
     <section className="content" id="top">
-      {/* ── Meta Banner ── */}
-      <div className="project-meta-banner" id="project-meta">
-        <div className="project-meta-left">
-          <span className="project-badge">{PROJECT_META.course}</span>
-          <span className="project-guide">
-            Guide: <strong>{PROJECT_META.guide.name}</strong> ({PROJECT_META.guide.role})
-          </span>
-        </div>
-        <div className="project-status-tag">
-          {PROJECT_META.group} · {PROJECT_META.date}
-        </div>
-      </div>
+
 
       {/* ── Hero Section ── */}
       <div className="page-hero">
@@ -173,30 +162,7 @@ function OverviewPage({ onNavigate }) {
         </div>
       </div>
 
-      {/* ── Team Registry ── */}
-      <div className="content-section" id="team">
-        <div className="plots-section-header">
-          <h2>Project Investigation Team & Guidance</h2>
-          <span className="plots-count-badge">Amrita School of Engineering</span>
-        </div>
-        <p className="section-desc">
-          Conducted under the mentorship of <strong>{PROJECT_META.guide.name}</strong> at Amrita Vishwa Vidyapeetham, Coimbatore.
-        </p>
-        <div className="section-divider" />
 
-        <div className="team-grid">
-          {PROJECT_META.team.map((member, i) => (
-            <div key={member.reg} className="team-card">
-              <div className="team-card-avatar">0{i + 1}</div>
-              <div className="team-card-info">
-                <div className="team-card-name">{member.name}</div>
-                <div className="team-card-reg">{member.reg}</div>
-                <div className="team-card-dept">B.Tech CSE · Group 12</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
 
       {/* ── Real-World Motivation & Industry Gap ── */}
       <div className="content-section" id="motivation">

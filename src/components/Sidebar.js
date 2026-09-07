@@ -30,8 +30,6 @@ const PAGES = [
 
 const SECTIONS_BY_PAGE = {
   overview: [
-    { id: "project-meta", label: "Guide & Presentation Meta" },
-    { id: "team", label: "Investigation Team" },
     { id: "motivation", label: "Motivation & Industry Benchmark" },
     { id: "architecture", label: "System Architecture" },
     { id: "objectives", label: "4-Objective Progress" },
@@ -100,13 +98,11 @@ function Sidebar({ currentPage, onNavigate }) {
           <div className="brand-mark">PCM</div>
           <div className="brand-text">
             <span className="brand-title">Documentation Portal</span>
-            <span className="brand-subtitle">Group 12 · Review 2</span>
           </div>
         </button>
 
         {/* Primary Page Navigation */}
         <div className="sidebar-page-switcher">
-          <div className="nav-section-label">Research Modules</div>
           <div className="page-switcher-list">
             {PAGES.map((page) => (
               <button

@@ -19,11 +19,7 @@ function PortalLayout({ currentPage, onNavigate, children }) {
       <div className="portal-content-wrapper">
         {/* Top Floating Glass Navigation Header */}
         <header className="portal-top-bar">
-          <div className="top-bar-left">
-            <span className="top-bar-badge">Panel Review 2</span>
-            <span className="top-bar-separator">/</span>
-            <span className="top-bar-active-page">{pageTitles[currentPage] || "Documentation"}</span>
-          </div>
+
 
           <div className="top-bar-center">
             <nav className="top-nav-pills">
@@ -52,12 +48,7 @@ function PortalLayout({ currentPage, onNavigate, children }) {
             </nav>
           </div>
 
-          <div className="top-bar-right">
-            <span className="top-bar-status">
-              <span className="status-ping" />
-              <span>G12 Live Portal</span>
-            </span>
-          </div>
+
         </header>
 
         {/* Main Content Area */}
