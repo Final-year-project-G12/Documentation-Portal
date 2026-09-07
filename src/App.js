@@ -1,10 +1,10 @@
 import PortalLayout from "./components/PortalLayout";
-import HomePage from "./pages/HomePage";
+import Objective1Page from "./pages/Objective1Page";
 
 function App() {
   return (
     <PortalLayout>
-      <HomePage />
+      <Objective1Page />
     </PortalLayout>
   );
 }

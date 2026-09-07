@@ -1,3 +1,4 @@
+import "../styles/global.css";
 import Sidebar from "./Sidebar";
 
 function PortalLayout({ children }) {
