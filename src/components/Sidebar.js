@@ -1,75 +1,162 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
-const sections = [
-  { id: "top", label: "Project Overview", group: "main" },
-  { id: "state-selector", label: "State Selection", group: "main" },
-  { id: "preprocessing", label: "Preprocessing & QC", group: "objective1" },
-  { id: "interactive-plots", label: "Interactive Plots (All 4 States)", group: "objective1" },
-  { id: "clustering", label: "Clustering & Cross-State Analysis", group: "objective1" },
-  { id: "methods", label: "Methods & Mathematical Models", group: "objective1" },
-  { id: "results", label: "Recommendations & Findings", group: "objective1" },
+/* ─────────────────────────────────────────────────────────
+   Sidebar.js — Multi-Page & Context-Aware Navigation
+   ───────────────────────────────────────────────────────── */
+
+const PAGES = [
+  {
+    id: "overview",
+    label: "Project Overview",
+    icon: "🏠",
+    badge: "Review 2",
+    badgeType: "brand",
+  },
+  {
+    id: "objective1",
+    label: "Objective 1: Selection",
+    icon: "🎯",
+    badge: "100%",
+    badgeType: "complete",
+  },
+  {
+    id: "objective2",
+    label: "Objective 2: Design & AI",
+    icon: "⚡",
+    badge: "~92%",
+    badgeType: "progress",
+  },
 ];
 
-function Sidebar() {
-  const [active, setActive] = useState("top");
+const SECTIONS_BY_PAGE = {
+  overview: [
+    { id: "project-meta", label: "Guide & Presentation Meta" },
+    { id: "team", label: "Investigation Team" },
+    { id: "motivation", label: "Motivation & Industry Benchmark" },
+    { id: "architecture", label: "System Architecture" },
+    { id: "objectives", label: "4-Objective Progress" },
+    { id: "territories", label: "4-State Climate Scope" },
+    { id: "sdgs", label: "UN SDG Alignment" },
+  ],
+  objective1: [
+    { id: "top", label: "Objective 1 Pipeline" },
+    { id: "state-selector", label: "State Territory Selection" },
+    { id: "implementation-flow", label: "7-Phase Implementation" },
+    { id: "preprocessing", label: "Preprocessing & QC Audit" },
+    { id: "interactive-plots", label: "Interactive Plots Suite" },
+    { id: "clustering", label: "Cross-State Findings" },
+    { id: "methods", label: "Theoretical Algorithms" },
+    { id: "results", label: "Recommended PCMs" },
+  ],
+  objective2: [
+    { id: "top", label: "Objective 2 Scope" },
+    { id: "research-questions", label: "Engineering Questions" },
+    { id: "workflow", label: "Optimization Workflow" },
+    { id: "interactive-explorer", label: "Design Space Estimator" },
+    { id: "parameters", label: "System Bounds & Limits" },
+    { id: "deliverables", label: "Deliverables (D2.1–D2.9)" },
+    { id: "objective3-handoff", label: "Objective 3 Hand-Off" },
+  ],
+};
+
+function Sidebar({ currentPage, onNavigate }) {
+  const [activeSection, setActiveSection] = useState("");
+
+  const currentSections = useMemo(
+    () => SECTIONS_BY_PAGE[currentPage] || [],
+    [currentPage]
+  );
 
   useEffect(() => {
+    setActiveSection("");
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            setActive(entry.target.id);
+            setActiveSection(entry.target.id);
           }
         });
       },
-      { rootMargin: "-25% 0px -65% 0px" }
+      { rootMargin: "-20% 0px -60% 0px" }
     );
-    sections.forEach(({ id }) => {
+
+    currentSections.forEach(({ id }) => {
       const el = document.getElementById(id);
       if (el) observer.observe(el);
     });
-    return () => observer.disconnect();
-  }, []);
 
-  const mainSections = sections.filter((s) => s.group === "main");
-  const obj1Sections = sections.filter((s) => s.group === "objective1");
+    return () => observer.disconnect();
+  }, [currentPage, currentSections]);
 
   return (
     <aside className="sidebar" aria-label="Documentation navigation">
       <div className="sidebar-inner">
-        <a className="brand" href="#top">
+        {/* Brand */}
+        <button
+          className="brand"
+          onClick={() => onNavigate("overview")}
+          style={{ background: "none", border: "none", cursor: "pointer", width: "100%", textAlign: "left" }}
+        >
           <div className="brand-mark">PCM</div>
           <div className="brand-text">
             <span className="brand-title">Documentation Portal</span>
-
+            <span className="brand-subtitle">Group 12 · Review 2</span>
           </div>
-        </a>
+        </button>
 
+        {/* Primary Page Navigation */}
+        <div className="sidebar-page-switcher">
+          <div className="nav-section-label">Research Modules</div>
+          <div className="page-switcher-list">
+            {PAGES.map((page) => (
+              <button
+                key={page.id}
+                className={`page-switcher-btn ${currentPage === page.id ? "active" : ""}`}
+                onClick={() => onNavigate(page.id)}
+              >
+                <div className="page-btn-main">
+                  <span className="page-btn-icon">{page.icon}</span>
+                  <span className="page-btn-label">{page.label}</span>
+                </div>
+                <span className={`page-badge badge-${page.badgeType}`}>{page.badge}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Dynamic In-Page Anchor Navigation */}
         <nav className="navigation">
-          <div className="nav-section-label">Navigation</div>
-          {mainSections.map((item) => (
-            <a
-              key={item.id}
-              className={`nav-link ${active === item.id ? "active" : ""}`}
-              href={`#${item.id}`}
-            >
-              <span className="nav-link-dot" />
-              {item.label}
-            </a>
-          ))}
+          <div className="nav-section-label">
+            {currentPage === "overview" && "Overview Sections"}
+            {currentPage === "objective1" && "Objective 1 Sections"}
+            {currentPage === "objective2" && "Objective 2 Sections"}
+          </div>
 
-          <div className="nav-section-label">Objective 1 — 4 States</div>
-          {obj1Sections.map((item) => (
+          {currentSections.map((item) => (
             <a
               key={item.id}
-              className={`nav-link ${active === item.id ? "active" : ""}`}
+              className={`nav-link ${activeSection === item.id ? "active" : ""}`}
               href={`#${item.id}`}
+              onClick={(e) => {
+                e.preventDefault();
+                const target = document.getElementById(item.id);
+                if (target) {
+                  target.scrollIntoView({ behavior: "smooth", block: "start" });
+                  setActiveSection(item.id);
+                }
+              }}
             >
               <span className="nav-link-dot" />
-              {item.label}
+              <span>{item.label}</span>
             </a>
           ))}
         </nav>
+
+        {/* Sidebar Footer */}
+        <div className="sidebar-footer">
+          <div className="sidebar-footer-text">Amrita School of Engineering</div>
+          <div className="sidebar-footer-sub">23CSE498 Project Phase 2</div>
+        </div>
       </div>
     </aside>
   );

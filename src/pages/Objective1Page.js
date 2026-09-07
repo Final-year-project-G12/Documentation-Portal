@@ -1,23 +1,9 @@
 import { useState } from "react";
 
 /* ─────────────────────────────────────────────────────────
-   Presentation & Project Information (From Review 2 Deck)
+   Objective 1 — Climate-Region-Aware PCM Recommendation
+   Final Year Project — Group 12 | Department of CSE
    ───────────────────────────────────────────────────────── */
-const PROJECT_INFO = {
-  title: "Climate-Adaptive Intelligent Control and Optimization of PCM Thermal Storage for Solar Water Heating",
-  course: "23CSE498 — Project Phase 2 (Panel Review 2)",
-  group: "Group 12",
-  date: "September 7, 2026",
-  guide: "Dr. T. Deepika, Assistant Professor (Sr. Gd.), Department of CSE",
-  team: [
-    "Manduva Jaswita",
-    "Dungi Manvitha",
-    "Duddekunta Yuva Hasini",
-    "Chiruvolu Venkata Khyathi",
-    "K P N L K Mahitha",
-  ],
-  status: "Objective 1 (100% Complete) · Objective 2 (~92% Near-Complete) · Phase 2 Verified",
-};
 
 /* ─────────────────────────────────────────────────────────
    Slide 15: Cross-State Preprocessing & QC Verification Summary
