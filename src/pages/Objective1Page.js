@@ -1592,7 +1592,6 @@ function Objective1Page() {
       <div className="content-section" id="clustering">
         <div className="plots-section-header">
           <h2>Clustering & MCDM Cross-State Findings</h2>
-          <span className="plots-count-badge">Review 2 Synthesis</span>
         </div>
         <p className="section-desc">
           Key empirical findings from deploying the Objective 1 framework across four geographically
