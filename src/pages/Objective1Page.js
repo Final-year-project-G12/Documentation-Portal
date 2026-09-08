@@ -1084,7 +1084,6 @@ function Objective1Page() {
       ...p,
       stateKey: selectedState,
       stateName: currentState.name,
-      stateIcon: currentState.icon,
     }));
   }
 
@@ -1156,8 +1155,7 @@ function Objective1Page() {
               setActivePlotCategory("All");
             }}
           >
-            <span>🇮🇳 All 4 States</span>
-            <span className="state-pill-badge">Overview</span>
+            <span>All 4 States</span>
           </button>
 
           <button
@@ -1167,8 +1165,7 @@ function Objective1Page() {
               setActivePlotCategory("All");
             }}
           >
-            <span> Tamil Nadu</span>
-            <span className="state-pill-badge">Lead · K=5</span>
+            <span>Tamil Nadu</span>
           </button>
 
           <button
@@ -1178,8 +1175,7 @@ function Objective1Page() {
               setActivePlotCategory("All");
             }}
           >
-            <span>️ Rajasthan</span>
-            <span className="state-pill-badge">Arid · K=3</span>
+            <span>Rajasthan</span>
           </button>
 
           <button
@@ -1189,8 +1185,7 @@ function Objective1Page() {
               setActivePlotCategory("All");
             }}
           >
-            <span> Assam</span>
-            <span className="state-pill-badge">Subtropical · K=3</span>
+            <span>Assam</span>
           </button>
 
           <button
@@ -1200,8 +1195,7 @@ function Objective1Page() {
               setActivePlotCategory("All");
             }}
           >
-            <span>️ Uttarakhand</span>
-            <span className="state-pill-badge">Montane · K=5</span>
+            <span>Uttarakhand</span>
           </button>
         </div>
       </div>
@@ -1212,7 +1206,7 @@ function Objective1Page() {
           <div className="state-profile-item">
             <span className="state-profile-label">Selected Territory</span>
             <span className="state-profile-val">
-              {currentState.icon} {currentState.name}
+              {currentState.name}
             </span>
             <span className="state-profile-sub">{currentState.climateType}</span>
           </div>

@@ -362,29 +362,14 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 10px;
-  border-radius: 99px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #f4f4f5;
-  font-size: 0.7rem;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--neutral-300);
+  font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.04em;
-}
-
-.eyebrow-badge::before {
-  content: '';
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #ffffff;
-  box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
-  animation: pulse 2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(0.7); }
 }
 
 h1 {
@@ -481,7 +466,7 @@ h1 {
 .state-pill-badge {
   font-size: 0.65rem;
   padding: 2px 6px;
-  border-radius: 99px;
+  border-radius: 4px;
   background: rgba(0, 0, 0, 0.15);
   font-weight: 600;
 }
@@ -769,13 +754,13 @@ h3 {
 .plots-count-badge {
   display: inline-flex;
   align-items: center;
-  padding: 3px 10px;
-  border-radius: 99px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #ffffff;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--neutral-300);
   font-size: 0.72rem;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .plots-controls-bar {
@@ -1221,8 +1206,8 @@ h3 {
 }
 
 .tag {
-  padding: 3px 10px;
-  border-radius: 99px;
+  padding: 3px 8px;
+  border-radius: 4px;
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.04em;
@@ -1707,7 +1692,7 @@ h3 {
   font-size: 0.64rem;
   font-weight: 700;
   padding: 2px 7px;
-  border-radius: 99px;
+  border-radius: 4px;
 }
 
 .badge-brand {
