@@ -85,56 +85,56 @@ const O2_WORKFLOW_STEPS = [
   {
     step: "01",
     title: "Frozen Input Ingestion",
-    icon: "📦",
+    icon: "",
     tag: "Level A Hand-Off",
     desc: "Directly ingests Objective 1 outputs without modifying rankings: regime assignments, medoid hourly weather (GHI, Tamb, wind, RH), screened PCM database, and the canonical 300 L/day household draw schedule.",
   },
   {
     step: "02",
     title: "Geometry & Envelope Engine",
-    icon: "📐",
+    icon: "",
     tag: "Form Factor",
     desc: "Parameterizes capsule designs: maximum conduction thickness t_pcm (10–45 mm), capsule geometries (spherical nodules, horizontal tubes, cylindrical rods), packing volume fraction (20–40%), and interstitial flow channels.",
   },
   {
     step: "03",
     title: "2-Node Grey-Box Enthalpy Solver",
-    icon: "⚛️",
+    icon: "️",
     tag: "Physics Ground Truth",
     desc: "Solves transient energy balances across 8,760 hourly time-steps. Tracks water temperature Tw, PCM bulk temperature Tp, and phase melt fraction f using an effective heat capacity enthalpy formulation with phase transition bounds.",
   },
   {
     step: "04",
     title: "Latin Hypercube Sampling (DOE)",
-    icon: "🎲",
+    icon: "",
     tag: "Space Filling",
     desc: "Generates space-filling design configurations across 8 continuous/discrete variables. Simulates 1,200 design candidates across contrasting regimes to build the empirical training distribution.",
   },
   {
     step: "05",
     title: "AI Surrogate Neural Architecture",
-    icon: "🧠",
+    icon: "",
     tag: "ML Acceleration",
     desc: "Dual-stage surrogate: Stage 1 filters infeasible/freezing geometries via XGBoost classifier; Stage 2 predicts annual solar fraction, melting duration, and hydraulic loss via a 4-layer MLP / Gaussian Process Regressor.",
   },
   {
     step: "06",
     title: "Multi-Objective Pareto Optimization",
-    icon: "🎯",
+    icon: "",
     tag: "NSGA-II / MOPSO",
     desc: "Runs multi-objective genetic algorithms to resolve trade-offs: maximizing annual solar fraction (SF) and delivery reliability while simultaneously minimizing PCM capital mass, capsule count, and pumping parasitic power.",
   },
   {
     step: "07",
     title: "Ground-Truth Physics Verification",
-    icon: "🔬",
+    icon: "",
     tag: "Zero Hallucination",
     desc: "Every Pareto-optimal candidate selected by the AI surrogate is fed back into the full 8,760-hour numerical simulator. A surrogate prediction is never adopted without 100% numerical verification.",
   },
   {
     step: "08",
     title: "Objective 3 DRL Interface Freeze",
-    icon: "🎮",
+    icon: "",
     tag: "Control Interface",
     desc: "Freezes the physical state space st = [Tw, Tp, f, GHI, Tamb, wind, time], 3-way valve actuation constraints (Charge/Discharge/Bypass), and safety shield bounds for real-time reinforcement learning control.",
   },
@@ -383,7 +383,7 @@ function Objective2Page() {
             </div>
 
             <div className="estimator-status-note">
-              ✔ <strong>Physics Feasibility Check:</strong> Configuration satisfies the 300 L/day household draw constraint
+               <strong>Physics Feasibility Check:</strong> Configuration satisfies the 300 L/day household draw constraint
               and operates within allowable hydraulic pressure loss (&lt; 8.5 kPa).
             </div>
           </div>
@@ -482,7 +482,7 @@ function Objective2Page() {
         <div className="section-divider" />
 
         <div className="finding-item">
-          <span className="finding-icon">🎮</span>
+          <span className="finding-icon"></span>
           <div className="finding-text">
             <strong>State Space Vector (s_t):</strong>{" "}
             <code>s_t = [T_w(t), T_p(t), f(t), GHI(t), T_amb(t), v_wind(t), hour_sin, hour_cos, demand(t)]</code>.
@@ -491,7 +491,7 @@ function Objective2Page() {
         </div>
 
         <div className="finding-item" style={{ marginTop: 12 }}>
-          <span className="finding-icon">🕹️</span>
+          <span className="finding-icon">️</span>
           <div className="finding-text">
             <strong>Action Space & Valve Actuation:</strong> Discrete 3-action or continuous valve opening α ∈ [0, 1] controlling:
             <ul style={{ marginTop: 6, paddingLeft: 20 }}>
@@ -503,7 +503,7 @@ function Objective2Page() {
         </div>
 
         <div className="finding-item" style={{ marginTop: 12 }}>
-          <span className="finding-icon">🛡️</span>
+          <span className="finding-icon">️</span>
           <div className="finding-text">
             <strong>Safety Shield & Constraints:</strong> Objective 2 establishes physical hard constraints preventing thermal shock
             and boiling. If T_collector &gt; 95°C, safety bypass automatically activates; if T_w &lt; 40°C during draw, electrical backup

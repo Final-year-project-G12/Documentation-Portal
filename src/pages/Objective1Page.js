@@ -70,7 +70,7 @@ const STATES_CONFIG = {
   rajasthan: {
     name: "Rajasthan",
     short: "RJ",
-    icon: "🏜️",
+    icon: "️",
     climateType: "Hot Arid & Semi-Arid (Western India)",
     tag: "320 Grid Points · K=3 Regimes",
     stats: [
@@ -234,7 +234,7 @@ const STATES_CONFIG = {
   tamilnadu: {
     name: "Tamil Nadu",
     short: "TN",
-    icon: "🌴",
+    icon: "",
     climateType: "Tropical Maritime & Semi-Arid (Southern India · Lead Pipeline State)",
     tag: "133 Grid Points · K=5 Regimes · End-to-End Verified",
     stats: [
@@ -405,7 +405,7 @@ const STATES_CONFIG = {
   assam: {
     name: "Assam",
     short: "AS",
-    icon: "🌿",
+    icon: "",
     climateType: "Humid Subtropical & Monsoonal (North-East India)",
     tag: "129 Grid Points · K=3 Regimes · 100% Complete",
     stats: [
@@ -560,7 +560,7 @@ const STATES_CONFIG = {
   uttarakhand: {
     name: "Uttarakhand",
     short: "UK",
-    icon: "🏔️",
+    icon: "️",
     climateType: "Montane & Alpine Foothills (Northern Himalayan India)",
     tag: "45 Grid Points · K=5 Regimes · Sub-Zero Protection",
     stats: [
@@ -874,25 +874,25 @@ const ALL_STATE_PLOTS = [
     ...p,
     stateKey: "tamilnadu",
     stateName: "Tamil Nadu",
-    stateIcon: "🌴",
+    stateIcon: "",
   })),
   ...STATES_CONFIG.rajasthan.plots.map((p) => ({
     ...p,
     stateKey: "rajasthan",
     stateName: "Rajasthan",
-    stateIcon: "🏜️",
+    stateIcon: "️",
   })),
   ...STATES_CONFIG.assam.plots.map((p) => ({
     ...p,
     stateKey: "assam",
     stateName: "Assam",
-    stateIcon: "🌿",
+    stateIcon: "",
   })),
   ...STATES_CONFIG.uttarakhand.plots.map((p) => ({
     ...p,
     stateKey: "uttarakhand",
     stateName: "Uttarakhand",
-    stateIcon: "🏔️",
+    stateIcon: "️",
   })),
 ];
 
@@ -901,56 +901,56 @@ const ALL_STATE_PLOTS = [
    ───────────────────────────────────────────────────────── */
 const methods = [
   {
-    icon: "🗺️",
+    icon: "️",
     tag: "Clustering",
     title: "Gaussian Mixture Models (BIC-Optimal)",
     desc: "Probabilistic clustering accounting for climate feature covariances (temperature, DTR, GHI, humidity). Optimal regime count k determined via Bayesian Information Criterion (BIC) and silhouette validation.",
     why: "<strong>Why:</strong> Captures overlapping climate gradients. Rejected: K-Means (assumes spherical clusters) & Hierarchical (O(N²) scaling).",
   },
   {
-    icon: "⚖️",
+    icon: "️",
     tag: "MCDM 1",
     title: "TOPSIS (Ideal Solution Proximity)",
     desc: "Ranks candidates by relative closeness to the positive ideal solution (max latent heat, thermal conductivity) and distance from negative ideal.",
     why: "<strong>Why:</strong> Intuitive geometric distance metric. Sensitive to extreme property outliers.",
   },
   {
-    icon: "📊",
+    icon: "",
     tag: "MCDM 2",
     title: "PROMETHEE II (Outranking Flow)",
     desc: "Builds pairwise preference indices using Gaussian and V-shape criterion functions, calculating net outranking flows (Phi+ − Phi−) for a complete preorder.",
     why: "<strong>Why:</strong> Non-compensatory evaluation prevents high latent heat from masking poor cycling stability.",
   },
   {
-    icon: "🎯",
+    icon: "",
     tag: "MCDM 3",
     title: "VIKOR (Compromise Ranking)",
     desc: "Determines compromise ranking measure Q based on maximum group utility S and individual regret R with parameter v=0.5.",
     why: "<strong>Why:</strong> Explicitly evaluates closeness to ideal while mitigating maximum individual property regret.",
   },
   {
-    icon: "🔗",
+    icon: "",
     tag: "MCDM 4",
     title: "GRA (Grey Relational Analysis)",
     desc: "Measures relational degree between candidate property sequences and reference ideal sequence via grey relational coefficients (xi=0.5).",
     why: "<strong>Why:</strong> Operates effectively on small candidate sets without strict distributional assumptions.",
   },
   {
-    icon: "🏛️",
+    icon: "️",
     tag: "Consensus",
     title: "Borda Count & Copeland Cross-Check",
     desc: "Aggregates independent ranks from all 4 MCDM schools into a robust consensus rank, eliminating single-method biases.",
     why: "<strong>Why:</strong> Borda consensus smooths structural method outliers (such as GRA's linear normalization).",
   },
   {
-    icon: "🎲",
+    icon: "",
     tag: "Uncertainty",
     title: "Monte Carlo Stability (1,000 Draws)",
     desc: "Propagates uncertainty by sampling criterion weights from Dirichlet distribution and perturbing material properties with Gaussian noise (sigma=5%).",
     why: "<strong>Why:</strong> Computes Top-3 inclusion probabilities to verify robustness against measurement and stakeholder bias.",
   },
   {
-    icon: "🔬",
+    icon: "",
     tag: "Physics",
     title: "2-Node Lumped-Enthalpy Tank Model",
     desc: "Dynamically simulates water tank (Tw) and PCM capsule (Tp/f) node interactions using Backward Euler implicit time-stepping driven by 10-year real weather.",
@@ -988,7 +988,7 @@ function PlotCard({ plot, stateKey }) {
           <div className="tag-list" style={{ marginTop: 8 }}>
             <span className="tag tag-zinc">{plot.phase || plot.category}</span>
             {plot.interactive && (
-              <span className="tag tag-amber">⚡ Plotly / Folium Interactive</span>
+              <span className="tag tag-amber"> Plotly / Folium Interactive</span>
             )}
             <span className="tag tag-brand">
               {stateBadge.toUpperCase()}
@@ -1002,7 +1002,7 @@ function PlotCard({ plot, stateKey }) {
               showInteractive && plot.interactive ? "interactive" : "static"
             }`}
           >
-            {showInteractive && plot.interactive ? "⚡ Interactive HTML" : "🖼 Static PNG"}
+            {showInteractive && plot.interactive ? " Interactive HTML" : " Static PNG"}
           </span>
         </div>
       </div>
@@ -1036,7 +1036,7 @@ function PlotCard({ plot, stateKey }) {
             className="plot-toggle-btn"
             onClick={() => setShowInteractive((v) => !v)}
           >
-            {showInteractive ? "🖼 Switch to Static PNG" : "⚡ Switch to Interactive HTML"}
+            {showInteractive ? " Switch to Static PNG" : " Switch to Interactive HTML"}
           </button>
         ) : (
           <span style={{ fontSize: "0.76rem", color: "var(--neutral-500)" }}>
@@ -1138,7 +1138,7 @@ function Objective1Page() {
       <div className="state-selector-wrapper" id="state-selector">
         <div className="state-selector-label-row">
           <div className="state-selector-title">
-            <span>🌐 Select State Pipeline:</span>
+            <span> Select State Pipeline:</span>
           </div>
           <span style={{ fontSize: "0.75rem", color: "var(--neutral-400)" }}>
             Showing data, metrics, and plots for:{" "}
@@ -1167,7 +1167,7 @@ function Objective1Page() {
               setActivePlotCategory("All");
             }}
           >
-            <span>🌴 Tamil Nadu</span>
+            <span> Tamil Nadu</span>
             <span className="state-pill-badge">Lead · K=5</span>
           </button>
 
@@ -1178,7 +1178,7 @@ function Objective1Page() {
               setActivePlotCategory("All");
             }}
           >
-            <span>🏜️ Rajasthan</span>
+            <span>️ Rajasthan</span>
             <span className="state-pill-badge">Arid · K=3</span>
           </button>
 
@@ -1189,7 +1189,7 @@ function Objective1Page() {
               setActivePlotCategory("All");
             }}
           >
-            <span>🌿 Assam</span>
+            <span> Assam</span>
             <span className="state-pill-badge">Subtropical · K=3</span>
           </button>
 
@@ -1200,7 +1200,7 @@ function Objective1Page() {
               setActivePlotCategory("All");
             }}
           >
-            <span>🏔️ Uttarakhand</span>
+            <span>️ Uttarakhand</span>
             <span className="state-pill-badge">Montane · K=5</span>
           </button>
         </div>
@@ -1286,7 +1286,7 @@ function Objective1Page() {
           {[
             {
               num: "01",
-              icon: "🛰️",
+              icon: "️",
               phase: "Data Ingestion",
               tag: "ERA5 + NASA POWER",
               details: [
@@ -1300,7 +1300,7 @@ function Objective1Page() {
             },
             {
               num: "02",
-              icon: "🧹",
+              icon: "",
               phase: "Preprocessing & QC",
               tag: "Hampel · MICE · Bias Correction",
               details: [
@@ -1315,7 +1315,7 @@ function Objective1Page() {
             },
             {
               num: "03",
-              icon: "🔬",
+              icon: "",
               phase: "GMM Clustering",
               tag: "Climate Regime Discovery",
               details: [
@@ -1330,7 +1330,7 @@ function Objective1Page() {
             },
             {
               num: "04",
-              icon: "🧪",
+              icon: "",
               phase: "Feasibility Screening",
               tag: "κ-Calibrated Thresholds",
               details: [
@@ -1345,7 +1345,7 @@ function Objective1Page() {
             },
             {
               num: "05",
-              icon: "📊",
+              icon: "",
               phase: "MCDM Consensus Ranking",
               tag: "TOPSIS · GRA · PROMETHEE II · VIKOR",
               details: [
@@ -1361,7 +1361,7 @@ function Objective1Page() {
             },
             {
               num: "06",
-              icon: "⚛️",
+              icon: "️",
               phase: "Physics Validation",
               tag: "Grey-Box Lumped Enthalpy Solver",
               details: [
@@ -1377,7 +1377,7 @@ function Objective1Page() {
             },
             {
               num: "07",
-              icon: "🏆",
+              icon: "",
               phase: "PCM Recommendation",
               tag: "Borda + Monte Carlo Stability",
               details: [
@@ -1477,7 +1477,7 @@ function Objective1Page() {
                   <td>{row.engineeredFeatures}</td>
                   <td>{row.missingRate}</td>
                   <td>
-                    <span className="tag tag-brand">✔ {row.status}</span>
+                    <span className="tag tag-brand"> {row.status}</span>
                   </td>
                 </tr>
               ))}
@@ -1502,7 +1502,7 @@ function Objective1Page() {
           </div>
 
           <div style={{ fontSize: "0.8rem", color: "var(--neutral-400)" }}>
-            ⚡ Plotly & Folium Interactive Views Available
+             Plotly & Folium Interactive Views Available
           </div>
         </div>
 
@@ -1524,10 +1524,10 @@ function Objective1Page() {
             </span>
             {[
               { id: "all", label: "🇮🇳 All 4 States" },
-              { id: "tamilnadu", label: "🌴 Tamil Nadu" },
-              { id: "rajasthan", label: "🏜️ Rajasthan" },
-              { id: "assam", label: "🌿 Assam" },
-              { id: "uttarakhand", label: "🏔️ Uttarakhand" },
+              { id: "tamilnadu", label: " Tamil Nadu" },
+              { id: "rajasthan", label: "️ Rajasthan" },
+              { id: "assam", label: " Assam" },
+              { id: "uttarakhand", label: "️ Uttarakhand" },
             ].map((st) => (
               <button
                 key={st.id}
@@ -1549,12 +1549,12 @@ function Objective1Page() {
                 FILTER VIEW:
               </span>
               {[
-                { id: "all", label: `🌐 All Plots (${ALL_STATE_PLOTS.length})` },
+                { id: "all", label: ` All Plots (${ALL_STATE_PLOTS.length})` },
                 { id: "comparison", label: `🇮🇳 Comparison Suite (${CROSS_STATE_PLOTS.length})` },
-                { id: "tamilnadu", label: "🌴 Tamil Nadu (13)" },
-                { id: "rajasthan", label: "🏜️ Rajasthan (13)" },
-                { id: "assam", label: "🌿 Assam (13)" },
-                { id: "uttarakhand", label: "🏔️ Uttarakhand (13)" },
+                { id: "tamilnadu", label: " Tamil Nadu (13)" },
+                { id: "rajasthan", label: "️ Rajasthan (13)" },
+                { id: "assam", label: " Assam (13)" },
+                { id: "uttarakhand", label: "️ Uttarakhand (13)" },
               ].map((sc) => (
                 <button
                   key={sc.id}
@@ -1608,7 +1608,7 @@ function Objective1Page() {
 
         <div className="findings-list">
           <div className="finding-item">
-            <span className="finding-icon">🌴</span>
+            <span className="finding-icon"></span>
             <div className="finding-text">
               <strong>Tamil Nadu (Lead State · v3.2 Verified):</strong> 5 GMM regimes discovered
               (Coastal, Plains, Ghats, Delta, South). Demonstrates high inter-method concordance
@@ -1619,7 +1619,7 @@ function Objective1Page() {
           </div>
 
           <div className="finding-item">
-            <span className="finding-icon">🏜️</span>
+            <span className="finding-icon">️</span>
             <div className="finding-text">
               <strong>Rajasthan (Honest Negative Correlation Documented):</strong> 3 GMM regimes discovered.
               Spearman correlation between MCDM consensus rank and simulated performance yielded ρ = −0.385 (C0),
@@ -1630,7 +1630,7 @@ function Objective1Page() {
           </div>
 
           <div className="finding-item">
-            <span className="finding-icon">🌿</span>
+            <span className="finding-icon"></span>
             <div className="finding-text">
               <strong>Assam (Monsoon Attenuation & Subtropical Dynamics):</strong> 3 GMM regimes covering
               the Brahmaputra Valley and Barak Valley. High relative humidity (&gt;70%) and monsoonal clouding
@@ -1640,7 +1640,7 @@ function Objective1Page() {
           </div>
 
           <div className="finding-item">
-            <span className="finding-icon">🏔️</span>
+            <span className="finding-icon">️</span>
             <div className="finding-text">
               <strong>Uttarakhand (Montane Freezing & Altitude Stratification):</strong> 5 elevation-driven
               regimes ranging from Tarai plains (~300m) to Greater Himalaya (&gt;2500m). Winter freezing risks
@@ -1650,7 +1650,7 @@ function Objective1Page() {
           </div>
 
           <div className="finding-item">
-            <span className="finding-icon">🐛</span>
+            <span className="finding-icon"></span>
             <div className="finding-text">
               <strong>VIKOR Sign-Inversion Bug Detection:</strong> During multi-state cross-verification,
               a sign-inversion bug in VIKOR's regret metric computation was caught via bump charts (VIKOR ranks

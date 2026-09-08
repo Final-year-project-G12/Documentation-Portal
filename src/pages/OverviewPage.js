@@ -88,7 +88,7 @@ const OBJECTIVES_ROADMAP = [
 
 const TERRITORIES = [
   {
-    icon: "🌴",
+    icon: "",
     name: "Tamil Nadu",
     tag: "Lead State · v3.2 Verified",
     gridPoints: 133,
@@ -98,7 +98,7 @@ const TERRITORIES = [
     summary: "Coastal, Plains, Ghats, Delta, and Southern zones. Strong positive physics correlation (ρ = +0.717, p = 0.030) with 41% inside the 54–84% solar fraction band.",
   },
   {
-    icon: "🏜️",
+    icon: "️",
     name: "Rajasthan",
     tag: "Arid Core · Continental Swings",
     gridPoints: 320,
@@ -108,7 +108,7 @@ const TERRITORIES = [
     summary: "Thar Desert core, Southern plateau, and Shekhawati. Extreme diurnal temperature swings and peak GHI > 1050 W/m² requiring high latent heat retention.",
   },
   {
-    icon: "🌿",
+    icon: "",
     name: "Assam",
     tag: "Subtropical · Monsoon Attenuated",
     gridPoints: 129,
@@ -118,7 +118,7 @@ const TERRITORIES = [
     summary: "Brahmaputra Valley and Barak Valley. Relative humidity > 70% with heavy monsoon cloud attenuation favoring moderate melting point paraffins.",
   },
   {
-    icon: "🏔️",
+    icon: "️",
     name: "Uttarakhand",
     tag: "Montane · Elevation Stratified",
     gridPoints: 45,
@@ -212,7 +212,7 @@ function OverviewPage({ onNavigate }) {
                   <td>{row.country}</td>
                   <td>
                     <span className={`tag ${row.pcmUsed === "Yes" ? "tag-brand" : "tag-zinc"}`}>
-                      {row.pcmUsed === "Yes" ? "✔ Yes" : "✖ No"}
+                      {row.pcmUsed === "Yes" ? " Yes" : " No"}
                     </span>
                   </td>
                   <td style={{ color: "#ffffff" }}>{row.pcmDetails}</td>
@@ -224,7 +224,7 @@ function OverviewPage({ onNavigate }) {
         </div>
 
         <div className="finding-item" style={{ marginTop: 24 }}>
-          <span className="finding-icon">💡</span>
+          <span className="finding-icon"></span>
           <div className="finding-text">
             <strong>The Deployment Gap in India:</strong> While international pioneers like Sunamp (UK) commercially deploy
             latent heat batteries, Indian systems (Emmvee, Racold) predominantly use sensible water buffers. India faces higher climatic
@@ -250,7 +250,7 @@ function OverviewPage({ onNavigate }) {
             <div className="arch-step-num">01</div>
             <div className="arch-step-box">
               <div className="arch-step-header">
-                <span className="arch-step-icon">🛰️</span>
+                <span className="arch-step-icon">️</span>
                 <h4>Meteorological Data Layer</h4>
               </div>
               <p>10-year hourly ECMWF ERA5 & NASA POWER reanalysis (637 population-weighted points across 4 states).</p>
@@ -263,7 +263,7 @@ function OverviewPage({ onNavigate }) {
             <div className="arch-step-num">02</div>
             <div className="arch-step-box">
               <div className="arch-step-header">
-                <span className="arch-step-icon">🗺️</span>
+                <span className="arch-step-icon">️</span>
                 <h4>Climate Clustering (GMM)</h4>
               </div>
               <p>BIC-optimal Gaussian Mixture Models discovering 16 distinct agro-climatic thermal regimes.</p>
@@ -276,7 +276,7 @@ function OverviewPage({ onNavigate }) {
             <div className="arch-step-num">03</div>
             <div className="arch-step-box active">
               <div className="arch-step-header">
-                <span className="arch-step-icon">⚖️</span>
+                <span className="arch-step-icon">️</span>
                 <h4>MCDM & PCM Selection</h4>
               </div>
               <p>TOPSIS, PROMETHEE II, GRA, VIKOR + Borda consensus screening 62 candidates against 1,000 MC draws.</p>
@@ -290,7 +290,7 @@ function OverviewPage({ onNavigate }) {
             <div className="arch-step-num">04</div>
             <div className="arch-step-box active">
               <div className="arch-step-header">
-                <span className="arch-step-icon">⚙️</span>
+                <span className="arch-step-icon">️</span>
                 <h4>AI Storage Design Optimization</h4>
               </div>
               <p>LHS DOE, 2-node grey-box enthalpy solver, AI surrogate neural network, and multi-objective Pareto optimization.</p>
@@ -304,7 +304,7 @@ function OverviewPage({ onNavigate }) {
             <div className="arch-step-num">05</div>
             <div className="arch-step-box">
               <div className="arch-step-header">
-                <span className="arch-step-icon">🧠</span>
+                <span className="arch-step-icon"></span>
                 <h4>Adaptive DRL Control Layer</h4>
               </div>
               <p>PPO Actor-Critic agent dynamically modulating charging, discharging, and bypass valve positions.</p>
@@ -318,7 +318,7 @@ function OverviewPage({ onNavigate }) {
             <div className="arch-step-num">06</div>
             <div className="arch-step-box">
               <div className="arch-step-header">
-                <span className="arch-step-icon">🔌</span>
+                <span className="arch-step-icon"></span>
                 <h4>Embedded Hardware Prototype</h4>
               </div>
               <p>ESP32 / Raspberry Pi, DS18B20 multi-point sensors, actuated valves, and closed-loop IoT telemetry.</p>
@@ -361,7 +361,7 @@ function OverviewPage({ onNavigate }) {
                 <span className="objective-outputs-label">Key Deliverables & Milestones:</span>
                 <div className="tag-list" style={{ marginTop: 6 }}>
                   {obj.outputs.map((out) => (
-                    <span key={out} className="tag tag-zinc">✔ {out}</span>
+                    <span key={out} className="tag tag-zinc"> {out}</span>
                   ))}
                 </div>
               </div>
