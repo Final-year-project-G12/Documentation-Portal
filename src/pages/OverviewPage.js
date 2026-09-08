@@ -44,9 +44,6 @@ const OBJECTIVES_ROADMAP = [
     id: "obj1",
     num: "Objective 1",
     title: "Climate-Region-Aware PCM Recommendation",
-    status: "100% Completed",
-    statusTag: "Verified · 4 States",
-    statusColor: "#4ade80",
     desc: "10-year ERA5 and NASA POWER meteorological clustering (GMM) across 4 contrasting Indian territories (637 points). Multi-criteria decision analysis (TOPSIS, PROMETHEE II, GRA, VIKOR) coupled with Borda consensus and 2-node lumped-enthalpy physics validation.",
     outputs: ["16 Discovered Climate Regimes", "4-Method MCDM Consensus Ranks", "Annual Solar Fraction Benchmarks (54–84%)", "Region-Specific PCM Recommendation Cards"],
     linkPage: "objective1",
@@ -55,9 +52,6 @@ const OBJECTIVES_ROADMAP = [
     id: "obj2",
     num: "Objective 2",
     title: "AI-Driven Storage Design Optimization",
-    status: "~92% Near-Complete",
-    statusTag: "In Progress · Review 2",
-    statusColor: "#fbbf24",
     desc: "Consumes frozen Objective 1 PCM shortlists to optimize capsule geometry (spherical/cylindrical macro-encapsulation, thickness, count) and water flow rates. Employs Latin Hypercube Sampling (LHS), 2-node grey-box enthalpy simulation, and an AI surrogate model (NSGA-II / MOPSO).",
     outputs: ["Frozen Multi-State Input Packages", "LHS Design of Experiments (DOE)", "AI Surrogate Feasibility & Performance Regressors", "Objective 3 Environment Hand-off"],
     linkPage: "objective2",
@@ -66,9 +60,6 @@ const OBJECTIVES_ROADMAP = [
     id: "obj3",
     num: "Objective 3",
     title: "Adaptive DRL Control & Dynamic Actuation",
-    status: "Scheduled Phase 3",
-    statusTag: "Design Stage",
-    statusColor: "#a1a1aa",
     desc: "Deep Reinforcement Learning (DRL) agent (PPO / Actor-Critic) operating over state vector s_t = [Tw, Tp, f, GHI, Tamb, wind, time]. Controls charging, discharging, and bypass valve positions to maximize hot water delivery availability under stochastic weather.",
     outputs: ["Trained PPO Controller", "Simulated Performance vs Rule-Based Baselines", "Robustness under Demand & Cloud Spikes"],
     linkPage: null,
@@ -77,9 +68,6 @@ const OBJECTIVES_ROADMAP = [
     id: "obj4",
     num: "Objective 4",
     title: "Embedded Closed-Loop Hardware Prototype",
-    status: "Scheduled Phase 3",
-    statusTag: "Hardware Lab",
-    statusColor: "#a1a1aa",
     desc: "Physical embedded system deployment on ESP32 / Raspberry Pi featuring DS18B20 multi-point temperature probes, irradiance sensors, and actuated solenoid valves driving a miniature PCM storage vessel.",
     outputs: ["Embedded Firmware (C++ / MicroPython)", "IoT Telemetry Dashboard", "Hardware-in-the-Loop Experimental Verification"],
     linkPage: null,
@@ -136,11 +124,6 @@ function OverviewPage({ onNavigate }) {
 
       {/* ── Hero Section ── */}
       <div className="page-hero">
-        <div className="eyebrow">
-          <span className="eyebrow-badge">B.Tech Final Year Project</span>
-          <span>Department of Computer Science & Engineering</span>
-        </div>
-
         <h1>Climate-Adaptive Intelligent Control and Optimization of PCM Thermal Storage for Solar Water Heating</h1>
 
         <p className="intro">
@@ -168,7 +151,6 @@ function OverviewPage({ onNavigate }) {
       <div className="content-section" id="motivation">
         <div className="plots-section-header">
           <h2>Motivation & Industrial State-of-the-Art</h2>
-          <span className="plots-count-badge">Energy Context</span>
         </div>
         <p className="section-desc">
           Why latent heat storage with PCMs is critical for transforming solar water heating in India.
@@ -237,7 +219,6 @@ function OverviewPage({ onNavigate }) {
       <div className="content-section" id="architecture">
         <div className="plots-section-header">
           <h2>End-to-End System Architecture</h2>
-          <span className="plots-count-badge">Multi-Layer Flow</span>
         </div>
         <p className="section-desc">
           Modular research architecture spanning climate reanalysis, multi-criteria material selection,
@@ -250,7 +231,6 @@ function OverviewPage({ onNavigate }) {
             <div className="arch-step-num">01</div>
             <div className="arch-step-box">
               <div className="arch-step-header">
-                <span className="arch-step-icon">️</span>
                 <h4>Meteorological Data Layer</h4>
               </div>
               <p>10-year hourly ECMWF ERA5 & NASA POWER reanalysis (637 population-weighted points across 4 states).</p>
@@ -263,10 +243,9 @@ function OverviewPage({ onNavigate }) {
             <div className="arch-step-num">02</div>
             <div className="arch-step-box">
               <div className="arch-step-header">
-                <span className="arch-step-icon">️</span>
                 <h4>Climate Clustering (GMM)</h4>
               </div>
-              <p>BIC-optimal Gaussian Mixture Models discovering 16 distinct agro-climatic thermal regimes.</p>
+              <p>Gaussian Mixture Models (k=3, k=5) discovering micro-climatic regimes per state territory.</p>
             </div>
           </div>
 
@@ -274,13 +253,11 @@ function OverviewPage({ onNavigate }) {
 
           <div className="arch-step">
             <div className="arch-step-num">03</div>
-            <div className="arch-step-box active">
+            <div className="arch-step-box">
               <div className="arch-step-header">
-                <span className="arch-step-icon">️</span>
-                <h4>MCDM & PCM Selection</h4>
+                <h4>Multi-Criteria Decision Analysis</h4>
               </div>
-              <p>TOPSIS, PROMETHEE II, GRA, VIKOR + Borda consensus screening 62 candidates against 1,000 MC draws.</p>
-              <span className="tag tag-brand" style={{ marginTop: 6 }}>Objective 1 · Complete</span>
+              <p>TOPSIS, PROMETHEE II, GRA, VIKOR consensus ranking candidates across 8 thermophysical properties.</p>
             </div>
           </div>
 
@@ -288,13 +265,11 @@ function OverviewPage({ onNavigate }) {
 
           <div className="arch-step">
             <div className="arch-step-num">04</div>
-            <div className="arch-step-box active">
+            <div className="arch-step-box">
               <div className="arch-step-header">
-                <span className="arch-step-icon">️</span>
-                <h4>AI Storage Design Optimization</h4>
+                <h4>Surrogate Design Optimization</h4>
               </div>
-              <p>LHS DOE, 2-node grey-box enthalpy solver, AI surrogate neural network, and multi-objective Pareto optimization.</p>
-              <span className="tag tag-amber" style={{ marginTop: 6 }}>Objective 2 · In Progress</span>
+              <p>LHS sampling + 2-node enthalpy simulation training AI surrogate regressors for MOPSO / NSGA-II geometry design.</p>
             </div>
           </div>
 
@@ -304,11 +279,9 @@ function OverviewPage({ onNavigate }) {
             <div className="arch-step-num">05</div>
             <div className="arch-step-box">
               <div className="arch-step-header">
-                <span className="arch-step-icon"></span>
-                <h4>Adaptive DRL Control Layer</h4>
+                <h4>Deep Reinforcement Learning</h4>
               </div>
-              <p>PPO Actor-Critic agent dynamically modulating charging, discharging, and bypass valve positions.</p>
-              <span className="tag tag-zinc" style={{ marginTop: 6 }}>Objective 3</span>
+              <p>PPO agent controlling charging/discharging valve actuation under stochastic weather.</p>
             </div>
           </div>
 
@@ -318,11 +291,9 @@ function OverviewPage({ onNavigate }) {
             <div className="arch-step-num">06</div>
             <div className="arch-step-box">
               <div className="arch-step-header">
-                <span className="arch-step-icon"></span>
                 <h4>Embedded Hardware Prototype</h4>
               </div>
-              <p>ESP32 / Raspberry Pi, DS18B20 multi-point sensors, actuated valves, and closed-loop IoT telemetry.</p>
-              <span className="tag tag-zinc" style={{ marginTop: 6 }}>Objective 4</span>
+              <p>ESP32 / Pi closed-loop hardware deployment with temperature probes and valve relay actuation.</p>
             </div>
           </div>
         </div>
@@ -332,7 +303,6 @@ function OverviewPage({ onNavigate }) {
       <div className="content-section" id="objectives">
         <div className="plots-section-header">
           <h2>Core Research Objectives & Progress Matrix</h2>
-          <span className="plots-count-badge">Review 2 Audit</span>
         </div>
         <p className="section-desc">
           Current phase-wise progress across all four planned research objectives.
@@ -346,12 +316,6 @@ function OverviewPage({ onNavigate }) {
                 <div className="objective-card-title-group">
                   <span className="objective-card-num">{obj.num}</span>
                   <h3>{obj.title}</h3>
-                </div>
-                <div className="objective-card-badge-group">
-                  <span className="tag tag-brand" style={{ background: "rgba(255, 255, 255, 0.08)", borderColor: obj.statusColor, color: obj.statusColor }}>
-                    ● {obj.status}
-                  </span>
-                  <span className="tag tag-zinc">{obj.statusTag}</span>
                 </div>
               </div>
 
@@ -382,7 +346,6 @@ function OverviewPage({ onNavigate }) {
       <div className="content-section" id="territories">
         <div className="plots-section-header">
           <h2>4-State Contrasting Climate Scope</h2>
-          <span className="plots-count-badge">National Coverage</span>
         </div>
         <p className="section-desc">
           Four Indian states intentionally selected to cover contrasting extremes of solar irradiance,
@@ -430,7 +393,6 @@ function OverviewPage({ onNavigate }) {
       <div className="content-section" id="sdgs">
         <div className="plots-section-header">
           <h2>United Nations Sustainable Development Goals (SDGs)</h2>
-          <span className="plots-count-badge">Global Impact</span>
         </div>
         <p className="section-desc">
           Direct contributions to sustainable, affordable, and zero-carbon energy transition targets.
