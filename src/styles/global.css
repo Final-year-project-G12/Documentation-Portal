@@ -978,6 +978,49 @@ h3 {
   text-decoration: underline;
 }
 
+.plots-nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin-top: 20px;
+}
+
+.plots-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: #18181b;
+  color: var(--neutral-200);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: 'Inter', sans-serif;
+}
+
+.plots-nav-btn:hover:not(:disabled) {
+  background: #27272a;
+  border-color: rgba(255, 255, 255, 0.3);
+  color: white;
+}
+
+.plots-nav-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.plots-nav-counter {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--neutral-400);
+  min-width: 110px;
+  text-align: center;
+}
+
 /* ─── Results Summary ────────────────────────────────────── */
 .results-grid {
   display: grid;

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 /* ─────────────────────────────────────────────────────────
    Objective 1 — Climate-Region-Aware PCM Recommendation
@@ -1066,6 +1066,7 @@ function Objective1Page() {
   const [selectedState, setSelectedState] = useState("all");
   const [activePlotCategory, setActivePlotCategory] = useState("All");
   const [allStateScope, setAllStateScope] = useState("all");
+  const [currentPlotIndex, setCurrentPlotIndex] = useState(0);
 
   const currentState = STATES_CONFIG[selectedState] || STATES_CONFIG.all;
 
@@ -1108,6 +1109,16 @@ function Objective1Page() {
     "Physics",
     "Output",
   ];
+
+  // Reset to the first plot whenever the active filter set changes
+  useEffect(() => {
+    setCurrentPlotIndex(0);
+  }, [selectedState, activePlotCategory, allStateScope]);
+
+  const activePlot =
+    filteredPlots.length > 0
+      ? filteredPlots[Math.min(currentPlotIndex, filteredPlots.length - 1)]
+      : null;
 
   return (
     <section className="content" id="top">
@@ -1577,14 +1588,42 @@ function Objective1Page() {
 
         <div className="section-divider" />
 
-        {/* Render Plots */}
-        {filteredPlots.map((plot) => (
-          <PlotCard
-            key={plot.id}
-            plot={plot}
-            stateKey={plot.stateKey || (selectedState === "all" ? "comparison" : selectedState)}
-          />
-        ))}
+        {/* Render Plots — one at a time via Prev / Next navigation */}
+        {activePlot ? (
+          <>
+            <PlotCard
+              key={activePlot.id}
+              plot={activePlot}
+              stateKey={
+                activePlot.stateKey || (selectedState === "all" ? "comparison" : selectedState)
+              }
+            />
+
+            <div className="plots-nav-bar">
+              <button
+                className="plots-nav-btn"
+                onClick={() => setCurrentPlotIndex((i) => Math.max(0, i - 1))}
+                disabled={currentPlotIndex === 0}
+              >
+                ← Prev
+              </button>
+              <span className="plots-nav-counter">
+                Plot {currentPlotIndex + 1} of {filteredPlots.length}
+              </span>
+              <button
+                className="plots-nav-btn"
+                onClick={() =>
+                  setCurrentPlotIndex((i) => Math.min(filteredPlots.length - 1, i + 1))
+                }
+                disabled={currentPlotIndex === filteredPlots.length - 1}
+              >
+                Next →
+              </button>
+            </div>
+          </>
+        ) : (
+          <p className="section-desc">No plots available for this filter.</p>
+        )}
 
       </div>
 
