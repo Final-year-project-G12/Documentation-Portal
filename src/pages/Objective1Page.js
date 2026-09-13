@@ -897,6 +897,21 @@ const ALL_STATE_PLOTS = [
 ];
 
 /* ─────────────────────────────────────────────────────────
+   Resolve which state/scope selection reveals a given plot id,
+   used to deep-link directly to a plot via the URL hash.
+   ───────────────────────────────────────────────────────── */
+function locatePlot(id) {
+  const plot = ALL_STATE_PLOTS.find((p) => p.id === id);
+  if (!plot) return null;
+  const isComparison = plot.stateKey === "comparison";
+  return {
+    plot,
+    selectedState: isComparison ? "all" : plot.stateKey,
+    allStateScope: isComparison ? "comparison" : "all",
+  };
+}
+
+/* ─────────────────────────────────────────────────────────
    Methods (Slide 24, 25, 26)
    ───────────────────────────────────────────────────────── */
 const methods = [
@@ -1067,6 +1082,34 @@ function Objective1Page() {
   const [activePlotCategory, setActivePlotCategory] = useState("All");
   const [allStateScope, setAllStateScope] = useState("all");
   const [currentPlotIndex, setCurrentPlotIndex] = useState(0);
+  const [pendingPlotId, setPendingPlotId] = useState(null);
+
+  // Deep-link support: "#/objective1/<plot-id>" opens that specific plot directly.
+  useEffect(() => {
+    const applyHashPlot = () => {
+      const cleaned = (window.location.hash || "").replace(/^#\/?/, "").split("?")[0];
+      const [page, plotId] = cleaned.split("/").filter(Boolean);
+      if (page !== "objective1" || !plotId) return;
+
+      const located = locatePlot(decodeURIComponent(plotId));
+      if (!located) return;
+
+      setSelectedState(located.selectedState);
+      setAllStateScope(located.allStateScope);
+      setActivePlotCategory("All");
+      setPendingPlotId(located.plot.id);
+    };
+
+    applyHashPlot();
+    window.addEventListener("hashchange", applyHashPlot);
+    return () => window.removeEventListener("hashchange", applyHashPlot);
+  }, []);
+
+  // Navigating to a specific plot updates the URL so it can be opened, bookmarked,
+  // or shared directly — the hash listener above then selects and reveals it.
+  const navigateToPlot = (id) => {
+    window.location.hash = `#/objective1/${id}`;
+  };
 
   const currentState = STATES_CONFIG[selectedState] || STATES_CONFIG.all;
 
@@ -1114,6 +1157,15 @@ function Objective1Page() {
   useEffect(() => {
     setCurrentPlotIndex(0);
   }, [selectedState, activePlotCategory, allStateScope]);
+
+  // If a specific plot was requested (via deep-link or the plot menu below),
+  // jump to it once the filtered list reflects the matching state/scope.
+  useEffect(() => {
+    if (!pendingPlotId) return;
+    const idx = filteredPlots.findIndex((p) => p.id === pendingPlotId);
+    if (idx !== -1) setCurrentPlotIndex(idx);
+    setPendingPlotId(null);
+  }, [pendingPlotId, filteredPlots]);
 
   const activePlot =
     filteredPlots.length > 0
@@ -1588,39 +1640,33 @@ function Objective1Page() {
 
         <div className="section-divider" />
 
-        {/* Render Plots — one at a time via Prev / Next navigation */}
-        {activePlot ? (
-          <>
-            <PlotCard
-              key={activePlot.id}
-              plot={activePlot}
-              stateKey={
-                activePlot.stateKey || (selectedState === "all" ? "comparison" : selectedState)
-              }
-            />
+        {/* Plot Menu — click a plot by name to open it below (also updates the URL) */}
+        {filteredPlots.length > 0 && (
+          <div className="plot-selector-menu">
+            {filteredPlots.map((p, idx) => (
+              <button
+                key={p.id}
+                className={`plot-selector-item ${
+                  activePlot && activePlot.id === p.id ? "active" : ""
+                }`}
+                onClick={() => navigateToPlot(p.id)}
+                title={p.title}
+              >
+                <span className="plot-selector-num">{p.num || idx + 1}</span>
+                <span className="plot-selector-title">{p.title}</span>
+              </button>
+            ))}
+          </div>
+        )}
 
-            <div className="plots-nav-bar">
-              <button
-                className="plots-nav-btn"
-                onClick={() => setCurrentPlotIndex((i) => Math.max(0, i - 1))}
-                disabled={currentPlotIndex === 0}
-              >
-                ← Prev
-              </button>
-              <span className="plots-nav-counter">
-                Plot {currentPlotIndex + 1} of {filteredPlots.length}
-              </span>
-              <button
-                className="plots-nav-btn"
-                onClick={() =>
-                  setCurrentPlotIndex((i) => Math.min(filteredPlots.length - 1, i + 1))
-                }
-                disabled={currentPlotIndex === filteredPlots.length - 1}
-              >
-                Next →
-              </button>
-            </div>
-          </>
+        {activePlot ? (
+          <PlotCard
+            key={activePlot.id}
+            plot={activePlot}
+            stateKey={
+              activePlot.stateKey || (selectedState === "all" ? "comparison" : selectedState)
+            }
+          />
         ) : (
           <p className="section-desc">No plots available for this filter.</p>
         )}
