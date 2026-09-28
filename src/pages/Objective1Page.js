@@ -405,43 +405,43 @@ const STATES_CONFIG = {
   assam: {
     name: "Assam",
     short: "AS",
-    icon: "",
+    icon: "🍃",
     climateType: "Humid Subtropical & Monsoonal (North-East India)",
     tag: "129 Grid Points · K=3 Regimes · 100% Complete",
     stats: [
       { value: "129", label: "Population-Weighted Points" },
       { value: "100%", label: "Data Completeness (0.00% Missing)" },
       { value: "k=3", label: "GMM Regimes (Brahmaputra Valley, Upper, Barak)" },
-      { value: "16", label: "Feasible Evaluations (C0:6, C1:5, C2:5)" },
-      { value: "0.844", label: "Mean Kendall's W Concordance" },
-      { value: "RT44HC", label: "Consensus Rank 1 Pick (High Latent Heat)" },
+      { value: "27", label: "Physics Simulations (9 PCMs × 3 Regimes)" },
+      { value: "0.948", label: "Kendall's W Concordance (Phase 6 Consensus)" },
+      { value: "RT54HC", label: "MCDM Consensus Leader (Top-3 Prob: 93.0%)" },
     ],
     overview:
-      "Assam represents a humid subtropical regime with prolonged monsoon cloud cover, high atmospheric attenuation, and mean relative humidity exceeding 70%. The pipeline aggregates 129 population-weighted locations with 100% data completeness (0.00% missing). Medoid-anchored K=3 clustering isolates Lower Brahmaputra Valley, Upper Assam, and Barak Valley. Paraffin-based PCMs (RT44HC, RT45HC, and C22H46) emerge as unanimous leaders.",
-    spearmanSummary: "Positive agreement in valley clusters · Moderate attenuation during monsoon months",
+      "Assam represents a humid subtropical regime with prolonged monsoon cloud cover, high atmospheric attenuation, and mean relative humidity exceeding 70%. The pipeline aggregates 129 population-weighted locations with 100% data completeness (0.00% missing). Medoid-anchored K=3 clustering isolates Lower Brahmaputra Valley, Upper Assam, and Barak Valley. Under the corrected approach delta (6K, Tm target 56.0°C) and operational window [50°C, 64°C], 9 feasible candidates were screened. Level 2 MCDM consensus is led by RT54HC and savE® OM50, while dynamic first-principles grey-box physics benchmarking across 27 simulations evaluates demand-deficit solar coverage (54%–65%) and exposes operational trade-offs.",
+    spearmanSummary: "Exploratory positive association (ρ = +0.3013, p = 0.4308, n = 9) · Statistically non-significant",
     recommendations: [
       {
         cluster: "Cluster 0 — Lower Brahmaputra Valley",
-        pcm: "RT44HC (Paraffin)",
-        tm: "43.0°C",
-        latentHeat: "250 kJ/kg",
-        mc: "96.2% (Top-3)",
+        pcm: "RT54HC (MCDM Rank 1) / savE® OM50 (Rank 2)",
+        tm: "54.0°C / 50.0°C",
+        latentHeat: "200 / 189 kJ/kg",
+        mc: "93.0% (RT54HC Top-3)",
         region: "Guwahati / Kamrup / Goalpara",
       },
       {
         cluster: "Cluster 1 — Upper Assam Tea Belt",
-        pcm: "RT44HC (Paraffin)",
-        tm: "43.0°C",
-        latentHeat: "250 kJ/kg",
-        mc: "95.5% (Top-3)",
+        pcm: "RT54HC (MCDM Rank 1) / savE® OM50 (Rank 2)",
+        tm: "54.0°C / 50.0°C",
+        latentHeat: "200 / 189 kJ/kg",
+        mc: "93.0% (RT54HC Top-3)",
         region: "Dibrugarh / Jorhat / Tinsukia",
       },
       {
         cluster: "Cluster 2 — Barak Valley & Southern Hills",
-        pcm: "RT44HC (Paraffin)",
-        tm: "43.0°C",
-        latentHeat: "250 kJ/kg",
-        mc: "95.3% (Top-3)",
+        pcm: "RT54HC (MCDM Rank 1) / savE® OM50 (Rank 2)",
+        tm: "54.0°C / 50.0°C",
+        latentHeat: "200 / 189 kJ/kg",
+        mc: "93.0% (RT54HC Top-3)",
         region: "Silchar / Cachar / Karimganj",
       },
     ],
@@ -450,7 +450,7 @@ const STATES_CONFIG = {
         id: "as-01",
         num: "01",
         title: "Raw vs. Preprocessed Radiation (Assam)",
-        desc: "Solar radiation signature distribution across Assam's 129 population coordinates, demonstrating cloud-attenuated monsoonal profiles.",
+        desc: "GHI series across Assam's primary population center (Point ASP_0001 - Guwahati), comparing raw satellite/reanalysis flux with quality-controlled, night-masked, and bias-corrected radiation profiles.",
         interactive: "01_raw_vs_preprocessed_radiation_interactive.html",
         static: "01_raw_vs_preprocessed_radiation.png",
         phase: "Phase 2–3 Preprocessing",
@@ -468,7 +468,7 @@ const STATES_CONFIG = {
         id: "as-03",
         num: "03",
         title: "Melting Point vs. Latent Heat Distribution",
-        desc: "Screening of PCM candidates against Assam's lower ambient temperature and moderate hot water delivery thresholds.",
+        desc: "Screening of PCM candidates against Assam's target Tm = 56.0°C and feasibility window [50°C, 64°C] with latent heat requirement.",
         interactive: "03_melting_point_vs_latent_heat_interactive.html",
         static: "03_melting_point_vs_latent_heat.png",
         phase: "Phase 5 Feasibility",
@@ -477,7 +477,7 @@ const STATES_CONFIG = {
         id: "as-04",
         num: "04",
         title: "Feasible Candidates Highlighted",
-        desc: "Constraint boundary visualization highlighting surviving paraffin and organic PCM candidates.",
+        desc: "Constraint boundary visualization highlighting the 9 surviving organic and paraffin PCM candidates under [50°C, 64°C] bounds.",
         interactive: null,
         static: "04_feasible_candidates_highlighted.png",
         phase: "Phase 5 Feasibility",
@@ -486,7 +486,7 @@ const STATES_CONFIG = {
         id: "as-05",
         num: "05",
         title: "PCM Survivors per Climate Regime",
-        desc: "Survival numbers per cluster under rigorous supercooling, cycling, and latent heat floor checks.",
+        desc: "Uniform 9-candidate feasibility survival across all 3 Assam climate clusters under supercooling, cycling, and latent heat checks.",
         interactive: "05_pcm_survivors_per_cluster_interactive.html",
         static: "05_pcm_survivors_per_cluster.png",
         phase: "Phase 5 Feasibility",
@@ -495,7 +495,7 @@ const STATES_CONFIG = {
         id: "as-07",
         num: "07",
         title: "Bump Chart — MCDM Rank Evolution (Cluster 0)",
-        desc: "Bump chart tracing 6 feasible candidate rankings (RT44HC, RT45HC, C22H46, savE® OM50, savE® OM42, savE® OM46) across TOPSIS, GRA, PROMETHEE II, and VIKOR for Assam Cluster 0.",
+        desc: "Bump chart tracing 9 feasible candidates (RT54HC, savE® OM50, RT55, RT64HC, Myristic acid, Palmitic-Stearic eutectic, savE® OM48, Palmitic acid, Paraffin wax) across TOPSIS, GRA, PROMETHEE II, and VIKOR for Assam Cluster 0.",
         interactive: "07_bump_chart_ranks.html",
         static: "07_bump_chart_ranks.png",
         phase: "Phase 6 MCDM",
@@ -504,7 +504,7 @@ const STATES_CONFIG = {
         id: "as-08",
         num: "08",
         title: "Method Rank Correlation Heatmap",
-        desc: "Pairwise rank concordance illustrating solid consensus across distance-based and outranking MCDM families.",
+        desc: "Pairwise rank concordance across distance-based and outranking MCDM methods (Kendall's W = 0.948 in Cluster 0).",
         interactive: "08_method_rank_correlation_heatmap_interactive.html",
         static: "08_method_rank_correlation_heatmap.png",
         phase: "Phase 6 MCDM",
@@ -513,7 +513,7 @@ const STATES_CONFIG = {
         id: "as-09",
         num: "09",
         title: "Monte Carlo Top-3 Inclusion Probability",
-        desc: "Probabilistic sensitivity testing under 5,000 randomized weightings for Assam candidate survivors.",
+        desc: "Probabilistic sensitivity testing under 5,000 Dirichlet randomized weightings for Assam candidates (RT54HC: 93.0%, OM50: 60.8%, RT55: 61.3%).",
         interactive: "09_monte_carlo_top3_probability_interactive.html",
         static: "09_monte_carlo_top3_probability.png",
         phase: "Phase 6 MCDM",
@@ -522,7 +522,7 @@ const STATES_CONFIG = {
         id: "as-10",
         num: "10",
         title: "Rank-Reversal Frequency Analysis",
-        desc: "Violin plot of rank stability verifying low reversal risk for RT44HC and RT45HC.",
+        desc: "Violin plot of rank stability verifying robust preference retention for RT54HC and savE® OM50 under criterion perturbations.",
         interactive: "10_rank_reversal_violin_interactive.html",
         static: "10_rank_reversal_violin_bar.png",
         phase: "Phase 6 MCDM",
@@ -531,8 +531,8 @@ const STATES_CONFIG = {
         id: "as-11",
         num: "11",
         title: "Agreement Plot — Physics vs. MCDM Rank",
-        desc: "Simulated performance versus MCDM consensus rank per climate regime in Assam (Slide 19).",
-        interactive: "11_agreement_plot_interactive.html",
+        desc: "Independent first-principles physics benchmarking (27 simulations: 9 PCMs × 3 clusters). Aggregate Spearman ρ = +0.3013 (p = 0.4308, exploratory positive association, statistically non-significant).",
+        interactive: null,
         static: "11_agreement_plot.png",
         phase: "Phase 7 Physics",
       },
@@ -540,7 +540,7 @@ const STATES_CONFIG = {
         id: "as-12",
         num: "12",
         title: "Tank Temperature & Melt-Fraction Diurnal Profile",
-        desc: "Simulated charging and phase transitions under typical humid subtropical solar radiation regimes.",
+        desc: "Dynamic phase-change diurnal simulation under 100 L/day demand (two discrete 50 kg draws at 07:00 and 19:00 IST) in humid subtropical Assam.",
         interactive: "12_tank_temperature_melt_fraction_interactive.html",
         static: "12_tank_temperature_melt_fraction.png",
         phase: "Phase 7 Physics",
@@ -549,7 +549,7 @@ const STATES_CONFIG = {
         id: "as-13",
         num: "13",
         title: "Recommended PCM Summary Dashboard",
-        desc: "Comprehensive recommendation cards for Assam's 3 agro-climatic zones.",
+        desc: "Multi-cluster synthesis comparing Level 2 MCDM consensus ranks against dynamic physical solar fraction and delivery trade-offs.",
         interactive: "13_recommended_pcm_summary_interactive.html",
         static: "13_recommended_pcm_summary.png",
         phase: "Phase 8 Output",
@@ -763,10 +763,10 @@ const STATES_CONFIG = {
       },
       {
         cluster: "Assam (Subtropical Valley)",
-        pcm: "RT44HC & RT45HC",
-        tm: "44.0°C / 45.0°C",
-        latentHeat: "250 kJ/kg",
-        mc: "95.3% (Top-3)",
+        pcm: "RT54HC & savE® OM50 (MCDM Leaders)",
+        tm: "54.0°C / 50.0°C",
+        latentHeat: "200 / 189 kJ/kg",
+        mc: "93.0% (Top-3)",
         region: "Brahmaputra / Barak Valleys",
       },
       {
@@ -1285,7 +1285,7 @@ function Objective1Page() {
           <div className="state-profile-item">
             <span className="state-profile-label">Primary Consensus Winner</span>
             <span className="state-profile-val" style={{ color: "#ffffff" }}>
-              {selectedState === "all" ? "Regional Borda Leaders (RT44HC / OM50 / C28 / RT60)" : currentState.stats[5].value}
+              {selectedState === "all" ? "Regional Borda Leaders (RT54HC / OM50 / C28 / RT60)" : currentState.stats[5].value}
             </span>
             <span className="state-profile-sub">4-Method Borda Leader</span>
           </div>
@@ -1395,7 +1395,7 @@ function Objective1Page() {
                 "Hard constraints: Tm∈[Tₐₘɓ₊10, GHI_peak/3], latent heat ≥80 kJ/kg, no toxic/flammable flags",
                 "κ-calibrated thresholds adjust for climate severity (arid vs. montane vs. subtropical)",
                 "Sub-zero activation for Uttarakhand: eliminates PCMs with Tm&lt;5°C in high-altitude regimes",
-                "Survivors: 39 (Rajasthan), 41 (Tamil Nadu), 38 (Assam), 35 (Uttarakhand)",
+                "Survivors: 39 (Rajasthan), 41 (Tamil Nadu), 9 (Assam operational window [50, 64]°C), 35 (Uttarakhand)",
               ],
               input: "Per-cluster climate signatures + PCM property database",
               output: "Feasible candidate shortlist per cluster",
@@ -1411,7 +1411,7 @@ function Objective1Page() {
                 "PROMETHEE II: pairwise preference flow with Gaussian preference functions",
                 "VIKOR: compromise ranking minimising regret and group utility simultaneously",
                 "Borda count aggregation across all 4 methods for consensus ranking",
-                "Kendall’s W concordance measured per cluster (W=0.842 C1 Tamil Nadu; W=0.784 Assam)",
+                "Kendall’s W concordance measured per cluster (W=0.842 C1 Tamil Nadu; W=0.948 Assam Cluster 0)",
               ],
               input: "Feasible PCM shortlist + normalised criterion weights",
               output: "Borda consensus ranked PCM list per cluster",
@@ -1424,10 +1424,10 @@ function Objective1Page() {
               details: [
                 "2-node lumped-enthalpy energy balance ODE solved over 8760 hourly timesteps",
                 "Nodes: PCM tank and domestic hot water draw loop",
-                "Solar fraction SF = Q_delivered / Q_demand computed per annual cycle",
-                "Target band: 54–84% solar fraction benchmark",
-                "Spearman ρ between MCDM rank and simulated SF computed per cluster",
-                "VIKOR sign-inversion bug detected via bump chart cross-verification (ρ=−0.86 vs TOPSIS)",
+                "System-level demand-deficit solar coverage fraction (collector + PCM storage) evaluated over annual cycle",
+                "Corrected solar fraction range: 54%–65% for Assam (aggregate 60.1%–61.1% across 27 simulations)",
+                "Independent physics benchmark vs MCDM consensus rank (Assam aggregate: ρ = +0.3013, p = 0.4308, exploratory positive association)",
+                "First-principles numerical simulation benchmark under ERA5 forcing (not experimental or field validation)",
               ],
               input: "Top-ranked PCMs + cluster solar/thermal signatures",
               output: "Annual solar fractions + Spearman ρ concordance per cluster",
@@ -1442,7 +1442,7 @@ function Objective1Page() {
                 "Monte Carlo stability: 1,000 Dirichlet weight draws, Top-3 inclusion rate computed",
                 "Threshold: ≥75% MC Top-3 inclusion for high-confidence recommendation",
                 "Outputs: recommended PCM, Tm, latent heat, MC certainty, and target geographic region",
-                "Example winners: savE® OM50 (Rajasthan C1/C2), n-Octacosane C28 (Tamil Nadu C1), RT44HC (Assam)",
+                "Example MCDM consensus leaders: savE® OM50 (Rajasthan C1/C2), n-Octacosane C28 (Tamil Nadu C1), RT54HC (Assam)",
               ],
               input: "Borda-ranked list + Monte Carlo draws",
               output: "Final region-specific PCM recommendations with confidence scores",
@@ -1711,9 +1711,11 @@ function Objective1Page() {
             <span className="finding-icon"></span>
             <div className="finding-text">
               <strong>Assam (Monsoon Attenuation & Subtropical Dynamics):</strong> 3 GMM regimes covering
-              the Brahmaputra Valley and Barak Valley. High relative humidity (&gt;70%) and monsoonal clouding
-              attenuate summer solar fractions, favoring paraffin PCMs with moderate melting temperatures
-              (RT44HC, RT45HC, and C22H46) with Kendall's W = 0.784.
+              the Brahmaputra Valley and Barak Valley. High relative humidity (&gt;70%) and monsoonal cloud attenuation
+              require a target Tm = 56.0°C and operational window [50, 64]°C (9 feasible candidates). Level 2 MCDM
+              consensus is led by RT54HC and savE® OM50 (Kendall's W = 0.948). Dynamic grey-box physics benchmarking
+              across 27 simulations yields annual demand-deficit solar fractions of 54%–65% and an exploratory,
+              statistically non-significant correlation with MCDM ranks (ρ = +0.3013, p = 0.4308).
             </div>
           </div>
 
