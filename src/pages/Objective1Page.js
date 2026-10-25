@@ -1,4 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { Cite, richHtml } from "../components/Cite";
+import Figure from "../components/Figure";
 
 /* ─────────────────────────────────────────────────────────
    Objective 1 — Climate-Region-Aware PCM Recommendation
@@ -26,19 +28,19 @@ const PREPROCESSING_SUMMARY = [
     state: "Rajasthan",
     tag: "Arid Belt",
     gridPoints: 320,
-    inputRecords: "500,000",
-    outputRecords: "200,000",
-    retention: "40.0% (3-Window)",
+    inputRecords: "3,506,880",
+    outputRecords: "3,478,080",
+    retention: "99.2% (28,800 lag warm-up rows dropped)",
     inputDims: 37,
     outputDims: 90,
-    engineeredFeatures: 45,
-    missingRate: "0.00%",
+    engineeredFeatures: 53,
+    missingRate: "0.00% (1.15% of cells imputed)",
     status: "PASS",
   },
   {
     state: "Assam",
     tag: "Subtropical",
-    gridPoints: 129,
+    gridPoints: 80,
     inputRecords: "1,413,420",
     outputRecords: "1,402,101",
     retention: "99.2%",
@@ -54,11 +56,11 @@ const PREPROCESSING_SUMMARY = [
     gridPoints: 45,
     inputRecords: "493,155",
     outputRecords: "489,105",
-    retention: "99.2%",
-    inputDims: 36,
-    outputDims: 89,
-    engineeredFeatures: 45,
-    missingRate: "0.00%",
+    retention: "99.2% (4,050 lag warm-up rows dropped)",
+    inputDims: 37,
+    outputDims: 90,
+    engineeredFeatures: 53,
+    missingRate: "0.00% (2.86% of cells imputed)",
     status: "PASS",
   },
 ];
@@ -70,44 +72,53 @@ const STATES_CONFIG = {
   rajasthan: {
     name: "Rajasthan",
     short: "RJ",
-    icon: "️",
-    climateType: "Hot Arid & Semi-Arid (Western India)",
-    tag: "320 Grid Points · K=3 Regimes",
+    climateType: "Hot Arid & Semi-Arid (Western India) · Reference state",
+    tag: "320 Grid Points · k=3 Regimes · 62-PCM database",
     stats: [
-      { value: "320", label: "Population-Weighted Points" },
-      { value: "10yr", label: "ERA5 + NASA POWER Coverage" },
-      { value: "k=3", label: "GMM Regimes (Thar / Southern / Shekhawati)" },
-      { value: "39", label: "PCM Survivors (of 62 evaluated)" },
-      { value: "0.582", label: "Kendall's W Concordance" },
-      { value: "savE® OM50", label: "Consensus Rank 1 Pick (C1/C2)" },
+      { value: "320", label: "Population-Weighted Points (87.5% population coverage)" },
+      { value: "−0.20 / −0.17 / +0.57", label: "Spearman ρ, MCDM rank vs. simulated rank" },
+      { value: "k=3", label: "GMM Regimes (medoids Udaipur / Nagaur / Jaipur)" },
+      { value: "4 / 8 / 11", label: "Calibrated Survivors per Cluster (23 of 62; 0 at κ = 0.7)" },
+      { value: "1.00 / 0.77 / 0.42", label: "Kendall's W per Cluster (C2 below 0.6)" },
+      { value: "OM55 / PureTemp 60 / Palmitic-stearic–EG", label: "Borda Rank-1 Pick (C0 / C1 / C2)" },
     ],
     overview:
-      "Rajasthan exhibits pronounced continental diurnal swings with noon GHI exceeding 950–1050 W/m² and arid humidity conditions (<25% in Thar). GMM clustering identifies three distinct regimes: Cluster 0 (Southern plateau), Cluster 1 (Thar desert core), and Cluster 2 (North-East Shekhawati). Feasibility screening filters 62 candidates down to 39 survivors under κ-calibrated thresholds.",
-    spearmanSummary: "C0: −0.385 (honest supercooling mismatch) · C1: +0.125 · C2: −0.097",
+      "Rajasthan is the reference state: it has the most complete and most recently corrected pipeline. 320 population-weighted points are clustered into three regimes with a diagonal-covariance Gaussian Mixture Model {{cite:Schwarz1978BIC,Rousseeuw1987Silhouettes}}. Targets follow the corrected design basis (60 °C delivery plus a 7 K approach gives Tm_target = 67 °C; scoring uses the per-cluster capped target of 55.5 / 61.1 / 59.2 °C). At the nominal latent-heat factor κ = 0.7 no candidate survives in any cluster, so κ is calibrated per cluster, leaving 4 / 8 / 11 survivors out of 62 candidates.",
+    spearmanSummary: "C0: −0.200 · C1: −0.168 · C2: +0.569",
+    verdict: "Negative in 2 of 3 clusters",
+    verdictSub: "Partial agreement in C2; physics-tested, not physics-confirmed",
+    notes: [
+      "<strong>Design basis.</strong> L_required = SHARE_PCM · Q_night / m_PCM with SHARE_PCM = 0.5 (published range 0.4–0.78) {{cite:Zhao2022PCMShare,Huang2020PCMVolumeRatio,Abdelsalam2020PCMStorageVolume,Kozelj2021PCMFraction}}, giving L_required = 438 / 427 / 443 kJ/kg for C0 / C1 / C2. The delivery temperature was raised from 50 to 60 °C because the 300 L / 7 h night-delivery benchmark is reported at 60 ± 2 °C {{cite:MadadiAvargani2021}}; this moved Tm_target from 57 to 67 °C and L_required from 285–344 to 410–469 kJ/kg. The benchmark system uses circular-trough collectors, so the 300 L figure is a demand-scale reference, not a flat-plate performance benchmark.",
+      "<strong>Latent-heat calibration.</strong> The latent-heat floor is κ · L_required. Calibrated κ is 0.0 / 0.5 / 0.3, which leaves 4 / 8 / 11 survivors. Cluster 0 ends at κ = 0.0 with an undersized pool (n = 4, status insufficient_even_at_kappa_0). Only 4 of 62 candidates clear the melting-window and charging-feasibility gates there regardless of κ, so the small pool reflects the cluster's climate, not a calibration artefact. Its Top-3 carries more sampling noise than the other two.",
+      "<strong>Ranking.</strong> Eight criteria are scored with a 50/50 blend of Shannon-entropy weights {{cite:Shannon1948Communication}} and fixed prior weights; the prior half was not elicited by pairwise comparison, so the weights are not AHP-derived. Candidates are ranked by TOPSIS {{cite:HwangYoon1981MADM}}, PROMETHEE II {{cite:BransVincke1985PROMETHEE}}, VIKOR {{cite:OpricovicTzeng2004VIKOR}} and GRA {{cite:Deng1982GreySystems}}, combined by Borda count with a Copeland cross-check. Cluster 2's Borda and Copeland orderings disagree on Top-3 membership.",
+      "<strong>Physics check (negative or partial).</strong> Spearman ρ between the MCDM rank and the simulated annual solar fraction is −0.200 (C0, n = 4), −0.168 (C1, n = 8) and +0.569 (C2, n = 11). The tank model uses 200 kg of water {{cite:Eldokaishi2022ANN_PCM_SWH}}; its loss and isolation parameters were retuned jointly so the plain-tank solar fraction lands in the 54–84% literature band {{cite:Singh2025PCMSWH}} (64.3 / 65.8 / 64.0% at the three medoids). The Top-3 candidates inside each cluster differ by under about 1 percentage point of solar fraction, so the physics model barely separates them. The MCDM ordering is therefore reported as physics-tested, not physics-confirmed.",
+      "<strong>Re-run check (2026-10-25).</strong> The Rajasthan pipeline was re-run from preprocessing through the recommendation cards (11:27–11:44) and reproduced every figure on this page: survivors 4 / 8 / 11, Rank-1 picks, Kendall's W and Spearman ρ. The plots below were last regenerated 2026-09-28 and match the unchanged data.",
+      "<strong>Open items.</strong> The mains-water temperature is a placeholder (ambient mean minus 2 °C), pending a ground-temperature annual-lag model {{cite:Kusuda1965EarthTemperature}}. Imputed properties (thermal conductivity, densities, specific heats) appear in each Top-3 and are listed in the recommendation cards.",
+    ],
     recommendations: [
       {
-        cluster: "Cluster 0 — Southern Block",
-        pcm: "RT50 (Rubitherm)",
-        tm: "50.0°C",
-        latentHeat: "168 kJ/kg",
-        mc: "90.8% (Top-3)",
-        region: "Southern Plateau / Udaipur / Kota",
+        cluster: "Cluster 0 — Southern plateau (Udaipur medoid)",
+        pcm: "savE® OM55 (PLUSS)",
+        tm: "55.0°C",
+        latentHeat: "188 kJ/kg",
+        mc: "W = 1.00",
+        region: "109 points · 21.8 M people · n = 4 pool",
       },
       {
-        cluster: "Cluster 1 — Thar Arid Belt",
-        pcm: "savE® OM50 (Pluss)",
-        tm: "50.0°C",
-        latentHeat: "218 kJ/kg",
-        mc: "83.2% (Top-3)",
-        region: "Western Desert / Jaisalmer / Jodhpur",
+        cluster: "Cluster 1 — Hot, steady-solar (Nagaur medoid)",
+        pcm: "PureTemp 60",
+        tm: "61.0°C",
+        latentHeat: "220 kJ/kg",
+        mc: "W = 0.77",
+        region: "83 points · 14.0 M people · n = 8 pool",
       },
       {
-        cluster: "Cluster 2 — North-East Shekhawati",
-        pcm: "savE® OM50 (Pluss)",
-        tm: "50.0°C",
-        latentHeat: "218 kJ/kg",
-        mc: "93.9% (Top-3)",
-        region: "North-East / Jaipur / Bikaner / Alwar",
+        cluster: "Cluster 2 — North-east (Jaipur medoid)",
+        pcm: "Palmitic-stearic acid / expanded graphite",
+        tm: "55.2°C",
+        latentHeat: "176 kJ/kg",
+        mc: "W = 0.42",
+        region: "128 points · 34.5 M people · n = 11 pool",
       },
     ],
     plots: [
@@ -115,7 +126,7 @@ const STATES_CONFIG = {
         id: "rj-01",
         num: "01",
         title: "Raw vs. Preprocessed Radiation (Rajasthan)",
-        desc: "GHI before and after Hampel filtering (Point RJP_0001). GHI is deliberately preserved because cloudy dips are genuine physical phenomena; ambient temperature shows effective tail-trimming.",
+        desc: "GHI and ambient temperature before and after preprocessing at point RJP_0001. GHI is not Hampel-filtered, because cloud-driven dips are real physical variation {{cite:Hampel1974InfluenceCurve}}.",
         interactive: "01_raw_vs_preprocessed_radiation_interactive.html",
         static: "01_raw_vs_preprocessed_radiation.png",
         phase: "Phase 2–3 Preprocessing",
@@ -124,43 +135,16 @@ const STATES_CONFIG = {
         id: "rj-02",
         num: "02",
         title: "Climate Regime Map (GMM k=3)",
-        desc: "320 population-weighted sampling coordinates partitioned into 3 GMM regimes: Cluster 1 (Arid Thar), Cluster 2 (Shekhawati), Cluster 0 (Southern).",
+        desc: "320 population-weighted points assigned to three regimes by a diagonal-covariance GMM.",
         interactive: "02_climate_regime_map_interactive.html",
         static: "02_climate_regime_map.png",
         phase: "Phase 4 Clustering",
       },
       {
-        id: "rj-03",
-        num: "03",
-        title: "Melting Point vs. Latent Heat Distribution",
-        desc: "Full 62-candidate PCM pool with melting window [44–73°C] highlighted. Surviving candidates comfortably exceed the 100 kJ/kg storage floor.",
-        interactive: "03_melting_point_vs_latent_heat_interactive.html",
-        static: "03_melting_point_vs_latent_heat.png",
-        phase: "Phase 5 Feasibility",
-      },
-      {
-        id: "rj-04",
-        num: "04",
-        title: "Feasible Candidates Highlighted",
-        desc: "Visual representation of the 8-filter feasibility triage (melting window, cycling, safety, corrosion veto).",
-        interactive: null,
-        static: "04_feasible_candidates_highlighted.png",
-        phase: "Phase 5 Feasibility",
-      },
-      {
-        id: "rj-05",
-        num: "05",
-        title: "PCM Survivors per Climate Regime",
-        desc: "Distribution of surviving candidates: 9 in C0, 14 in C1, and 16 in C2 across baseline vs. κ-calibrated thresholds.",
-        interactive: "05_pcm_survivors_per_cluster_interactive.html",
-        static: "05_pcm_survivors_per_cluster.png",
-        phase: "Phase 5 Feasibility",
-      },
-      {
         id: "rj-07a",
         num: "07a",
         title: "Bump Chart — MCDM Ranks (Cluster 0)",
-        desc: "MCDM rank trajectories across TOPSIS, PROMETHEE II, VIKOR, GRA, and Borda consensus. RT50 achieves Rank 1 under three out of four methods.",
+        desc: "Each candidate's rank under TOPSIS, GRA, PROMETHEE II and VIKOR, and the Borda consensus (Cluster 0, 4 candidates).",
         interactive: "07_bump_chart_ranks_cluster_0.html",
         static: "07_bump_chart_ranks_cluster_0.png",
         phase: "Phase 6 MCDM",
@@ -169,34 +153,34 @@ const STATES_CONFIG = {
         id: "rj-07b",
         num: "07b",
         title: "Bump Chart — MCDM Ranks (Cluster 1)",
-        desc: "savE® OM50 dominates Cluster 1 under TOPSIS, PROMETHEE II, and VIKOR, demonstrating robust concordance.",
+        desc: "Rank trajectories for the 8 Cluster 1 candidates. PureTemp 60 is first in the consensus; GRA ranks RT57HC first, which is why W is 0.77, not 1.",
         interactive: "07_bump_chart_ranks_cluster_1.html",
         static: "07_bump_chart_ranks_cluster_1.png",
+        phase: "Phase 6 MCDM",
+      },
+      {
+        id: "rj-07c",
+        num: "07c",
+        title: "Bump Chart — MCDM Ranks (Cluster 2)",
+        desc: "Rank trajectories for the 11 Cluster 2 candidates, where method agreement is weakest (W = 0.42).",
+        interactive: "07_bump_chart_ranks_cluster_2.html",
+        static: "07_bump_chart_ranks_cluster_2.png",
         phase: "Phase 6 MCDM",
       },
       {
         id: "rj-08",
         num: "08",
         title: "Method Rank Correlation Heatmap",
-        desc: "Pairwise Spearman ρ and Kendall τ across MCDM methods. Strongest synergy observed between TOPSIS and PROMETHEE II (ρ ≈ 0.84).",
+        desc: "Pairwise rank correlation between the four MCDM methods.",
         interactive: "08_method_rank_correlation_heatmap_interactive.html",
         static: "08_method_rank_correlation_heatmap.png",
         phase: "Phase 6 MCDM",
       },
       {
-        id: "rj-09",
-        num: "09",
-        title: "Monte Carlo Top-3 Inclusion Probability",
-        desc: "Probabilistic rank stability across 1,000 Dirichlet weight draws and Gaussian property perturbations. savE® OM50 achieves >90% stability.",
-        interactive: "09_monte_carlo_top3_probability_interactive.html",
-        static: "09_monte_carlo_top3_probability.png",
-        phase: "Phase 6 MCDM",
-      },
-      {
         id: "rj-10",
         num: "10",
-        title: "Rank-Reversal Frequency Distribution",
-        desc: "Violin and bar profiles evaluating rank-inversion sensitivity across candidate pairs under noisy inputs.",
+        title: "Rank-Reversal Frequency",
+        desc: "How often pairs of candidates swap order under perturbed weights and properties.",
         interactive: "10_rank_reversal_violin_interactive.html",
         static: "10_rank_reversal_violin_bar.png",
         phase: "Phase 6 MCDM",
@@ -204,8 +188,8 @@ const STATES_CONFIG = {
       {
         id: "rj-11",
         num: "11",
-        title: "Agreement Plot — Physics Simulation vs. MCDM Rank",
-        desc: "Grey-box lumped-enthalpy tank performance vs. MCDM consensus rank. Highlights honest negative correlation in C0 (ρ = −0.385).",
+        title: "Agreement Plot — Simulated vs. MCDM Rank",
+        desc: "Simulated performance rank against MCDM consensus rank per cluster. Points on the dashed line would mean full agreement; Cluster 0 and 1 points scatter widely (ρ = −0.200 and −0.168).",
         interactive: "11_agreement_plot_interactive.html",
         static: "11_agreement_plot.png",
         phase: "Phase 7 Physics",
@@ -213,20 +197,11 @@ const STATES_CONFIG = {
       {
         id: "rj-12",
         num: "12",
-        title: "Tank Temperature & Melt-Fraction Diurnal Profile",
-        desc: "Dynamic phase-change diurnal simulation illustrating charging during peak GHI and sensible+latent discharge overnight.",
+        title: "Tank Temperature & Melt-Fraction Profile",
+        desc: "Simulated tank temperature and PCM melt fraction over a day from the lumped-enthalpy model.",
         interactive: "12_tank_temperature_melt_fraction_interactive.html",
         static: "12_tank_temperature_melt_fraction.png",
         phase: "Phase 7 Physics",
-      },
-      {
-        id: "rj-13",
-        num: "13",
-        title: "Recommended PCM Summary Dashboard",
-        desc: "Executive multi-cluster recommendation card showing top candidate properties and operational guidelines.",
-        interactive: "13_recommended_pcm_summary_interactive.html",
-        static: "13_recommended_pcm_summary.png",
-        phase: "Phase 8 Output",
       },
     ],
   },
@@ -234,60 +209,53 @@ const STATES_CONFIG = {
   tamilnadu: {
     name: "Tamil Nadu",
     short: "TN",
-    icon: "",
-    climateType: "Tropical Maritime & Semi-Arid (Southern India · Lead Pipeline State)",
-    tag: "133 Grid Points · K=5 Regimes · End-to-End Verified",
+    climateType: "Tropical Maritime & Semi-Arid (Southern India)",
+    tag: "133 Grid Points · k=3 Regimes · re-run 2026-10-25",
     stats: [
-      { value: "133", label: "Population-Weighted Points" },
-      { value: "1.44M", label: "Verified Clean Records (99.2% retention)" },
-      { value: "k=5", label: "GMM Regimes (Coastal, Plains, Ghats, Delta, South)" },
-      { value: "15 / 9", label: "Screened Survivors (C0 / C1)" },
-      { value: "0.842", label: "Kendall's W (Strong 4-Method Concordance)" },
-      { value: "n-Octacosane", label: "Consensus Rank 1 Pick (71% Solar Fraction)" },
+      { value: "133", label: "Population-Weighted Points (87.5% population coverage)" },
+      { value: "−0.33 / +0.10 / +0.02", label: "Spearman ρ, MCDM rank vs. simulated rank" },
+      { value: "k=3", label: "GMM Regimes (auto-selected; forced k=5 reverted)" },
+      { value: "8 / 10 / 8", label: "Calibrated Survivors per Cluster (26 of 62)" },
+      { value: "0.85 / 0.48 / 0.78", label: "Kendall's W per Cluster (C1 below 0.6)" },
+      { value: "RT57HC", label: "Borda Rank-1 Pick (all three clusters)" },
     ],
     overview:
-      "Tamil Nadu serves as the lead verified state in Objective 1 (v3.2) and the foundational testbed for Objective 2's surrogate design model. With 1,445,577 cleaned records spanning 10 years, 5 distinct climate regimes were identified via BIC-optimal GMM. Physics validation using the 2-node lumped enthalpy model yields a strong positive correlation in Cluster 1 (ρ = +0.717, p = 0.030) with 41% of simulations inside the 54–84% solar fraction benchmark.",
-    spearmanSummary: "Mean ρ = +0.177 across all clusters · Cluster 1: ρ = +0.717 (p = 0.030)",
+      "Tamil Nadu uses the same shared design basis as Rajasthan (60 °C delivery, Tm_target = 67 °C, SHARE_PCM = 0.5), with a 300 L/day draw. 133 population points are clustered into three regimes with a diagonal-covariance GMM; a forced five-cluster run was tried and reverted because it scored worst of k = 2–5 on silhouette and bootstrap ARI {{cite:Schwarz1978BIC,Rousseeuw1987Silhouettes}}. RT57HC is the Borda #1 in every cluster, which the project flags for an independent sanity check.",
+    spearmanSummary: "C0: −0.333 · C1: +0.103 · C2: +0.024",
+    verdict: "Weak, not significant",
+    verdictSub: "n = 8–10 per cluster; Phase 7 uses a 50 °C delivery constant",
+    notes: [
+      "<strong>Code mismatch to be aware of.</strong> Phase 3 imports the shared <code>T_DELIVERY_C = 60.0</code> (Tm_target = 67 °C), but this state's <code>10_physics_validation.py</code> still hard-codes <code>T_DELIVERY_C = 50.0</code> (line 164). Phase 3 targets and the Phase 7 simulator therefore use different delivery temperatures, and the Phase 7 results below should be read with that in mind. The code has not been changed.",
+      "<strong>Results on disk (outputs regenerated 2026-10-25).</strong> Calibrated survivors are 8 / 10 / 8, and L_required in the ranking files is 406 / 438 / 406 kJ/kg. Borda #1 is RT57HC in all clusters, with n-Hexacosane (C26) second in C0 and C1 and n-Pentacosane (C25) second in C2. Kendall's W is 0.848 / 0.477 / 0.780, so Cluster 1's choice is genuinely ambiguous.",
+      "<strong>Physics check (weak, not significant).</strong> Spearman ρ is −0.333 (C0, n = 8), +0.103 (C1, n = 10) and +0.024 (C2, n = 8), mean −0.069, with none statistically significant. Of 26 simulations, 9 fall in the 54–84% solar-fraction band {{cite:Singh2025PCMSWH}}; the range is 29.5–85.5%. Earlier project documents and the conference paper quote C0 ρ = +0.381 and a mean of +0.169; the present outputs do not reproduce that figure.",
+      "<strong>Preprocessing.</strong> ERA5 {{cite:Hersbach2020ERA5}} is cross-checked against NASA POWER {{cite:Stackhouse2021POWER}} and bias-corrected per season by quantile mapping {{cite:Cannon2015QuantileMapping}}, with chained-equation imputation for residual gaps {{cite:vanBuuren2011MICE}}. Solar geometry uses the NREL solar position algorithm {{cite:RedaAndreas2004SPA}} through pvlib {{cite:Holmgren2018pvlib}}. Per-point elevation (0–1,283 m, mean 282 m) replaced a flat 150 m assumption.",
+      "<strong>Plots.</strong> The Tamil Nadu plots were regenerated on 2026-10-25 (11:16–11:19); the ranking and physics data files are dated 03:34–03:51 the same day, and the plots match them.",
+      "<strong>Open items.</strong> The monsoon index is a proxy because NASA POWER precipitation was not downloaded.",
+    ],
     recommendations: [
       {
-        cluster: "Cluster 0 — Coastal / Chennai Metropole",
-        pcm: "n-Octacosane (C28)",
-        tm: "61.6°C",
-        latentHeat: "253 kJ/kg",
-        mc: "76.8% (Top-3)",
-        region: "Coastal Plain / Chennai (12.6M Pop)",
+        cluster: "Cluster 0 — Southern plains (TNP_0011 medoid)",
+        pcm: "RT57HC (Rubitherm)",
+        tm: "56.5°C",
+        latentHeat: "240 kJ/kg",
+        mc: "W = 0.85",
+        region: "46 points · 20.5 M people · n = 8 pool",
       },
       {
-        cluster: "Cluster 1 — Inland Plains / Salem & Coimbatore",
-        pcm: "n-Octacosane (C28) / RT64HC",
-        tm: "61.6°C / 64.0°C",
-        latentHeat: "253 / 250 kJ/kg",
-        mc: "90.2% (Top-3)",
-        region: "Interior Plains (19.8M Pop)",
+        cluster: "Cluster 1 — Western interior (TNP_0007 medoid)",
+        pcm: "RT57HC (Rubitherm)",
+        tm: "56.5°C",
+        latentHeat: "240 kJ/kg",
+        mc: "W = 0.48",
+        region: "n = 10 pool (weak agreement)",
       },
       {
-        cluster: "Cluster 2 — Delta & Central Agro-Belt",
-        pcm: "RT64HC (Rubitherm)",
-        tm: "64.0°C",
-        latentHeat: "250 kJ/kg",
-        mc: "88.4% (Top-3)",
-        region: "Cauvery Delta / Thanjavur / Trichy",
-      },
-      {
-        cluster: "Cluster 3 — Southern Dry Zone / Madurai",
-        pcm: "RT35 / PureTemp 58",
-        tm: "35.0°C / 58.0°C",
-        latentHeat: "240 / 225 kJ/kg",
-        mc: "81.5% (Top-3)",
-        region: "Southern Plains / Madurai / Tirunelveli",
-      },
-      {
-        cluster: "Cluster 4 — Western Ghats / Nilgiris Highland",
-        pcm: "PureTemp 58 (Bio-based)",
-        tm: "58.0°C",
-        latentHeat: "225 kJ/kg",
-        mc: "85.0% (Top-3)",
-        region: "High Altitude / Ooty / Nilgiris",
+        cluster: "Cluster 2 — North-east coast (TNP_0001 medoid)",
+        pcm: "RT57HC (Rubitherm)",
+        tm: "56.5°C",
+        latentHeat: "240 kJ/kg",
+        mc: "W = 0.78",
+        region: "n = 8 pool",
       },
     ],
     plots: [
@@ -295,7 +263,7 @@ const STATES_CONFIG = {
         id: "tn-01",
         num: "01",
         title: "Raw vs. Preprocessed Radiation (Tamil Nadu)",
-        desc: "Solar radiation series at medoid TNP_0001 (13.125°N, 80.125°E) across 10 years, showing physical range bounding and deaccumulated hourly SSRD fluxes.",
+        desc: "Radiation and temperature before and after preprocessing at a sample point.",
         interactive: "01_raw_vs_preprocessed_radiation_interactive.html",
         static: "01_raw_vs_preprocessed_radiation.png",
         phase: "Phase 2–3 Preprocessing",
@@ -303,71 +271,53 @@ const STATES_CONFIG = {
       {
         id: "tn-02",
         num: "02",
-        title: "Climate Regime Map (Tamil Nadu k=5)",
-        desc: "Interactive spatial clustering of 133 population points into Coastal, Plains, Delta, Southern, and Nilgiris Highland zones.",
+        title: "Climate Regime Map (Tamil Nadu k=3)",
+        desc: "133 population-weighted points assigned to three regimes by a diagonal-covariance GMM.",
         interactive: "02_climate_regime_map_interactive.html",
         static: "02_climate_regime_map.png",
         phase: "Phase 4 Clustering",
       },
       {
-        id: "tn-03",
-        num: "03",
-        title: "Melting Point vs. Latent Heat Distribution",
-        desc: "Candidate database mapping against Tamil Nadu's high-temperature storage targets (Tm_target = 57.0°C, L_req = 301–322 kJ/kg).",
-        interactive: "03_melting_point_vs_latent_heat_interactive.html",
-        static: "03_melting_point_vs_latent_heat.png",
-        phase: "Phase 5 Feasibility",
+        id: "tn-07a",
+        num: "07a",
+        title: "Bump Chart — MCDM Ranks (Cluster 0)",
+        desc: "Candidate ranks under each MCDM method and the Borda consensus, Cluster 0 (8 candidates).",
+        interactive: "07_bump_chart_ranks_cluster0.html",
+        static: "07_bump_chart_ranks_cluster0.png",
+        phase: "Phase 6 MCDM",
       },
       {
-        id: "tn-04",
-        num: "04",
-        title: "Feasible Candidates Highlighted",
-        desc: "Hard constraint filtering results showing survivors in the target latent heat and melting temperature band.",
-        interactive: null,
-        static: "04_feasible_candidates_highlighted.png",
-        phase: "Phase 5 Feasibility",
+        id: "tn-07b",
+        num: "07b",
+        title: "Bump Chart — MCDM Ranks (Cluster 1)",
+        desc: "Candidate ranks for Cluster 1 (10 candidates), where method agreement is weakest (W = 0.48).",
+        interactive: "07_bump_chart_ranks_cluster1.html",
+        static: "07_bump_chart_ranks_cluster1.png",
+        phase: "Phase 6 MCDM",
       },
       {
-        id: "tn-05",
-        num: "05",
-        title: "PCM Survivors per Climate Regime",
-        desc: "Screened survivor counts across Tamil Nadu's 5 regimes, with 15 survivors in Coastal Cluster 0 and 9 in Plains Cluster 1.",
-        interactive: "05_pcm_survivors_per_cluster_interactive.html",
-        static: "05_pcm_survivors_per_cluster.png",
-        phase: "Phase 5 Feasibility",
-      },
-      {
-        id: "tn-07",
-        num: "07",
-        title: "Bump Chart — MCDM Rank Trajectory (Cluster 0)",
-        desc: "PCM Rank evolution across TOPSIS, GRA, PROMETHEE II, and VIKOR. n-Octacosane (C28) and n-Hexacosane (C26) maintain ranks 1 and 2.",
-        interactive: "07_bump_chart_ranks.html",
-        static: "07_bump_chart_ranks.png",
+        id: "tn-07c",
+        num: "07c",
+        title: "Bump Chart — MCDM Ranks (Cluster 2)",
+        desc: "Candidate ranks for Cluster 2 (8 candidates).",
+        interactive: "07_bump_chart_ranks_cluster2.html",
+        static: "07_bump_chart_ranks_cluster2.png",
         phase: "Phase 6 MCDM",
       },
       {
         id: "tn-08",
         num: "08",
         title: "Method Rank Correlation Heatmap",
-        desc: "Spearman rank concordance matrix demonstrating strong agreement (Kendall's W = 0.842 in C0, 0.956 in C1).",
+        desc: "Pairwise rank correlation between the four MCDM methods.",
         interactive: "08_method_rank_correlation_heatmap_interactive.html",
         static: "08_method_rank_correlation_heatmap.png",
         phase: "Phase 6 MCDM",
       },
       {
-        id: "tn-09",
-        num: "09",
-        title: "Monte Carlo Top-3 Inclusion Probability",
-        desc: "Robustness check under 1,000 Dirichlet noise iterations; n-Octacosane demonstrates 76.8% (C0) and 90.2% (C1) inclusion certainty.",
-        interactive: null,
-        static: "09_monte_carlo_top3_probability.png",
-        phase: "Phase 6 MCDM",
-      },
-      {
         id: "tn-10",
         num: "10",
-        title: "Rank-Reversal Frequency Analysis",
-        desc: "Violin profile showing minimal probability of rank reversal among top-tier candidate pairs.",
+        title: "Rank-Reversal Frequency",
+        desc: "How often candidates swap order under perturbed weights and properties.",
         interactive: "10_rank_reversal_violin_interactive.html",
         static: "10_rank_reversal_violin_bar.png",
         phase: "Phase 6 MCDM",
@@ -375,8 +325,8 @@ const STATES_CONFIG = {
       {
         id: "tn-11",
         num: "11",
-        title: "Agreement Plot — Physics Performance vs. MCDM Rank",
-        desc: "Simulated annual solar fraction vs. MCDM Borda rank. Verified ρ = +0.717 in Cluster 1, with 41% inside the benchmark band (Slide 17/19).",
+        title: "Agreement Plot — Top-3 Simulated vs. MCDM Rank",
+        desc: "Simulated rank against MCDM consensus rank for the Top-3 candidates only (three points per cluster, jittered). Points far from the dashed line mean the physics model orders the Top-3 differently.",
         interactive: "11_agreement_plot_interactive.html",
         static: "11_agreement_plot.png",
         phase: "Phase 7 Physics",
@@ -384,20 +334,11 @@ const STATES_CONFIG = {
       {
         id: "tn-12",
         num: "12",
-        title: "Tank Temperature & Melt-Fraction Diurnal Profile",
-        desc: "Diurnal temperature evolution and melt-fraction curves over 10-year medoid weather driving cycles.",
+        title: "Tank Temperature & Melt-Fraction Profile",
+        desc: "Simulated tank temperature and PCM melt fraction from the lumped-enthalpy model.",
         interactive: "12_tank_temperature_melt_fraction_interactive.html",
         static: "12_tank_temperature_melt_fraction.png",
         phase: "Phase 7 Physics",
-      },
-      {
-        id: "tn-13",
-        num: "13",
-        title: "Recommended PCM Summary Dashboard",
-        desc: "Final recommendation synthesis for Tamil Nadu across all 5 discovered regimes.",
-        interactive: "13_recommended_pcm_summary_interactive.html",
-        static: "13_recommended_pcm_summary.png",
-        phase: "Phase 8 Output",
       },
     ],
   },
@@ -405,44 +346,53 @@ const STATES_CONFIG = {
   assam: {
     name: "Assam",
     short: "AS",
-    icon: "🍃",
     climateType: "Humid Subtropical & Monsoonal (North-East India)",
-    tag: "129 Grid Points · K=3 Regimes · 100% Complete",
+    tag: "80 Grid Points · k=3 Regimes · cards are the reference",
     stats: [
-      { value: "129", label: "Population-Weighted Points" },
-      { value: "100%", label: "Data Completeness (0.00% Missing)" },
-      { value: "k=3", label: "GMM Regimes (Brahmaputra Valley, Upper, Barak)" },
-      { value: "27", label: "Physics Simulations (9 PCMs × 3 Regimes)" },
-      { value: "0.948", label: "Kendall's W Concordance (Phase 6 Consensus)" },
-      { value: "RT54HC", label: "MCDM Consensus Leader (Top-3 Prob: 93.0%)" },
+      { value: "80", label: "Population-Weighted Points (27 / 28 / 25 per cluster); older documents say 129" },
+      { value: "k=3", label: "GMM Regimes (medoids ASP_0048 / ASP_0051 / ASP_0038 in the cards)" },
+      { value: "35 / 33 / 33", label: "Candidates passing the Phase 5 filter and ranked in the cards" },
+      { value: "−0.16 / −0.46 / −0.41", label: "Spearman ρ, MCDM rank vs. simulated hours" },
+      { value: "0.94", label: "Kendall's W (0.939 / 0.941 / 0.942)" },
+      { value: "savE® OM49", label: "Borda Rank-1 Pick (all three clusters)" },
     ],
     overview:
-      "Assam represents a humid subtropical regime with prolonged monsoon cloud cover, high atmospheric attenuation, and mean relative humidity exceeding 70%. The pipeline aggregates 129 population-weighted locations with 100% data completeness (0.00% missing). Medoid-anchored K=3 clustering isolates Lower Brahmaputra Valley, Upper Assam, and Barak Valley. Under the corrected approach delta (6K, Tm target 56.0°C) and operational window [50°C, 64°C], 9 feasible candidates were screened. Level 2 MCDM consensus is led by RT54HC and savE® OM50, while dynamic first-principles grey-box physics benchmarking across 27 simulations evaluates demand-deficit solar coverage (54%–65%) and exposes operational trade-offs.",
-    spearmanSummary: "Exploratory positive association (ρ = +0.3013, p = 0.4308, n = 9) · Statistically non-significant",
+      "Assam has its own pipeline variant. The 2026-10-25 recommendation cards are the reference: 80 population-weighted points in three GMM regimes, 33–35 candidates ranked per cluster by the four-method Borda consensus, and savE® OM49 first in every cluster. The 129 points quoted in older documents predate the current grid.",
+    spearmanSummary: "C0: −0.16 · C1: −0.46 · C2: −0.41 (vs. simulated hours)",
+    verdict: "Negative against simulated hours",
+    verdictSub: "Positive against solar fraction; n = 33–35 per cluster",
+    notes: [
+      "<strong>What was re-run.</strong> The 2026-10-25 11:11–11:14 re-run regenerated the plots, the verification scripts and the final-output report. The clustering, PCM and recommendation-card files are dated 02:55–03:22 the same day and were not rewritten, so the numbers below come from those files. The re-run's final-output report prints fixed text (129 points; clusters of 33 / 61 / 35 points) and the sampling-map figure carries a \"129 coordinates\" title; neither matches the data files and neither is used.",
+      "<strong>Design basis and caveat.</strong> Cards: Tm_target = 56.0 °C (capped 50.3 / 49.4 / 49.4 °C) and L_required = 126 / 131 / 131 kJ/kg. The ranked candidates are the 33–35 per cluster that pass the Phase 5 filter; none meets the stricter confirmed-feasible test, so the Top-3 should be read as the best of a conditionally feasible pool. The older documents quote a 44 °C target.",
+      "<strong>What the cards rank.</strong> Four-method Borda consensus (TOPSIS {{cite:HwangYoon1981MADM}}, GRA {{cite:Deng1982GreySystems}}, PROMETHEE II {{cite:BransVincke1985PROMETHEE}}, VIKOR {{cite:OpricovicTzeng2004VIKOR}}). Rank 1 is savE® OM49 in all clusters; Rank 2 is savE® OM50 in Cluster 0 and n-Tricosane (C23) in Clusters 1 and 2.",
+      "<strong>Physics comparison (negative on the plotted metric).</strong> Using the same inputs as the agreement plot (Borda rank against the rank of simulated annual hours with the tank at or above 50 °C), Spearman ρ is −0.158 (C0, n = 35), −0.463 (C1, n = 33) and −0.408 (C2, n = 33). Against simulated solar fraction the same ranks give +0.626, +0.366 and +0.435. These values were computed from the output files for this page; the project does not report them. The physics file labels its candidates as independently evaluated, not MCDM-ranked.",
+      "<strong>Preprocessing.</strong> Outliers are flagged by a multivariate isolation forest instead of the Hampel filter {{cn}}. ERA5 {{cite:Hersbach2020ERA5}} agreed with NASA POWER {{cite:Stackhouse2021POWER}} closely enough that quantile mapping was judged unnecessary, per the project's cross-region notes (see bias_decision_assam.txt).",
+      "<strong>Withdrawn claims.</strong> Earlier portal text said RT44HC was selected unanimously and that Assam was 100% complete. The unanimous RT44HC ranking is the older K=4 run, kept in the repository as a historical artefact only.",
+    ],
     recommendations: [
       {
-        cluster: "Cluster 0 — Lower Brahmaputra Valley",
-        pcm: "RT54HC (MCDM Rank 1) / savE® OM50 (Rank 2)",
-        tm: "54.0°C / 50.0°C",
-        latentHeat: "200 / 189 kJ/kg",
-        mc: "93.0% (RT54HC Top-3)",
-        region: "Guwahati / Kamrup / Goalpara",
+        cluster: "Cluster 0 (ASP_0048 medoid)",
+        pcm: "savE® OM49 (PLUSS)",
+        tm: "49.0°C",
+        latentHeat: "224 kJ/kg",
+        mc: "W = 0.94",
+        region: "27 points · 13.2 M people",
       },
       {
-        cluster: "Cluster 1 — Upper Assam Tea Belt",
-        pcm: "RT54HC (MCDM Rank 1) / savE® OM50 (Rank 2)",
-        tm: "54.0°C / 50.0°C",
-        latentHeat: "200 / 189 kJ/kg",
-        mc: "93.0% (RT54HC Top-3)",
-        region: "Dibrugarh / Jorhat / Tinsukia",
+        cluster: "Cluster 1 (ASP_0051 medoid)",
+        pcm: "savE® OM49 (PLUSS)",
+        tm: "49.0°C",
+        latentHeat: "224 kJ/kg",
+        mc: "W = 0.94",
+        region: "28 points · 8.6 M people",
       },
       {
-        cluster: "Cluster 2 — Barak Valley & Southern Hills",
-        pcm: "RT54HC (MCDM Rank 1) / savE® OM50 (Rank 2)",
-        tm: "54.0°C / 50.0°C",
-        latentHeat: "200 / 189 kJ/kg",
-        mc: "93.0% (RT54HC Top-3)",
-        region: "Silchar / Cachar / Karimganj",
+        cluster: "Cluster 2 (ASP_0038 medoid)",
+        pcm: "savE® OM49 (PLUSS)",
+        tm: "49.0°C",
+        latentHeat: "224 kJ/kg",
+        mc: "W = 0.94",
+        region: "25 points · 8.9 M people",
       },
     ],
     plots: [
@@ -450,7 +400,7 @@ const STATES_CONFIG = {
         id: "as-01",
         num: "01",
         title: "Raw vs. Preprocessed Radiation (Assam)",
-        desc: "GHI series across Assam's primary population center (Point ASP_0001 - Guwahati), comparing raw satellite/reanalysis flux with quality-controlled, night-masked, and bias-corrected radiation profiles.",
+        desc: "Radiation and temperature before and after preprocessing at a sample point.",
         interactive: "01_raw_vs_preprocessed_radiation_interactive.html",
         static: "01_raw_vs_preprocessed_radiation.png",
         phase: "Phase 2–3 Preprocessing",
@@ -459,70 +409,52 @@ const STATES_CONFIG = {
         id: "as-02",
         num: "02",
         title: "Climate Regime Map (Assam k=3)",
-        desc: "Spatial geographic mapping of 129 points into 3 coherent valley regimes (Cluster 0: Lower Brahmaputra, Cluster 1: Upper Assam, Cluster 2: Barak Valley).",
+        desc: "80 population-weighted points assigned to three regimes by a GMM (27 / 28 / 25 points).",
         interactive: "02_climate_regime_map_interactive.html",
         static: "02_climate_regime_map.png",
         phase: "Phase 4 Clustering",
       },
       {
-        id: "as-03",
-        num: "03",
-        title: "Melting Point vs. Latent Heat Distribution",
-        desc: "Screening of PCM candidates against Assam's target Tm = 56.0°C and feasibility window [50°C, 64°C] with latent heat requirement.",
-        interactive: "03_melting_point_vs_latent_heat_interactive.html",
-        static: "03_melting_point_vs_latent_heat.png",
-        phase: "Phase 5 Feasibility",
+        id: "as-07a",
+        num: "07a",
+        title: "Bump Chart — MCDM Ranks (Cluster 0)",
+        desc: "Candidate ranks under each MCDM method and the Borda consensus, Cluster 0.",
+        interactive: "07_bump_chart_ranks_cluster_0.html",
+        static: "07_bump_chart_ranks_cluster_0.png",
+        phase: "Phase 6 MCDM",
       },
       {
-        id: "as-04",
-        num: "04",
-        title: "Feasible Candidates Highlighted",
-        desc: "Constraint boundary visualization highlighting the 9 surviving organic and paraffin PCM candidates under [50°C, 64°C] bounds.",
-        interactive: null,
-        static: "04_feasible_candidates_highlighted.png",
-        phase: "Phase 5 Feasibility",
+        id: "as-07b",
+        num: "07b",
+        title: "Bump Chart — MCDM Ranks (Cluster 1)",
+        desc: "Candidate ranks under each MCDM method and the Borda consensus, Cluster 1.",
+        interactive: "07_bump_chart_ranks_cluster_1.html",
+        static: "07_bump_chart_ranks_cluster_1.png",
+        phase: "Phase 6 MCDM",
       },
       {
-        id: "as-05",
-        num: "05",
-        title: "PCM Survivors per Climate Regime",
-        desc: "Uniform 9-candidate feasibility survival across all 3 Assam climate clusters under supercooling, cycling, and latent heat checks.",
-        interactive: "05_pcm_survivors_per_cluster_interactive.html",
-        static: "05_pcm_survivors_per_cluster.png",
-        phase: "Phase 5 Feasibility",
-      },
-      {
-        id: "as-07",
-        num: "07",
-        title: "Bump Chart — MCDM Rank Evolution (Cluster 0)",
-        desc: "Bump chart tracing 9 feasible candidates (RT54HC, savE® OM50, RT55, RT64HC, Myristic acid, Palmitic-Stearic eutectic, savE® OM48, Palmitic acid, Paraffin wax) across TOPSIS, GRA, PROMETHEE II, and VIKOR for Assam Cluster 0.",
-        interactive: "07_bump_chart_ranks.html",
-        static: "07_bump_chart_ranks.png",
+        id: "as-07c",
+        num: "07c",
+        title: "Bump Chart — MCDM Ranks (Cluster 2)",
+        desc: "Candidate ranks under each MCDM method and the Borda consensus, Cluster 2.",
+        interactive: "07_bump_chart_ranks_cluster_2.html",
+        static: "07_bump_chart_ranks_cluster_2.png",
         phase: "Phase 6 MCDM",
       },
       {
         id: "as-08",
         num: "08",
         title: "Method Rank Correlation Heatmap",
-        desc: "Pairwise rank concordance across distance-based and outranking MCDM methods (Kendall's W = 0.948 in Cluster 0).",
+        desc: "Pairwise rank correlation between the four MCDM methods.",
         interactive: "08_method_rank_correlation_heatmap_interactive.html",
         static: "08_method_rank_correlation_heatmap.png",
         phase: "Phase 6 MCDM",
       },
       {
-        id: "as-09",
-        num: "09",
-        title: "Monte Carlo Top-3 Inclusion Probability",
-        desc: "Probabilistic sensitivity testing under 5,000 Dirichlet randomized weightings for Assam candidates (RT54HC: 93.0%, OM50: 60.8%, RT55: 61.3%).",
-        interactive: "09_monte_carlo_top3_probability_interactive.html",
-        static: "09_monte_carlo_top3_probability.png",
-        phase: "Phase 6 MCDM",
-      },
-      {
         id: "as-10",
         num: "10",
-        title: "Rank-Reversal Frequency Analysis",
-        desc: "Violin plot of rank stability verifying robust preference retention for RT54HC and savE® OM50 under criterion perturbations.",
+        title: "Rank-Reversal Frequency",
+        desc: "How often candidates swap order under perturbed weights and properties.",
         interactive: "10_rank_reversal_violin_interactive.html",
         static: "10_rank_reversal_violin_bar.png",
         phase: "Phase 6 MCDM",
@@ -530,29 +462,20 @@ const STATES_CONFIG = {
       {
         id: "as-11",
         num: "11",
-        title: "Agreement Plot — Physics vs. MCDM Rank",
-        desc: "Independent first-principles physics benchmarking (27 simulations: 9 PCMs × 3 clusters). Aggregate Spearman ρ = +0.3013 (p = 0.4308, exploratory positive association, statistically non-significant).",
-        interactive: null,
+        title: "Agreement Plot — Simulated vs. MCDM Rank",
+        desc: "Borda rank against simulated rank (annual hours with the tank at or above 50 °C) for 33–35 candidates per cluster. Points far from the dashed line mean poor agreement; Spearman ρ is −0.158, −0.463 and −0.408.",
+        interactive: "11_agreement_plot_interactive.html",
         static: "11_agreement_plot.png",
         phase: "Phase 7 Physics",
       },
       {
         id: "as-12",
         num: "12",
-        title: "Tank Temperature & Melt-Fraction Diurnal Profile",
-        desc: "Dynamic phase-change diurnal simulation under 100 L/day demand (two discrete 50 kg draws at 07:00 and 19:00 IST) in humid subtropical Assam.",
+        title: "Tank Temperature & Melt-Fraction Profile",
+        desc: "Simulated tank temperature and PCM melt fraction from the lumped-enthalpy model.",
         interactive: "12_tank_temperature_melt_fraction_interactive.html",
         static: "12_tank_temperature_melt_fraction.png",
         phase: "Phase 7 Physics",
-      },
-      {
-        id: "as-13",
-        num: "13",
-        title: "Recommended PCM Summary Dashboard",
-        desc: "Multi-cluster synthesis comparing Level 2 MCDM consensus ranks against dynamic physical solar fraction and delivery trade-offs.",
-        interactive: "13_recommended_pcm_summary_interactive.html",
-        static: "13_recommended_pcm_summary.png",
-        phase: "Phase 8 Output",
       },
     ],
   },
@@ -560,60 +483,68 @@ const STATES_CONFIG = {
   uttarakhand: {
     name: "Uttarakhand",
     short: "UK",
-    icon: "️",
     climateType: "Montane & Alpine Foothills (Northern Himalayan India)",
-    tag: "45 Grid Points · K=5 Regimes · Sub-Zero Protection",
+    tag: "45 Grid Points · k=5 Regimes · 57 °C design basis",
     stats: [
-      { value: "45", label: "Population-Weighted Points" },
-      { value: "489,105", label: "Clean Records (99.2% Retention)" },
-      { value: "k=5", label: "GMM Regimes (Tarai, Mid-Hills, High Altitude)" },
-      { value: "28", label: "Feasible Candidates Screened" },
-      { value: "0.812", label: "Kendall's W Concordance" },
-      { value: "RT60", label: "Consensus Rank 1 Pick (High Tm Defense)" },
+      { value: "45", label: "Population-Weighted Points (7 / 3 / 9 / 10 / 16 per cluster)" },
+      { value: "k=5", label: "GMM Regimes (diagonal covariance, silhouette 0.28)" },
+      { value: "29 / 30 / 29 / 27 / 29", label: "Candidates passing Phase 5 (20 ranked per cluster)" },
+      { value: "0.80 / 0.84 / 0.78 / 0.71 / 0.80", label: "Kendall's W per Cluster" },
+      { value: "+0.02 / −0.17 / −0.34 / +0.17 / −0.14", label: "Spearman ρ, MCDM rank vs. simulated rank" },
+      { value: "PureTemp 58", label: "Borda Rank-1 Pick (C0 / C2 / C3 / C4); PureTemp 53 in C1" },
     ],
     overview:
-      "Uttarakhand presents steep elevation gradients from the fertile Tarai foothills (~300m) to high-altitude Himalayan valleys (>2500m). Winter freezing, high Heating Degree Days (HDD18), and sub-zero night temperatures necessitate higher melting point PCM candidates (55–60°C) to prevent storage freeze-out and maintain hot water supply. GMM clustering identifies 5 elevation-driven regimes, with RT60, savE® OM55, and PureTemp 58 leading.",
-    spearmanSummary: "Strong thermal validation under freezing winters · Anti-freeze constraint active",
+      "Uttarakhand was not moved to the 60 °C delivery basis: its Tm_target is still 57 °C (50 + 7), while Rajasthan and Tamil Nadu use 67 °C. A regime-specific cap lowers the target to 55.2 °C for Cluster 1 and 56.5 °C for Cluster 2. Results here are therefore not directly comparable with the other states. The physics simulation puts every candidate at 12–19% solar fraction, far below the 54–84% literature band, so it neither supports nor contradicts the MCDM ranking.",
+    spearmanSummary: "C0: +0.023 · C1: −0.168 · C2: −0.338 · C3: +0.169 · C4: −0.140",
+    verdict: "Weak, not significant",
+    verdictSub: "p = 0.14–0.92; simulated solar fraction far below the band",
+    notes: [
+      "<strong>Design basis.</strong> Tm_target = 57.0 °C for Clusters 0, 3 and 4, and 55.2 / 56.5 °C for Clusters 1 and 2 after the regime cap. L_required is 123 / 178 / 138 / 118 / 140 kJ/kg. The shared configuration now uses 60 °C delivery and a 67 °C target {{cite:MadadiAvargani2021}}; this state has not been re-run on that basis.",
+      "<strong>Ranking.</strong> Four-method Borda consensus {{cite:HwangYoon1981MADM}} with 20 candidates ranked per cluster. PureTemp 58 is first in Clusters 0, 2, 3 and 4 and PureTemp 53 in Cluster 1 (the high, cold cluster with only 3 points). Cluster 3's Kendall's W of 0.71 and Cluster 2's 0.78 indicate only moderate agreement between the methods.",
+      "<strong>Physics check (weak).</strong> Spearman ρ is +0.023, −0.168, −0.338, +0.169 and −0.140 for Clusters 0–4 (n = 20 each; p between 0.14 and 0.92). All 100 simulations give 12.0–19.1% solar fraction, none inside the 54–84% band {{cite:Singh2025PCMSWH}}. An earlier figure of 92% in band was an artefact of simulator bugs and is not used.",
+      "<strong>Re-run check (2026-10-25).</strong> The full Uttarakhand pipeline was re-run from preprocessing to the plots (13:06–13:15) and reproduced every figure on this page: picks, Kendall's W, Spearman ρ, survivor counts and the 12.0–19.1% simulated solar fractions. All plots below were regenerated by that run.",
+      "<strong>Not available.</strong> The feasibility scatter plots are not shown because they colour every candidate as Cluster 4. The earlier portal text about a sub-zero (anti-freeze) constraint selecting higher-Tm PCMs has been removed: no source for it was found in the repository.",
+    ],
     recommendations: [
       {
-        cluster: "Cluster 0 — Tarai Plains / Haridwar & Udham Singh Nagar",
-        pcm: "RT60 (Rubitherm)",
-        tm: "60.0°C",
-        latentHeat: "160 kJ/kg",
-        mc: "88.2% (Top-3)",
-        region: "Southern Plains / Haridwar",
-      },
-      {
-        cluster: "Cluster 1 — Doon Valley / Dehradun Sub-Himalayan",
-        pcm: "savE® OM55 (Pluss)",
-        tm: "55.0°C",
-        latentHeat: "205 kJ/kg",
-        mc: "84.5% (Top-3)",
-        region: "Doon Valley / Dehradun",
-      },
-      {
-        cluster: "Cluster 2 — Lesser Himalaya / Nainital & Almora",
-        pcm: "PureTemp 58 (Bio-based)",
+        cluster: "Cluster 0 (UKP_0037 medoid)",
+        pcm: "PureTemp 58",
         tm: "58.0°C",
         latentHeat: "225 kJ/kg",
-        mc: "81.0% (Top-3)",
-        region: "Kumaon Mid-Hills / Nainital",
+        mc: "W = 0.80",
+        region: "7 points · 2.0 M people",
       },
       {
-        cluster: "Cluster 3 — Garhwal Mid-Hills / Tehri & Pauri",
-        pcm: "Palmitic-stearic acid / EG composite",
-        tm: "56.8°C",
-        latentHeat: "192 kJ/kg",
-        mc: "78.4% (Top-3)",
-        region: "Garhwal Foothills / Pauri",
+        cluster: "Cluster 1 (cold, high)",
+        pcm: "PureTemp 53",
+        tm: "53.0°C",
+        latentHeat: "225 kJ/kg",
+        mc: "W = 0.84",
+        region: "3 points · 0.33 M people",
       },
       {
-        cluster: "Cluster 4 — High Alpine / Chamoli & Uttarkashi",
-        pcm: "RT60 (Rubitherm)",
-        tm: "60.0°C",
-        latentHeat: "160 kJ/kg",
-        mc: "89.1% (Top-3)",
-        region: "High Altitude / Chamoli",
+        cluster: "Cluster 2",
+        pcm: "PureTemp 58",
+        tm: "58.0°C",
+        latentHeat: "225 kJ/kg",
+        mc: "W = 0.78",
+        region: "9 points · 2.5 M people",
+      },
+      {
+        cluster: "Cluster 3",
+        pcm: "PureTemp 58",
+        tm: "58.0°C",
+        latentHeat: "225 kJ/kg",
+        mc: "W = 0.71",
+        region: "10 points · 3.7 M people",
+      },
+      {
+        cluster: "Cluster 4",
+        pcm: "PureTemp 58",
+        tm: "58.0°C",
+        latentHeat: "225 kJ/kg",
+        mc: "W = 0.80",
+        region: "16 points · 2.0 M people",
       },
     ],
     plots: [
@@ -621,7 +552,7 @@ const STATES_CONFIG = {
         id: "uk-01",
         num: "01",
         title: "Raw vs. Preprocessed Radiation (Uttarakhand)",
-        desc: "GHI series across Uttarakhand's 45 coordinates (UKP_0001), showing severe elevation-dependent clear sky radiation contrasted with mountain winter fog.",
+        desc: "Radiation and temperature before and after preprocessing at a sample point.",
         interactive: "01_raw_vs_preprocessed_radiation_interactive.html",
         static: "01_raw_vs_preprocessed_radiation.png",
         phase: "Phase 2–3 Preprocessing",
@@ -630,70 +561,70 @@ const STATES_CONFIG = {
         id: "uk-02",
         num: "02",
         title: "Climate Regime Map (Uttarakhand k=5)",
-        desc: "Elevation-driven GMM zoning clustering 45 sampling points across Tarai, Shivalik, Mid-Hills, and Greater Himalayan regions.",
+        desc: "45 population-weighted points assigned to five regimes by a diagonal-covariance GMM.",
         interactive: "02_climate_regime_map_interactive.html",
         static: "02_climate_regime_map.png",
         phase: "Phase 4 Clustering",
       },
       {
-        id: "uk-03",
-        num: "03",
-        title: "Melting Point vs. Latent Heat Distribution",
-        desc: "Candidate distribution showing higher Tm threshold requirements (≥55°C) to withstand mountain cold snaps.",
-        interactive: "03_melting_point_vs_latent_heat_interactive.html",
-        static: "03_melting_point_vs_latent_heat.png",
-        phase: "Phase 5 Feasibility",
+        id: "uk-07a",
+        num: "07a",
+        title: "Bump Chart — MCDM Ranks (Cluster 0)",
+        desc: "Candidate ranks under each MCDM method and the Borda consensus, Cluster 0.",
+        interactive: "07_bump_chart_ranks_cluster0.html",
+        static: "07_bump_chart_ranks_cluster0.png",
+        phase: "Phase 6 MCDM",
       },
       {
-        id: "uk-04",
-        num: "04",
-        title: "Feasible Candidates Highlighted",
-        desc: "Feasibility envelope identifying candidate survivors capable of handling mountain diurnal freezing.",
-        interactive: null,
-        static: "04_feasible_candidates_highlighted.png",
-        phase: "Phase 5 Feasibility",
+        id: "uk-07b",
+        num: "07b",
+        title: "Bump Chart — MCDM Ranks (Cluster 1)",
+        desc: "Candidate ranks for Cluster 1 (3 points; PureTemp 53 first).",
+        interactive: "07_bump_chart_ranks_cluster1.html",
+        static: "07_bump_chart_ranks_cluster1.png",
+        phase: "Phase 6 MCDM",
       },
       {
-        id: "uk-05",
-        num: "05",
-        title: "PCM Survivors per Climate Regime",
-        desc: "Screened survivor numbers per cluster across Uttarakhand's 5 elevation zones.",
-        interactive: "05_pcm_survivors_per_cluster_interactive.html",
-        static: "05_pcm_survivors_per_cluster.png",
-        phase: "Phase 5 Feasibility",
+        id: "uk-07c",
+        num: "07c",
+        title: "Bump Chart — MCDM Ranks (Cluster 2)",
+        desc: "Candidate ranks under each MCDM method and the Borda consensus, Cluster 2.",
+        interactive: "07_bump_chart_ranks_cluster2.html",
+        static: "07_bump_chart_ranks_cluster2.png",
+        phase: "Phase 6 MCDM",
       },
       {
-        id: "uk-07",
-        num: "07",
-        title: "Bump Chart — MCDM Rank Trajectory",
-        desc: "Ranking trajectories across TOPSIS, GRA, PROMETHEE II, and VIKOR for Uttarakhand's high-temperature candidates.",
-        interactive: "07_bump_chart_ranks.html",
-        static: "07_bump_chart_ranks.png",
+        id: "uk-07d",
+        num: "07d",
+        title: "Bump Chart — MCDM Ranks (Cluster 3)",
+        desc: "Candidate ranks for Cluster 3, where method agreement is lowest (W = 0.71).",
+        interactive: "07_bump_chart_ranks_cluster3.html",
+        static: "07_bump_chart_ranks_cluster3.png",
+        phase: "Phase 6 MCDM",
+      },
+      {
+        id: "uk-07e",
+        num: "07e",
+        title: "Bump Chart — MCDM Ranks (Cluster 4)",
+        desc: "Candidate ranks under each MCDM method and the Borda consensus, Cluster 4.",
+        interactive: "07_bump_chart_ranks_cluster4.html",
+        static: "07_bump_chart_ranks_cluster4.png",
         phase: "Phase 6 MCDM",
       },
       {
         id: "uk-08",
         num: "08",
         title: "Method Rank Correlation Heatmap",
-        desc: "Spearman rank correlation heatmap across MCDM methods for Uttarakhand regimes (Kendall's W = 0.812).",
+        desc: "Pairwise rank correlation between the four MCDM methods.",
         interactive: "08_method_rank_correlation_heatmap_interactive.html",
         static: "08_method_rank_correlation_heatmap.png",
         phase: "Phase 6 MCDM",
       },
       {
-        id: "uk-09",
-        num: "09",
-        title: "Monte Carlo Top-3 Inclusion Probability",
-        desc: "Probability of Top-3 selection over 1,000 Dirichlet weight simulations for montane PCM selections.",
-        interactive: null,
-        static: "09_monte_carlo_top3_probability.png",
-        phase: "Phase 6 MCDM",
-      },
-      {
         id: "uk-10",
         num: "10",
-        title: "Rank-Reversal Frequency Analysis",
-        desc: "Violin profile confirming low rank-reversal frequency under noisy property estimates.",
+        title: "Rank-Reversal Frequency",
+        desc: "How often candidates swap order under perturbed weights and properties.",
         interactive: "10_rank_reversal_violin_interactive.html",
         static: "10_rank_reversal_violin_bar.png",
         phase: "Phase 6 MCDM",
@@ -701,8 +632,8 @@ const STATES_CONFIG = {
       {
         id: "uk-11",
         num: "11",
-        title: "Agreement Plot — Physics Performance vs. MCDM Rank",
-        desc: "Grey-box simulated thermal delivery vs. MCDM consensus rank for Uttarakhand elevation regimes (Slide 19).",
+        title: "Agreement Plot — Top-3 Simulated vs. MCDM Rank",
+        desc: "Simulated rank against MCDM rank for the Top-3 candidates only (three points per cluster). The ρ values in the legend (−1 to +1) are computed on those three points and are not the validation ρ, which uses 20 candidates per cluster.",
         interactive: "11_agreement_plot_interactive.html",
         static: "11_agreement_plot.png",
         phase: "Phase 7 Physics",
@@ -710,72 +641,69 @@ const STATES_CONFIG = {
       {
         id: "uk-12",
         num: "12",
-        title: "Tank Temperature & Melt-Fraction Diurnal Profile",
-        desc: "Simulation under cold ambient temperatures showing phase transition stability without sub-zero freezing.",
+        title: "Tank Temperature & Melt-Fraction Profile",
+        desc: "Simulated tank temperature and PCM melt fraction from the lumped-enthalpy model.",
         interactive: "12_tank_temperature_melt_fraction_interactive.html",
         static: "12_tank_temperature_melt_fraction.png",
         phase: "Phase 7 Physics",
       },
-      {
-        id: "uk-13",
-        num: "13",
-        title: "Recommended PCM Summary Dashboard",
-        desc: "Final recommendation synthesis for Uttarakhand across all 5 elevation regimes.",
-        interactive: "13_recommended_pcm_summary_interactive.html",
-        static: "13_recommended_pcm_summary.png",
-        phase: "Phase 8 Output",
-      },
     ],
   },
+
   all: {
     name: "All 4 States",
     short: "ALL",
-    icon: "🇮🇳",
     climateType: "Multi-State Cross-Comparison (Coastal, Arid, Subtropical, Montane)",
-    tag: "637 Grid Points · 16 Regimes · 100% Complete",
+    tag: "578 Grid Points · 14 Regimes · mixed validation",
+    notes: [
+      "<strong>Not like-for-like.</strong> Design bases differ by state: Rajasthan and Tamil Nadu use 60 °C delivery and a 67 °C Tm_target (capped per cluster), Uttarakhand still uses 57 °C, and Assam’s cards use 56 °C (capped about 50 °C) while its older documents say 44 °C, and its point count is 80 (documents: 129). Rank-1 picks and correlations should be compared within a state, not across states.",
+      "<strong>Physics agreement by state.</strong> Rajasthan −0.200 / −0.168 / +0.569; Tamil Nadu −0.333 / +0.103 / +0.024; Uttarakhand −0.338 to +0.169 (none significant); Assam −0.16 / −0.46 / −0.41 against simulated hours (computed from its output files). Overall the physics simulation does not confirm the MCDM ranking in any state.",
+      "<strong>Scope of this page.</strong> Only plots and results that exist for all four states are shown: raw-vs-preprocessed radiation, the regime map, per-cluster MCDM bump charts, the method-agreement heatmap, rank-reversal, the simulated-vs-MCDM agreement plot and the tank profile; and, per state, points, regimes, candidates, Kendall's W, Spearman ρ and the Rank-1 pick. Monte Carlo stability, seasonal re-ranking, the supercooling sweep, the Köppen check, survivors and recommendation summary charts exist for only some states and are omitted.",
+      "<strong>Cross-state comparison figures withdrawn.</strong> The earlier eight comparison plots were Assam-only or pre-correction and have been removed until they are regenerated from the corrected pipelines.",
+    ],
     stats: [
       { value: "4 States", label: "Tamil Nadu, Rajasthan, Assam, Uttarakhand" },
-      { value: "637", label: "Total Population-Weighted Grid Points" },
+      { value: "578", label: "Total Population-Weighted Grid Points (320 + 133 + 45 + 80)" },
       { value: "10 Years", label: "Continuous Hourly ERA5 + POWER (2016–2025)" },
-      { value: "16", label: "Total Climate Regimes Discovered (GMM)" },
+      { value: "14", label: "Climate Regimes (RJ 3 · TN 3 · UK 5 · AS 3)" },
       { value: "62", label: "Screened PCM Candidate Records" },
-      { value: "100%", label: "Verified Data Completeness Post-QC" },
+      { value: "Mixed", label: "Physics agreement varies by state; see each state page" },
     ],
     overview:
-      "A comprehensive cross-state research framework synthesizing 637 population-weighted coordinates across India's four macro-climatic extremes: Tamil Nadu (Tropical Humid / Marine), Rajasthan (Hot Arid Continental), Assam (Subtropical Monsoon Attenuated), and Uttarakhand (Himalayan Montane Elevation Stratified).",
-    spearmanSummary: "Positive Concordance Across All Regimes",
+      "Objective 1 applies one pipeline (population-weighted ERA5 and NASA POWER sampling, GMM regimes, eight-constraint PCM screening, four-method MCDM consensus, lumped-enthalpy physics check) to four Indian states: Rajasthan, Tamil Nadu, Uttarakhand and Assam. The states are at different stages of correction, summarised below.",
+    spearmanSummary: "RJ negative/partial · TN, UK weak · AS negative vs. hours",
     recommendations: [
       {
         cluster: "Tamil Nadu (Tropical Marine)",
-        pcm: "n-Octacosane (C28) & RT64HC",
-        tm: "61.4°C / 64.0°C",
-        latentHeat: "253 kJ/kg",
-        mc: "95.6% (Top-3)",
-        region: "Coastal / Plains / Ghats",
+        pcm: "RT57HC (all three clusters)",
+        tm: "56.5°C",
+        latentHeat: "240 kJ/kg",
+        mc: "W 0.48–0.85 · ρ −0.333 to +0.103",
+        region: "Southern plains / Western interior / North-east coast",
       },
       {
         cluster: "Rajasthan (Hot Arid)",
-        pcm: "savE® OM50 & RT50",
-        tm: "50.0°C",
-        latentHeat: "218 kJ/kg",
-        mc: "90.8% (Top-3)",
-        region: "Thar Desert / Shekhawati",
+        pcm: "savE® OM55 / PureTemp 60 / Palmitic-stearic acid–EG",
+        tm: "55.0 / 61.0 / 55.2°C",
+        latentHeat: "188 / 220 / 176 kJ/kg",
+        mc: "W 0.42–1.00 · ρ −0.200 to +0.569",
+        region: "Southern plateau / Thar core / North-east",
       },
       {
         cluster: "Assam (Subtropical Valley)",
-        pcm: "RT54HC & savE® OM50 (MCDM Leaders)",
-        tm: "54.0°C / 50.0°C",
-        latentHeat: "200 / 189 kJ/kg",
-        mc: "93.0% (Top-3)",
+        pcm: "savE® OM49 (all three clusters)",
+        tm: "49.0°C",
+        latentHeat: "224 kJ/kg",
+        mc: "W 0.94 · ρ −0.46 to −0.16",
         region: "Brahmaputra / Barak Valleys",
       },
       {
         cluster: "Uttarakhand (Montane)",
-        pcm: "RT60 & savE® OM55",
-        tm: "60.0°C / 55.0°C",
-        latentHeat: "160 kJ/kg",
-        mc: "93.4% (Top-3)",
-        region: "Tarai Plains to High Himalayas",
+        pcm: "PureTemp 58 (PureTemp 53 in Cluster 1)",
+        tm: "58.0 / 53.0°C",
+        latentHeat: "225 kJ/kg",
+        mc: "W 0.71–0.84 · ρ −0.338 to +0.169",
+        region: "Tarai Plains to High Himalayas (57 °C basis)",
       },
     ],
     plots: [],
@@ -783,715 +711,200 @@ const STATES_CONFIG = {
 };
 
 /* ─────────────────────────────────────────────────────────
-   Cross-State Comparison Plots (Slide 13, 14, 18, 19, 20)
+   Objective 1 page — results by state.
+   The pipeline itself is described once on the Overview page.
    ───────────────────────────────────────────────────────── */
-const CROSS_STATE_PLOTS = [
+
+const STATE_ORDER = ["rajasthan", "tamilnadu", "uttarakhand", "assam"];
+
+/* Verified results, one column per state (sources: each state's
+   recommendation cards, ranking, physics and preprocessing outputs). */
+const COMPARISON_ROWS = [
   {
-    id: "comp-01",
-    num: "C-01",
-    title: "Cluster GHI Comparison Across States",
-    desc: "Direct comparison of solar irradiance distributions across clusters in Tamil Nadu, Rajasthan, Assam, and Uttarakhand.",
-    static: "comparison/01_comparison_cluster_ghi.png",
-    category: "Cross-State Irradiance",
-    phase: "Phase 2–3 Preprocessing",
+    label: "Population-weighted points",
+    values: { rajasthan: "320", tamilnadu: "133", uttarakhand: "45", assam: "80 (older documents: 129)" },
   },
   {
-    id: "comp-02",
-    num: "C-02",
-    title: "Ambient Temperature vs. Target Melting Point",
-    desc: "Correlation between regional ambient temperature signatures and derived PCM melting point targets (Tm_target).",
-    static: "comparison/02_comparison_temp_vs_tm_target.png",
-    category: "Thermal Target Synthesis",
-    phase: "Phase 4 Clustering",
+    label: "Climate regimes (GMM)",
+    values: { rajasthan: "3", tamilnadu: "3", uttarakhand: "5", assam: "3" },
   },
   {
-    id: "comp-03",
-    num: "C-03",
-    title: "MCDM Methods Cross-State Consistency",
-    desc: "Evaluation of TOPSIS, GRA, PROMETHEE II, and VIKOR stability across the 4 distinct geographic environments.",
-    static: "comparison/03_comparison_mcdm_methods.png",
-    category: "MCDM Sensitivity",
-    phase: "Phase 5–6 MCDM",
+    label: "Melting-point target",
+    values: {
+      rajasthan: "67 °C; capped 55.5 / 61.1 / 59.2 °C",
+      tamilnadu: "67 °C (physics script uses a 50 °C delivery constant)",
+      uttarakhand: "57 °C; capped 55.2 °C (C1) and 56.5 °C (C2)",
+      assam: "56 °C; capped about 50 °C (older documents: 44 °C)",
+    },
   },
   {
-    id: "comp-04",
-    num: "C-04",
-    title: "Monte Carlo Stability vs. Final Rank",
-    desc: "Assessment of Monte Carlo Top-3 inclusion probabilities across candidate pools in all 4 states.",
-    static: "comparison/04_comparison_mc_vs_rank.png",
-    category: "Uncertainty Quantification",
-    phase: "Phase 5–6 MCDM",
+    label: "Candidates ranked per cluster",
+    values: {
+      rajasthan: "4 / 8 / 11",
+      tamilnadu: "8 / 10 / 8",
+      uttarakhand: "20 each (29 / 30 / 29 / 27 / 29 pass the filter)",
+      assam: "35 / 33 / 33",
+    },
   },
   {
-    id: "comp-05",
-    num: "C-05",
-    title: "Latent Heat Distribution of Surviving PCMs",
-    desc: "Comparison of storage enthalpy capacities among feasible candidate survivors across all 4 state regimes.",
-    static: "comparison/05_comparison_latent_heat_distribution.png",
-    category: "Material Screening",
-    phase: "Phase 5 Feasibility",
+    label: "Kendall's W (method agreement)",
+    values: {
+      rajasthan: "1.00 / 0.77 / 0.42",
+      tamilnadu: "0.85 / 0.48 / 0.78",
+      uttarakhand: "0.80 / 0.84 / 0.78 / 0.71 / 0.80",
+      assam: "0.94 / 0.94 / 0.94",
+    },
   },
   {
-    id: "comp-06",
-    num: "C-06",
-    title: "Physics Simulation vs. MCDM Rank (All States)",
-    desc: "Spearman rank correlation comparison between grey-box simulated annual performance and MCDM ranking across all 4 pipelines.",
-    static: "comparison/06_comparison_physics_vs_rank.png",
-    category: "Physics Validation",
-    phase: "Phase 7 Physics",
+    label: "Spearman ρ, MCDM rank vs. simulated rank",
+    values: {
+      rajasthan: "−0.200 / −0.168 / +0.569",
+      tamilnadu: "−0.333 / +0.103 / +0.024",
+      uttarakhand: "+0.023 / −0.168 / −0.338 / +0.169 / −0.140",
+      assam: "−0.16 / −0.46 / −0.41 (against simulated hours)",
+    },
   },
   {
-    id: "comp-07",
-    num: "C-07",
-    title: "Cross-Cluster Top Recommended PCMs",
-    desc: "Synthesis matrix displaying the winning PCM candidates across all 16 total climate regimes discovered across India.",
-    static: "comparison/07_comparison_cross_cluster_top_pcm.png",
-    category: "Recommendation Matrix",
-    phase: "Phase 8 Output",
+    label: "Rank-1 PCM",
+    values: {
+      rajasthan: "savE® OM55 / PureTemp 60 / palmitic-stearic acid with expanded graphite",
+      tamilnadu: "RT57HC in all three clusters",
+      uttarakhand: "PureTemp 58 (PureTemp 53 in Cluster 1)",
+      assam: "savE® OM49 in all three clusters",
+    },
   },
   {
-    id: "comp-08",
-    num: "C-08",
-    title: "Rank Sensitivity to Weight Variations",
-    desc: "Sensitivity analysis of PCM rankings under varying stakeholder criterion weight configurations.",
-    static: "comparison/08_comparison_rank_sensitivity.png",
-    category: "Robustness Assessment",
-    phase: "Phase 5–6 MCDM",
+    label: "Main caveat",
+    values: {
+      rajasthan: "Cluster 0 pool is only 4 candidates; Cluster 2 methods agree weakly (W 0.42)",
+      tamilnadu: "Physics agreement is weak and not significant; Cluster 1 methods agree weakly",
+      uttarakhand: "Not on the 60 °C basis; simulated solar fractions (12–19%) are below the 54–84% band",
+      assam: "Ranked pool is conditionally feasible; point count differs from older documents",
+    },
   },
 ];
 
-/* ─────────────────────────────────────────────────────────
-   Comprehensive Multi-State Plots Registry (All 60 Plots)
-   ───────────────────────────────────────────────────────── */
-const ALL_STATE_PLOTS = [
-  ...CROSS_STATE_PLOTS.map((p) => ({
-    ...p,
-    stateKey: "comparison",
-    stateName: "Comparison",
-    stateIcon: "🇮🇳",
-  })),
-  ...STATES_CONFIG.tamilnadu.plots.map((p) => ({
-    ...p,
-    stateKey: "tamilnadu",
-    stateName: "Tamil Nadu",
-    stateIcon: "",
-  })),
-  ...STATES_CONFIG.rajasthan.plots.map((p) => ({
-    ...p,
-    stateKey: "rajasthan",
-    stateName: "Rajasthan",
-    stateIcon: "️",
-  })),
-  ...STATES_CONFIG.assam.plots.map((p) => ({
-    ...p,
-    stateKey: "assam",
-    stateName: "Assam",
-    stateIcon: "",
-  })),
-  ...STATES_CONFIG.uttarakhand.plots.map((p) => ({
-    ...p,
-    stateKey: "uttarakhand",
-    stateName: "Uttarakhand",
-    stateIcon: "️",
-  })),
+/* Notes that restate the shared pipeline are dropped from the state tabs. */
+const DROPPED_NOTE_TITLES = ["Ranking.", "Preprocessing.", "Plots."];
+
+function stateNotes(key) {
+  return (STATES_CONFIG[key].notes || [])
+    .filter((n) => !DROPPED_NOTE_TITLES.some((t) => n.startsWith("<strong>" + t)))
+    .map((n) => n.replace("The plots below were", "The plots on this page were").replace("All plots below were", "All plots on this page were"));
+}
+
+/* Plot types present and valid for all four states (one grid per type). */
+const PLOT_TYPES = [
+  { num: "01", title: "Raw vs. preprocessed radiation", caption: "Radiation and temperature before and after preprocessing at a sample point of each state." },
+  { num: "02", title: "Climate regime map", caption: "Grid points coloured by the climate regime assigned by the Gaussian Mixture Model." },
+  { num: "07a", title: "MCDM rank trajectories, Cluster 0", caption: "Each candidate's rank under TOPSIS, GRA, PROMETHEE II and VIKOR and in the Borda consensus (bump chart)." },
+  { num: "07b", title: "MCDM rank trajectories, Cluster 1", caption: "Same chart for Cluster 1." },
+  { num: "07c", title: "MCDM rank trajectories, Cluster 2", caption: "Same chart for Cluster 2." },
+  { num: "08", title: "Method rank-correlation heatmap", caption: "Pairwise rank correlation between the four MCDM methods." },
+  { num: "10", title: "Rank-reversal frequency", caption: "How often candidates swap order under perturbed weights and properties." },
+  {
+    num: "11",
+    title: "Agreement plot: simulated rank vs. MCDM rank",
+    caption: "Points on the dashed line mean the physics model and the MCDM ranking agree. The plotted set and metric differ by state, as noted under each plot.",
+    notes: {
+      rajasthan: "All ranked candidates, simulated solar fraction",
+      tamilnadu: "Top-3 candidates only",
+      uttarakhand: "Top-3 candidates only; legend ρ uses 3 points",
+      assam: "All ranked candidates, simulated hours at or above 50 °C",
+    },
+  },
+  { num: "12", title: "Tank temperature and melt-fraction profile", caption: "Simulated tank temperature and PCM melt fraction from the lumped-enthalpy model." },
 ];
 
-/* ─────────────────────────────────────────────────────────
-   Resolve which state/scope selection reveals a given plot id,
-   used to deep-link directly to a plot via the URL hash.
-   ───────────────────────────────────────────────────────── */
-function locatePlot(id) {
-  const plot = ALL_STATE_PLOTS.find((p) => p.id === id);
-  if (!plot) return null;
-  const isComparison = plot.stateKey === "comparison";
+function plotFor(stateKey, num) {
+  return (STATES_CONFIG[stateKey].plots || []).find((p) => p.num === num) || null;
+}
+
+function plotUrls(stateKey, plot) {
+  const base = `${process.env.PUBLIC_URL}/plots/${stateKey}/`;
   return {
-    plot,
-    selectedState: isComparison ? "all" : plot.stateKey,
-    allStateScope: isComparison ? "comparison" : "all",
+    src: plot && plot.static ? base + plot.static : null,
+    interactiveSrc: plot && plot.interactive ? base + plot.interactive : null,
   };
 }
 
-/* ─────────────────────────────────────────────────────────
-   Methods (Slide 24, 25, 26)
-   ───────────────────────────────────────────────────────── */
-const methods = [
-  {
-    icon: "️",
-    tag: "Clustering",
-    title: "Gaussian Mixture Models (BIC-Optimal)",
-    desc: "Probabilistic clustering accounting for climate feature covariances (temperature, DTR, GHI, humidity). Optimal regime count k determined via Bayesian Information Criterion (BIC) and silhouette validation.",
-    why: "<strong>Why:</strong> Captures overlapping climate gradients. Rejected: K-Means (assumes spherical clusters) & Hierarchical (O(N²) scaling).",
-  },
-  {
-    icon: "️",
-    tag: "MCDM 1",
-    title: "TOPSIS (Ideal Solution Proximity)",
-    desc: "Ranks candidates by relative closeness to the positive ideal solution (max latent heat, thermal conductivity) and distance from negative ideal.",
-    why: "<strong>Why:</strong> Intuitive geometric distance metric. Sensitive to extreme property outliers.",
-  },
-  {
-    icon: "",
-    tag: "MCDM 2",
-    title: "PROMETHEE II (Outranking Flow)",
-    desc: "Builds pairwise preference indices using Gaussian and V-shape criterion functions, calculating net outranking flows (Phi+ − Phi−) for a complete preorder.",
-    why: "<strong>Why:</strong> Non-compensatory evaluation prevents high latent heat from masking poor cycling stability.",
-  },
-  {
-    icon: "",
-    tag: "MCDM 3",
-    title: "VIKOR (Compromise Ranking)",
-    desc: "Determines compromise ranking measure Q based on maximum group utility S and individual regret R with parameter v=0.5.",
-    why: "<strong>Why:</strong> Explicitly evaluates closeness to ideal while mitigating maximum individual property regret.",
-  },
-  {
-    icon: "",
-    tag: "MCDM 4",
-    title: "GRA (Grey Relational Analysis)",
-    desc: "Measures relational degree between candidate property sequences and reference ideal sequence via grey relational coefficients (xi=0.5).",
-    why: "<strong>Why:</strong> Operates effectively on small candidate sets without strict distributional assumptions.",
-  },
-  {
-    icon: "️",
-    tag: "Consensus",
-    title: "Borda Count & Copeland Cross-Check",
-    desc: "Aggregates independent ranks from all 4 MCDM schools into a robust consensus rank, eliminating single-method biases.",
-    why: "<strong>Why:</strong> Borda consensus smooths structural method outliers (such as GRA's linear normalization).",
-  },
-  {
-    icon: "",
-    tag: "Uncertainty",
-    title: "Monte Carlo Stability (1,000 Draws)",
-    desc: "Propagates uncertainty by sampling criterion weights from Dirichlet distribution and perturbing material properties with Gaussian noise (sigma=5%).",
-    why: "<strong>Why:</strong> Computes Top-3 inclusion probabilities to verify robustness against measurement and stakeholder bias.",
-  },
-  {
-    icon: "",
-    tag: "Physics",
-    title: "2-Node Lumped-Enthalpy Tank Model",
-    desc: "Dynamically simulates water tank (Tw) and PCM capsule (Tp/f) node interactions using Backward Euler implicit time-stepping driven by 10-year real weather.",
-    why: "<strong>Why:</strong> Provides ground-truth annual solar fraction benchmarks (54–84%) to validate whether MCDM rankings predict physical thermal delivery.",
-  },
-];
-
-/* ─────────────────────────────────────────────────────────
-   PlotCard Component with State-Aware Paths & Controls
-   ───────────────────────────────────────────────────────── */
-function PlotCard({ plot, stateKey }) {
-  const [showInteractive, setShowInteractive] = useState(!!plot.interactive);
-
-  const effectiveState = plot.stateKey || stateKey;
-  const interactiveUrl = plot.interactive
-    ? `${process.env.PUBLIC_URL}/plots/${effectiveState}/${plot.interactive}`
-    : null;
-  const staticUrl = `${process.env.PUBLIC_URL}/plots/${
-    effectiveState === "comparison" ? "" : effectiveState + "/"
-  }${plot.static}`;
-
-  const stateBadge = plot.stateName
-    ? `${plot.stateIcon || ""} ${plot.stateName}`.trim()
-    : effectiveState.toUpperCase();
-
-  return (
-    <div className="plot-card" id={plot.id}>
-      <div className="plot-card-header">
-        <div>
-          <div className="plot-card-title">
-            {plot.num ? `Plot ${plot.num} — ` : ""}
-            {plot.title}
-          </div>
-          <div className="plot-card-desc">{plot.desc}</div>
-          <div className="tag-list" style={{ marginTop: 8 }}>
-            <span className="tag tag-zinc">{plot.phase || plot.category}</span>
-            {plot.interactive && (
-              <span className="tag tag-amber"> Plotly / Folium Interactive</span>
-            )}
-            <span className="tag tag-brand">
-              {stateBadge.toUpperCase()}
-            </span>
-          </div>
-        </div>
-
-        <div className="plot-badge-group">
-          <span
-            className={`plot-type-badge ${
-              showInteractive && plot.interactive ? "interactive" : "static"
-            }`}
-          >
-            {showInteractive && plot.interactive ? " Interactive HTML" : " Static PNG"}
-          </span>
-        </div>
-      </div>
-
-      <div className="plot-frame-container">
-        {showInteractive && plot.interactive ? (
-          <iframe
-            src={interactiveUrl}
-            title={plot.title}
-            loading="lazy"
-          />
-        ) : (
-          <img
-            className="plot-static-img"
-            src={staticUrl}
-            alt={plot.title}
-            onError={(e) => {
-              // Fallback to direct path if subfolder not resolved
-              if (!e.target.dataset.triedFallback) {
-                e.target.dataset.triedFallback = "true";
-                e.target.src = `${process.env.PUBLIC_URL}/plots/${plot.static}`;
-              }
-            }}
-          />
-        )}
-      </div>
-
-      <div className="plot-card-footer">
-        {plot.interactive ? (
-          <button
-            className="plot-toggle-btn"
-            onClick={() => setShowInteractive((v) => !v)}
-          >
-            {showInteractive ? " Switch to Static PNG" : " Switch to Interactive HTML"}
-          </button>
-        ) : (
-          <span style={{ fontSize: "0.76rem", color: "var(--neutral-500)" }}>
-            High-Resolution Static Visualization
-          </span>
-        )}
-
-        {plot.interactive && (
-          <a
-            href={interactiveUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="plot-external-link"
-          >
-            ↗ Open Fullscreen in New Tab
-          </a>
-        )}
-      </div>
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────
-   Main Objective 1 Page Component
-   ───────────────────────────────────────────────────────── */
 function Objective1Page() {
-  const [selectedState, setSelectedState] = useState("all");
-  const [activePlotCategory, setActivePlotCategory] = useState("All");
-  const [allStateScope, setAllStateScope] = useState("all");
-  const [currentPlotIndex, setCurrentPlotIndex] = useState(0);
-  const [pendingPlotId, setPendingPlotId] = useState(null);
-
-  // Deep-link support: "#/objective1/<plot-id>" opens that specific plot directly.
-  useEffect(() => {
-    const applyHashPlot = () => {
-      const cleaned = (window.location.hash || "").replace(/^#\/?/, "").split("?")[0];
-      const [page, plotId] = cleaned.split("/").filter(Boolean);
-      if (page !== "objective1" || !plotId) return;
-
-      const located = locatePlot(decodeURIComponent(plotId));
-      if (!located) return;
-
-      setSelectedState(located.selectedState);
-      setAllStateScope(located.allStateScope);
-      setActivePlotCategory("All");
-      setPendingPlotId(located.plot.id);
-    };
-
-    applyHashPlot();
-    window.addEventListener("hashchange", applyHashPlot);
-    return () => window.removeEventListener("hashchange", applyHashPlot);
-  }, []);
-
-  // Navigating to a specific plot updates the URL so it can be opened, bookmarked,
-  // or shared directly — the hash listener above then selects and reveals it.
-  const navigateToPlot = (id) => {
-    window.location.hash = `#/objective1/${id}`;
-  };
-
-  const currentState = STATES_CONFIG[selectedState] || STATES_CONFIG.all;
-
-  // Determine base plots for current state selection
-  let currentPlots = [];
-  if (selectedState === "all") {
-    if (allStateScope === "all") {
-      currentPlots = ALL_STATE_PLOTS;
-    } else if (allStateScope === "comparison") {
-      currentPlots = ALL_STATE_PLOTS.filter((p) => p.stateKey === "comparison");
-    } else {
-      currentPlots = ALL_STATE_PLOTS.filter((p) => p.stateKey === allStateScope);
-    }
-  } else {
-    currentPlots = (currentState?.plots || []).map((p) => ({
-      ...p,
-      stateKey: selectedState,
-      stateName: currentState.name,
-    }));
-  }
-
-  // Filter by phase category
-  const filteredPlots =
-    activePlotCategory === "All"
-      ? currentPlots
-      : currentPlots.filter((p) =>
-          p.phase
-            ? p.phase.toLowerCase().includes(activePlotCategory.toLowerCase())
-            : p.category
-            ? p.category.toLowerCase().includes(activePlotCategory.toLowerCase())
-            : false
-        );
-
-  const plotCategories = [
-    "All",
-    "Preprocessing",
-    "Clustering",
-    "Feasibility",
-    "MCDM",
-    "Physics",
-    "Output",
-  ];
-
-  // Reset to the first plot whenever the active filter set changes
-  useEffect(() => {
-    setCurrentPlotIndex(0);
-  }, [selectedState, activePlotCategory, allStateScope]);
-
-  // If a specific plot was requested (via deep-link or the plot menu below),
-  // jump to it once the filtered list reflects the matching state/scope.
-  useEffect(() => {
-    if (!pendingPlotId) return;
-    const idx = filteredPlots.findIndex((p) => p.id === pendingPlotId);
-    if (idx !== -1) setCurrentPlotIndex(idx);
-    setPendingPlotId(null);
-  }, [pendingPlotId, filteredPlots]);
-
-  const activePlot =
-    filteredPlots.length > 0
-      ? filteredPlots[Math.min(currentPlotIndex, filteredPlots.length - 1)]
-      : null;
+  const [tab, setTab] = useState("rajasthan");
+  const current = STATES_CONFIG[tab];
 
   return (
     <section className="content" id="top">
-
-
       {/* ── Page Hero ────────────────────────────────────── */}
       <div className="page-hero">
         <div className="eyebrow">
           <span className="eyebrow-badge">Research Module · Objective 1</span>
-          <span>4-State End-to-End Pipeline</span>
+          <span>Results by state</span>
         </div>
 
         <h1>Climate-Adaptive PCM Thermal Storage Selection</h1>
         <p className="intro">
-          A multi-stage machine learning and Multi-Criteria Decision Analysis (MCDA)
-          framework that identifies climate-adaptive Phase Change Materials (PCMs)
-          for domestic solar water heating across <strong>Rajasthan, Tamil Nadu, Assam, and Uttarakhand</strong>.
-          By coupling 10-year ERA5 and NASA POWER meteorological data with Gaussian Mixture Model
-          clustering, 4-method MCDM consensus (TOPSIS, PROMETHEE II, GRA, VIKOR), and grey-box lumped-enthalpy
-          physics validation, the framework delivers region-specific thermal storage recommendations.
+          Objective 1 recommends Phase Change Materials (PCMs) for domestic solar water heating in each climate regime of
+          Rajasthan, Tamil Nadu, Uttarakhand and Assam. It couples 10-year ERA5 <Cite k="Hersbach2020ERA5" /> and NASA POWER{" "}
+          <Cite k="Stackhouse2021POWER" /> data with Gaussian Mixture Model clustering, a four-method MCDM consensus and a
+          lumped-enthalpy physics check. The pipeline is described once on the{" "}
+          <a className="inline-link" href="#/overview/pipeline">Overview page</a>; this page holds the results.
         </p>
-
-
       </div>
 
-      {/* ── State Selector Bar (Prominent & Interactive) ─── */}
-      <div className="state-selector-wrapper" id="state-selector">
-        <div className="state-selector-label-row">
-          <div className="state-selector-title">
-            <span> Select State Pipeline:</span>
-          </div>
-          <span style={{ fontSize: "0.75rem", color: "var(--neutral-400)" }}>
-            Showing data, metrics, and plots for:{" "}
-            <strong style={{ color: "#ffffff" }}>
-              {selectedState === "all" ? "All 4 States (Cross-Comparison)" : currentState?.name}
-            </strong>
-          </span>
-        </div>
-
-        <div className="state-pills-container">
-          <button
-            className={`state-pill-btn ${selectedState === "all" ? "active" : ""}`}
-            onClick={() => {
-              setSelectedState("all");
-              setActivePlotCategory("All");
-            }}
-          >
-            <span>All 4 States</span>
-          </button>
-
-          <button
-            className={`state-pill-btn ${selectedState === "tamilnadu" ? "active" : ""}`}
-            onClick={() => {
-              setSelectedState("tamilnadu");
-              setActivePlotCategory("All");
-            }}
-          >
-            <span>Tamil Nadu</span>
-          </button>
-
-          <button
-            className={`state-pill-btn ${selectedState === "rajasthan" ? "active" : ""}`}
-            onClick={() => {
-              setSelectedState("rajasthan");
-              setActivePlotCategory("All");
-            }}
-          >
-            <span>Rajasthan</span>
-          </button>
-
-          <button
-            className={`state-pill-btn ${selectedState === "assam" ? "active" : ""}`}
-            onClick={() => {
-              setSelectedState("assam");
-              setActivePlotCategory("All");
-            }}
-          >
-            <span>Assam</span>
-          </button>
-
-          <button
-            className={`state-pill-btn ${selectedState === "uttarakhand" ? "active" : ""}`}
-            onClick={() => {
-              setSelectedState("uttarakhand");
-              setActivePlotCategory("All");
-            }}
-          >
-            <span>Uttarakhand</span>
-          </button>
-        </div>
-      </div>
-
-      {/* ── Active State Profile Banner ───────────────────── */}
-      {currentState && (
-        <div className="state-profile-card">
-          <div className="state-profile-item">
-            <span className="state-profile-label">Selected Territory</span>
-            <span className="state-profile-val">
-              {currentState.name}
-            </span>
-            <span className="state-profile-sub">{currentState.climateType}</span>
-          </div>
-
-          <div className="state-profile-item">
-            <span className="state-profile-label">Physics Spearman ρ</span>
-            <span className="state-profile-val" style={{ color: "#ffffff" }}>
-              {currentState.spearmanSummary ? currentState.spearmanSummary.split("·")[0] : "Positive Concordance"}
-            </span>
-            <span className="state-profile-sub">Grey-Box vs MCDM Concordance</span>
-          </div>
-
-          <div className="state-profile-item">
-            <span className="state-profile-label">Primary Consensus Winner</span>
-            <span className="state-profile-val" style={{ color: "#ffffff" }}>
-              {selectedState === "all" ? "Regional Borda Leaders (RT54HC / OM50 / C28 / RT60)" : currentState.stats[5].value}
-            </span>
-            <span className="state-profile-sub">4-Method Borda Leader</span>
-          </div>
-
-          <div className="state-profile-item">
-            <span className="state-profile-label">Pipeline Status</span>
-            <span className="state-profile-val" style={{ color: "#fbbf24" }}>
-              100% Verified
-            </span>
-            <span className="state-profile-sub">Full QC & Physics Simulated</span>
-          </div>
-        </div>
-      )}
-
-
-      {/* ── Key Metrics Grid ──────────────────────────────── */}
-      <div className="results-grid" style={{ marginBottom: 56 }}>
-        {selectedState === "all" ? (
-          [
-            { value: "4 States", label: "Tamil Nadu, Rajasthan, Assam, Uttarakhand" },
-            { value: "637", label: "Total Population-Weighted Grid Points" },
-            { value: "10 Years", label: "Continuous Hourly ERA5 + POWER (2016–2025)" },
-            { value: "16", label: "Total Climate Regimes Discovered (GMM)" },
-            { value: "62", label: "Screened PCM Candidate Records" },
-            { value: "100%", label: "Verified Data Completeness Post-QC" },
-          ].map((s) => (
-            <div key={s.label} className="result-stat-card">
-              <div className="result-stat-value">{s.value}</div>
-              <div className="result-stat-label">{s.label}</div>
-            </div>
-          ))
-        ) : (
-          currentState.stats.map((s) => (
-            <div key={s.label} className="result-stat-card">
-              <div className="result-stat-value">{s.value}</div>
-              <div className="result-stat-label">{s.label}</div>
-            </div>
-          ))
-        )}
-      </div>
-
-      {/* ── Implementation Flow (Detailed) ─────────────────── */}
-      <div className="content-section" id="implementation-flow">
+      {/* ── State comparison ───────────────────────────────── */}
+      <div className="content-section" id="comparison">
         <div className="plots-section-header">
-          <h2>End-to-End Implementation Pipeline</h2>
-          <span className="plots-count-badge">7 Phases</span>
+          <h2>State Comparison</h2>
+          <span className="plots-count-badge">4 States</span>
         </div>
         <p className="section-desc">
-          A reproducible multi-phase ML &amp; MCDM framework deployed across four Indian climate zones to
-          deliver data-driven, physics-validated PCM recommendations for solar water heating systems.
+          The same measures for each state. Compare within a row with care: the design basis differs by state (see the row
+          "Melting-point target").
         </p>
         <div className="section-divider" />
 
-        <div className="impl-detail-flow">
-          {[
-            {
-              num: "01",
-              icon: "️",
-              phase: "Data Ingestion",
-              tag: "ERA5 + NASA POWER",
-              details: [
-                "10-year hourly reanalysis data (2016–2025) from ECMWF ERA5 and NASA POWER",
-                "Population-weighted grid point selection: 637 total across 4 states",
-                "36–37 meteorological variables ingested per grid point",
-                "Covers GHI, DNI, DHI, Tₐₘɓ, RH, wind speed, pressure, and cloud fraction",
-              ],
-              input: "Raw ERA5 / POWER NetCDF & CSV",
-              output: "Structured hourly time-series per grid point",
-            },
-            {
-              num: "02",
-              icon: "",
-              phase: "Preprocessing & QC",
-              tag: "Hampel · MICE · Bias Correction",
-              details: [
-                "Physical bounds gating: GHI clamped to [0, 1400] W/m², RH to [0, 100]%",
-                "Hampel filter (MAD-based, k=3σ window) for outlier suppression—GHI channel excluded from spike removal",
-                "MICE multivariate imputation for residual missing values",
-                "Quantile-mapping bias correction against NASA POWER baseline",
-                "45 engineered features added (lag, rolling stats, diurnal, seasonal harmonics)",
-              ],
-              input: "Raw time-series with missing data & outliers",
-              output: "Clean 89-feature matrices; ≥99.2% data retention",
-            },
-            {
-              num: "03",
-              icon: "",
-              phase: "GMM Clustering",
-              tag: "Climate Regime Discovery",
-              details: [
-                "Gaussian Mixture Model (GMM) with BIC-optimised k selection",
-                "Fitted on PCA-reduced feature space (95% variance explained)",
-                "k=5 for Tamil Nadu &amp; Uttarakhand; k=3 for Rajasthan &amp; Assam",
-                "16 total climate regimes discovered across all 4 states",
-                "Each cluster assigned a geographic label (e.g. Thar Core, Brahmaputra Valley, Tarai)",
-              ],
-              input: "Clean 89-feature hourly matrices",
-              output: "Cluster-labelled grid points + per-cluster climate signatures",
-            },
-            {
-              num: "04",
-              icon: "",
-              phase: "Feasibility Screening",
-              tag: "κ-Calibrated Thresholds",
-              details: [
-                "62 PCM candidate records evaluated per state",
-                "Hard constraints: Tm∈[Tₐₘɓ₊10, GHI_peak/3], latent heat ≥80 kJ/kg, no toxic/flammable flags",
-                "κ-calibrated thresholds adjust for climate severity (arid vs. montane vs. subtropical)",
-                "Sub-zero activation for Uttarakhand: eliminates PCMs with Tm&lt;5°C in high-altitude regimes",
-                "Survivors: 39 (Rajasthan), 41 (Tamil Nadu), 9 (Assam operational window [50, 64]°C), 35 (Uttarakhand)",
-              ],
-              input: "Per-cluster climate signatures + PCM property database",
-              output: "Feasible candidate shortlist per cluster",
-            },
-            {
-              num: "05",
-              icon: "",
-              phase: "MCDM Consensus Ranking",
-              tag: "TOPSIS · GRA · PROMETHEE II · VIKOR",
-              details: [
-                "TOPSIS: Euclidean distance from ideal/anti-ideal solution",
-                "GRA (Grey Relational Analysis): relational grade-based ranking under uncertainty",
-                "PROMETHEE II: pairwise preference flow with Gaussian preference functions",
-                "VIKOR: compromise ranking minimising regret and group utility simultaneously",
-                "Borda count aggregation across all 4 methods for consensus ranking",
-                "Kendall’s W concordance measured per cluster (W=0.842 C1 Tamil Nadu; W=0.948 Assam Cluster 0)",
-              ],
-              input: "Feasible PCM shortlist + normalised criterion weights",
-              output: "Borda consensus ranked PCM list per cluster",
-            },
-            {
-              num: "06",
-              icon: "️",
-              phase: "Physics Validation",
-              tag: "Grey-Box Lumped Enthalpy Solver",
-              details: [
-                "2-node lumped-enthalpy energy balance ODE solved over 8760 hourly timesteps",
-                "Nodes: PCM tank and domestic hot water draw loop",
-                "System-level demand-deficit solar coverage fraction (collector + PCM storage) evaluated over annual cycle",
-                "Corrected solar fraction range: 54%–65% for Assam (aggregate 60.1%–61.1% across 27 simulations)",
-                "Independent physics benchmark vs MCDM consensus rank (Assam aggregate: ρ = +0.3013, p = 0.4308, exploratory positive association)",
-                "First-principles numerical simulation benchmark under ERA5 forcing (not experimental or field validation)",
-              ],
-              input: "Top-ranked PCMs + cluster solar/thermal signatures",
-              output: "Annual solar fractions + Spearman ρ concordance per cluster",
-            },
-            {
-              num: "07",
-              icon: "",
-              phase: "PCM Recommendation",
-              tag: "Borda + Monte Carlo Stability",
-              details: [
-                "Final recommendation = Borda consensus leader per cluster",
-                "Monte Carlo stability: 1,000 Dirichlet weight draws, Top-3 inclusion rate computed",
-                "Threshold: ≥75% MC Top-3 inclusion for high-confidence recommendation",
-                "Outputs: recommended PCM, Tm, latent heat, MC certainty, and target geographic region",
-                "Example MCDM consensus leaders: savE® OM50 (Rajasthan C1/C2), n-Octacosane C28 (Tamil Nadu C1), RT54HC (Assam)",
-              ],
-              input: "Borda-ranked list + Monte Carlo draws",
-              output: "Final region-specific PCM recommendations with confidence scores",
-            },
-          ].map((step, i, arr) => (
-            <div key={step.num} className="impl-detail-item">
-              <div className="impl-detail-connector">
-                <div className="impl-detail-badge">{step.num}</div>
-                {i < arr.length - 1 && <div className="impl-detail-line" />}
-              </div>
-              <div className="impl-detail-card">
-                <div className="impl-detail-header">
-                  <span className="impl-detail-icon">{step.icon}</span>
-                  <div>
-                    <div className="impl-detail-phase">{step.phase}</div>
-                    <span className="tag tag-zinc" style={{ marginTop: 4, display: "inline-block" }}>{step.tag}</span>
-                  </div>
-                </div>
-                <ul className="impl-detail-bullets">
-                  {step.details.map((d, di) => (
-                    <li key={di} dangerouslySetInnerHTML={{ __html: d }} />
+        <div className="data-table-wrapper compare-table-wrapper">
+          <table className="data-table compare-table">
+            <thead>
+              <tr>
+                <th>Measure</th>
+                {STATE_ORDER.map((k) => (
+                  <th key={k}>{STATES_CONFIG[k].name}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {COMPARISON_ROWS.map((row) => (
+                <tr key={row.label}>
+                  <td>{row.label}</td>
+                  {STATE_ORDER.map((k) => (
+                    <td key={k}>{row.values[k]}</td>
                   ))}
-                </ul>
-                <div className="impl-detail-io">
-                  <div className="impl-io-row">
-                    <span className="impl-io-label">Input</span>
-                    <span className="impl-io-val">{step.input}</span>
-                  </div>
-                  <div className="impl-io-row">
-                    <span className="impl-io-label" style={{ color: "#4ade80" }}>Output</span>
-                    <span className="impl-io-val">{step.output}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
+
+        <ul className="state-notes-list">
+          {(STATES_CONFIG.all.notes || []).map((n, i) => (
+            <li key={i} dangerouslySetInnerHTML={{ __html: richHtml(n) }} />
+          ))}
+        </ul>
       </div>
 
       {/* ── Cross-State Preprocessing Verification Table ── */}
       <div className="content-section" id="preprocessing">
         <div className="plots-section-header">
-          <h2>4-State Data Preprocessing & Quality Control</h2>
-          <span className="plots-count-badge">Presentation Audit</span>
+          <h2>Preprocessing and Quality Control</h2>
+          <span className="plots-count-badge">By State</span>
         </div>
         <p className="section-desc">
-          Rigorous quality control executed across all four territories. Preprocessing comprises
-          physical bounds gating, Hampel filtering (MAD-based with GHI preserved), MICE multivariate
-          imputation, and quantile-mapping bias correction against NASA POWER.
+          Counts before and after cleaning (stage 2 of the pipeline: Hampel filtering{" "}
+          <Cite k="Hampel1974InfluenceCurve" />, chained-equation imputation <Cite k="vanBuuren2011MICE" /> and quantile mapping{" "}
+          <Cite k="Cannon2015QuantileMapping" /> against NASA POWER). The Rajasthan and Uttarakhand rows were re-checked against
+          the 2026-10-25 quality-control reports (5 of 5 checks passed each); the other rows are carried over from the earlier
+          portal and have not been re-checked.
         </p>
         <div className="section-divider" />
 
@@ -1512,18 +925,8 @@ function Objective1Page() {
             </thead>
             <tbody>
               {PREPROCESSING_SUMMARY.map((row) => (
-                <tr
-                  key={row.state}
-                  style={{
-                    background:
-                      selectedState === row.state.toLowerCase().replace(" ", "")
-                        ? "rgba(255, 255, 255, 0.05)"
-                        : "transparent",
-                  }}
-                >
-                  <td style={{ fontWeight: 600, color: "#ffffff" }}>
-                    {row.state} <span className="tag tag-zinc">{row.tag}</span>
-                  </td>
+                <tr key={row.state}>
+                  <td style={{ fontWeight: 600, color: "#ffffff" }}>{row.state}</td>
                   <td>{row.gridPoints}</td>
                   <td>{row.inputRecords}</td>
                   <td>{row.outputRecords}</td>
@@ -1533,9 +936,7 @@ function Objective1Page() {
                   </td>
                   <td>{row.engineeredFeatures}</td>
                   <td>{row.missingRate}</td>
-                  <td>
-                    <span className="tag tag-brand"> {row.status}</span>
-                  </td>
+                  <td>{row.status}</td>
                 </tr>
               ))}
             </tbody>
@@ -1543,277 +944,124 @@ function Objective1Page() {
         </div>
       </div>
 
-      {/* ── Interactive Plots Section (FOR ALL 4 STATES) ───── */}
-      <div className="content-section" id="interactive-plots">
+      {/* ── Results by state (tabs) ────────────────────────── */}
+      <div className="content-section" id="state-results">
         <div className="plots-section-header">
-          <div className="plots-title-group">
-            <h2>
-              Interactive Plots —{" "}
-              {selectedState === "all"
-                ? "All 4 States (Cross-Comparison & Regional Suites)"
-                : currentState?.name}
-            </h2>
-            <span className="plots-count-badge">
-              {filteredPlots.length} Plots Available
-            </span>
-          </div>
-
-          <div style={{ fontSize: "0.8rem", color: "var(--neutral-400)" }}>
-             Plotly & Folium Interactive Views Available
-          </div>
-        </div>
-
-        <p className="section-desc">
-          Explore interactive HTML visualizations and high-resolution figures for{" "}
-          <strong>
-            {selectedState === "all"
-              ? "all four states & cross-state comparative metrics"
-              : currentState?.name}
-          </strong>
-          . Use the quick controls below to switch between states or filter by pipeline phase.
-        </p>
-
-        {/* State and Phase Controls inside Plots section */}
-        <div className="plots-controls-bar">
-          <div className="plots-state-bar">
-            <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "var(--neutral-400)" }}>
-              TERRITORY:
-            </span>
-            {[
-              { id: "all", label: "🇮🇳 All 4 States" },
-              { id: "tamilnadu", label: " Tamil Nadu" },
-              { id: "rajasthan", label: "️ Rajasthan" },
-              { id: "assam", label: " Assam" },
-              { id: "uttarakhand", label: "️ Uttarakhand" },
-            ].map((st) => (
-              <button
-                key={st.id}
-                className={`plots-state-btn ${selectedState === st.id ? "active" : ""}`}
-                onClick={() => {
-                  setSelectedState(st.id);
-                  setActivePlotCategory("All");
-                  setAllStateScope("all");
-                }}
-              >
-                {st.label}
-              </button>
-            ))}
-          </div>
-
-          {selectedState === "all" && (
-            <div className="plots-state-bar" style={{ marginTop: 10, flexWrap: "wrap", gap: 6 }}>
-              <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "var(--neutral-400)" }}>
-                FILTER VIEW:
-              </span>
-              {[
-                { id: "all", label: ` All Plots (${ALL_STATE_PLOTS.length})` },
-                { id: "comparison", label: `🇮🇳 Comparison Suite (${CROSS_STATE_PLOTS.length})` },
-                { id: "tamilnadu", label: " Tamil Nadu (13)" },
-                { id: "rajasthan", label: "️ Rajasthan (13)" },
-                { id: "assam", label: " Assam (13)" },
-                { id: "uttarakhand", label: "️ Uttarakhand (13)" },
-              ].map((sc) => (
-                <button
-                  key={sc.id}
-                  className={`tab-btn ${allStateScope === sc.id ? "active" : ""}`}
-                  onClick={() => setAllStateScope(sc.id)}
-                  style={{ fontSize: "0.76rem", padding: "4px 10px" }}
-                >
-                  {sc.label}
-                </button>
-              ))}
-            </div>
-          )}
-
-          <div className="plots-tab-bar" style={{ marginTop: selectedState === "all" ? 10 : 0 }}>
-            {plotCategories.map((cat) => (
-              <button
-                key={cat}
-                className={`tab-btn ${activePlotCategory === cat ? "active" : ""}`}
-                onClick={() => setActivePlotCategory(cat)}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="section-divider" />
-
-        {/* Plot Menu — click a plot by name to open it below (also updates the URL) */}
-        {filteredPlots.length > 0 && (
-          <div className="plot-selector-menu">
-            {filteredPlots.map((p, idx) => (
-              <button
-                key={p.id}
-                className={`plot-selector-item ${
-                  activePlot && activePlot.id === p.id ? "active" : ""
-                }`}
-                onClick={() => navigateToPlot(p.id)}
-                title={p.title}
-              >
-                <span className="plot-selector-num">{p.num || idx + 1}</span>
-                <span className="plot-selector-title">{p.title}</span>
-              </button>
-            ))}
-          </div>
-        )}
-
-        {activePlot ? (
-          <PlotCard
-            key={activePlot.id}
-            plot={activePlot}
-            stateKey={
-              activePlot.stateKey || (selectedState === "all" ? "comparison" : selectedState)
-            }
-          />
-        ) : (
-          <p className="section-desc">No plots available for this filter.</p>
-        )}
-
-      </div>
-
-      {/* ── Cross-State Technical Findings ── */}
-      <div className="content-section" id="clustering">
-        <div className="plots-section-header">
-          <h2>Clustering & MCDM Cross-State Findings</h2>
+          <h2>Results by State</h2>
         </div>
         <p className="section-desc">
-          Key empirical findings from deploying the Objective 1 framework across four geographically
-          and climatologically diverse Indian territories.
+          Cluster results, design-basis deviations and caveats that belong to one state only.
         </p>
         <div className="section-divider" />
 
-        <div className="findings-list">
-          <div className="finding-item">
-            <span className="finding-icon"></span>
-            <div className="finding-text">
-              <strong>Tamil Nadu (Lead State · v3.2 Verified):</strong> 5 GMM regimes discovered
-              (Coastal, Plains, Ghats, Delta, South). Demonstrates high inter-method concordance
-              (Kendall's W = 0.842 in C0, 0.956 in C1). In Cluster 1, physics validation confirms strong
-              correlation (ρ = +0.717, p = 0.030) with 41% of simulations inside the 54–84% solar fraction
-              benchmark band. n-Octacosane (C28) and RT64HC emerge as consensus leaders.
-            </div>
-          </div>
-
-          <div className="finding-item">
-            <span className="finding-icon">️</span>
-            <div className="finding-text">
-              <strong>Rajasthan (Honest Negative Correlation Documented):</strong> 3 GMM regimes discovered.
-              Spearman correlation between MCDM consensus rank and simulated performance yielded ρ = −0.385 (C0),
-              +0.125 (C1), and −0.097 (C2). The negative correlation in C0 is an honest finding: heavy supercooling
-              penalties in MCDM conflict with lumped-enthalpy physics where high latent heat dominates delivery.
-              savE® OM50 and RT50 lead across regimes.
-            </div>
-          </div>
-
-          <div className="finding-item">
-            <span className="finding-icon"></span>
-            <div className="finding-text">
-              <strong>Assam (Monsoon Attenuation & Subtropical Dynamics):</strong> 3 GMM regimes covering
-              the Brahmaputra Valley and Barak Valley. High relative humidity (&gt;70%) and monsoonal cloud attenuation
-              require a target Tm = 56.0°C and operational window [50, 64]°C (9 feasible candidates). Level 2 MCDM
-              consensus is led by RT54HC and savE® OM50 (Kendall's W = 0.948). Dynamic grey-box physics benchmarking
-              across 27 simulations yields annual demand-deficit solar fractions of 54%–65% and an exploratory,
-              statistically non-significant correlation with MCDM ranks (ρ = +0.3013, p = 0.4308).
-            </div>
-          </div>
-
-          <div className="finding-item">
-            <span className="finding-icon">️</span>
-            <div className="finding-text">
-              <strong>Uttarakhand (Montane Freezing & Altitude Stratification):</strong> 5 elevation-driven
-              regimes ranging from Tarai plains (~300m) to Greater Himalaya (&gt;2500m). Winter freezing risks
-              activate the sub-zero constraint, mandating higher melting point PCMs (RT60, savE® OM55, PureTemp 58)
-              to prevent nighttime phase freeze-out.
-            </div>
-          </div>
-
-          <div className="finding-item">
-            <span className="finding-icon"></span>
-            <div className="finding-text">
-              <strong>VIKOR Sign-Inversion Bug Detection:</strong> During multi-state cross-verification,
-              a sign-inversion bug in VIKOR's regret metric computation was caught via bump charts (VIKOR ranks
-              were anti-correlated with TOPSIS at ρ = −0.86). Once corrected, VIKOR aligned positively with the
-              compromise frontier.
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ── Methods & Mathematical Formulations ── */}
-      <div className="content-section" id="methods">
-        <div className="plots-section-header">
-          <h2>Theoretical & Mathematical Foundations</h2>
-          <span className="plots-count-badge">8 Core Algorithms</span>
-        </div>
-        <p className="section-desc">
-          Four methodologically distinct MCDM schools combined via Borda consensus, validated against a
-          2-node lumped-enthalpy energy balance solver.
-        </p>
-        <div className="section-divider" />
-
-        <div className="methods-grid">
-          {methods.map((m) => (
-            <div key={m.title} className="method-card">
-              <span className="method-card-icon">{m.icon}</span>
-              <div className="method-card-tag">{m.tag}</div>
-              <h3>{m.title}</h3>
-              <p>{m.desc}</p>
-              <div
-                className="method-card-why"
-                dangerouslySetInnerHTML={{ __html: m.why }}
-              />
-            </div>
+        <div className="state-tabs" role="tablist" aria-label="State">
+          {STATE_ORDER.map((k) => (
+            <button
+              key={k}
+              role="tab"
+              aria-selected={tab === k}
+              className={`state-tab ${tab === k ? "active" : ""}`}
+              onClick={() => setTab(k)}
+            >
+              {STATES_CONFIG[k].name}
+            </button>
           ))}
         </div>
+
+        <h3>{current.name}</h3>
+        <p className="section-desc" style={{ marginBottom: 20 }}>
+          {current.climateType}.{" "}
+          <span dangerouslySetInnerHTML={{ __html: richHtml(current.overview) }} />
+        </p>
+
+        <div className="data-table-wrapper">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Cluster</th>
+                <th>Rank-1 PCM</th>
+                <th>Melting point</th>
+                <th>Latent heat</th>
+                <th>Method agreement (W) · Physics ρ</th>
+                <th>Coverage</th>
+              </tr>
+            </thead>
+            <tbody>
+              {current.recommendations.map((r) => (
+                <tr key={r.cluster}>
+                  <td style={{ fontWeight: 600, color: "#ffffff" }}>{r.cluster}</td>
+                  <td style={{ color: "#ffffff" }}>{r.pcm}</td>
+                  <td>{r.tm}</td>
+                  <td>{r.latentHeat}</td>
+                  <td>{r.mc}</td>
+                  <td>{r.region}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <ul className="state-notes-list">
+          {stateNotes(tab).map((n, i) => (
+            <li key={i} dangerouslySetInnerHTML={{ __html: richHtml(n) }} />
+          ))}
+        </ul>
+
+        {tab === "uttarakhand" && (
+          <div style={{ marginTop: 28 }}>
+            <h3>Uttarakhand only: Clusters 3 and 4</h3>
+            <p className="plot-type-caption">
+              Uttarakhand has five regimes; the grids below show Clusters 0 to 2 for all states, so the two extra bump charts are here.
+            </p>
+            <div className="plot-grid">
+              {["07d", "07e"].map((num) => {
+                const p = plotFor("uttarakhand", num);
+                const u = plotUrls("uttarakhand", p);
+                return (
+                  <div key={num}>
+                    <div className="plot-grid-cell-label">{p.title.match(/Cluster \d/)[0]}</div>
+                    <Figure src={u.src} interactiveSrc={u.interactiveSrc} title={`Uttarakhand, ${p.title}`} />
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* ── Recommendation Cards Section ──────────────────── */}
-      <div className="content-section" id="results">
+      {/* ── Plots across states: one grid per plot type ─────── */}
+      <div className="content-section" id="plots">
         <div className="plots-section-header">
-          <h2>State-by-State Recommended PCMs</h2>
-          <span className="plots-count-badge">Borda Consensus Leaders</span>
+          <h2>Plots Across States</h2>
+          <span className="plots-count-badge">{PLOT_TYPES.length} Plot Types</span>
         </div>
         <p className="section-desc">
-          Optimal Phase Change Materials recommended for each climate regime based on multi-criteria
-          ranking and verified by 1,000 Monte Carlo stability draws (≥75% Top-3 inclusion).
+          Only plot types that exist for all four states are shown, one grid per type with the states side by side. Click a plot to
+          enlarge it. Where an interactive version exists, "Interactive view" opens it in the same viewer and "New tab" opens it
+          in a separate tab.
         </p>
         <div className="section-divider" />
 
-        {Object.entries(STATES_CONFIG).map(([key, st]) => (
-          <div key={key} style={{ marginBottom: 36 }}>
-            <h3 style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
-              <span>{st.icon}</span>
-              <span>{st.name}</span>
-              <span className="tag tag-zinc">{st.tag}</span>
-            </h3>
-
-            <div className="recommendation-cards-grid">
-              {st.recommendations.map((r) => (
-                <div key={r.cluster} className="rec-card">
-                  <div className="rec-card-cluster">{r.cluster}</div>
-                  <div className="rec-card-pcm">{r.pcm}</div>
-                  <div className="rec-card-props">
-                    <div className="rec-prop">
-                      <span className="rec-prop-label">Melting Temp (Tm)</span>
-                      <span className="rec-prop-value">{r.tm}</span>
-                    </div>
-                    <div className="rec-prop">
-                      <span className="rec-prop-label">Latent Heat</span>
-                      <span className="rec-prop-value">{r.latentHeat}</span>
-                    </div>
-                    <div className="rec-prop">
-                      <span className="rec-prop-label">MC Top-3 Certainty</span>
-                      <span className="rec-prop-value">{r.mc}</span>
-                    </div>
-                    <div className="rec-prop">
-                      <span className="rec-prop-label">Target Region</span>
-                      <span className="rec-prop-value">{r.region}</span>
-                    </div>
+        {PLOT_TYPES.map((pt) => (
+          <div key={pt.num} className="plot-type" id={`plot-${pt.num}`}>
+            <h3>{pt.title}</h3>
+            <p className="plot-type-caption">{pt.caption}</p>
+            <div className="plot-grid">
+              {STATE_ORDER.map((k) => {
+                const p = plotFor(k, pt.num);
+                const u = plotUrls(k, p);
+                return (
+                  <div key={k}>
+                    <div className="plot-grid-cell-label">{STATES_CONFIG[k].name}</div>
+                    <Figure
+                      src={u.src}
+                      interactiveSrc={u.interactiveSrc}
+                      title={`${STATES_CONFIG[k].name}: ${pt.title}`}
+                      note={pt.notes ? pt.notes[k] : null}
+                    />
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         ))}

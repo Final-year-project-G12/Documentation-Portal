@@ -1,3 +1,8 @@
+import { Rich, richHtml } from "../components/Cite";
+import Figure from "../components/Figure";
+import { PIPELINE_STAGES, STATE_DIFFERENCES } from "../data/pipeline";
+import { METHODS } from "../data/methods";
+
 /* ─────────────────────────────────────────────────────────
    OverviewPage.js — Central Project Hub (Review 2 Presentation)
    Final Year Project — Group 12 | Department of CSE
@@ -44,8 +49,8 @@ const OBJECTIVES_ROADMAP = [
     id: "obj1",
     num: "Objective 1",
     title: "Climate-Region-Aware PCM Recommendation",
-    desc: "10-year ERA5 and NASA POWER meteorological clustering (GMM) across 4 contrasting Indian territories (637 points). Multi-criteria decision analysis (TOPSIS, PROMETHEE II, GRA, VIKOR) coupled with Borda consensus and 2-node lumped-enthalpy physics validation.",
-    outputs: ["16 Discovered Climate Regimes", "4-Method MCDM Consensus Ranks", "Annual Solar Fraction Benchmarks (54–84%)", "Region-Specific PCM Recommendation Cards"],
+    desc: "10-year ERA5 {{cite:Hersbach2020ERA5}} and NASA POWER {{cite:Stackhouse2021POWER}} meteorological clustering (GMM) across 4 contrasting Indian territories (578 points). Multi-criteria decision analysis (TOPSIS {{cite:HwangYoon1981MADM}}, PROMETHEE II {{cite:BransVincke1985PROMETHEE}}, GRA {{cite:Deng1982GreySystems}}, VIKOR {{cite:OpricovicTzeng2004VIKOR}}) coupled with Borda consensus and a 2-node lumped-enthalpy physics check.",
+    outputs: ["14 Climate Regimes (3 + 3 + 5 + 3)", "4-Method MCDM Consensus Ranks", "Physics check against the 54–84% solar-fraction band {{cite:Singh2025PCMSWH}}", "Per-Regime PCM Recommendation Cards"],
     linkPage: "objective1",
   },
   {
@@ -76,44 +81,40 @@ const OBJECTIVES_ROADMAP = [
 
 const TERRITORIES = [
   {
-    icon: "",
     name: "Tamil Nadu",
-    tag: "Lead State · v3.2 Verified",
+    tag: "Tropical maritime & semi-arid",
     gridPoints: 133,
-    records: "1,445,577",
-    regimes: "k=5 GMM Regimes",
-    primaryPCM: "n-Octacosane (C28) & RT64HC",
-    summary: "Coastal, Plains, Ghats, Delta, and Southern zones. Strong positive physics correlation (ρ = +0.717, p = 0.030) with 41% inside the 54–84% solar fraction band.",
+    survivors: "8 / 10 / 8",
+    regimes: "k=3 GMM Regimes",
+    primaryPCM: "RT57HC (all clusters)",
+    summary: "Three regimes (southern plains, western interior, north-east coast). Physics agreement is weak and not significant (ρ = −0.333, +0.103, +0.024).",
   },
   {
-    icon: "️",
     name: "Rajasthan",
-    tag: "Arid Core · Continental Swings",
+    tag: "Arid core · reference state",
     gridPoints: 320,
-    records: "200,000",
+    survivors: "4 / 8 / 11",
     regimes: "k=3 GMM Regimes",
-    primaryPCM: "savE® OM50 & RT50",
-    summary: "Thar Desert core, Southern plateau, and Shekhawati. Extreme diurnal temperature swings and peak GHI > 1050 W/m² requiring high latent heat retention.",
+    primaryPCM: "savE® OM55 / PureTemp 60 / palmitic-stearic–EG",
+    summary: "Three regimes with Udaipur, Nagaur and Jaipur medoids. The physics check is negative or partial (ρ = −0.200, −0.168, +0.569).",
   },
   {
-    icon: "",
     name: "Assam",
-    tag: "Subtropical · Monsoon Attenuated",
-    gridPoints: 129,
-    records: "1,402,101",
+    tag: "Subtropical · monsoon attenuated",
+    gridPoints: 80,
+    survivors: "35 / 33 / 33",
     regimes: "k=3 GMM Regimes",
-    primaryPCM: "RT54HC & savE® OM50 (MCDM Leaders)",
-    summary: "Brahmaputra Valley and Barak Valley. Relative humidity > 70% with heavy monsoon cloud attenuation requiring target Tm = 56.0°C and operational window [50, 64]°C (9 feasible candidates).",
+    primaryPCM: "savE® OM49 (all clusters)",
+    summary: "Brahmaputra and Barak valleys with cluster-mean relative humidity of 76–79%. 80 points in the current grid. Physics agreement is negative against simulated hours at or above 50 °C (ρ = −0.16, −0.46, −0.41).",
   },
   {
-    icon: "️",
     name: "Uttarakhand",
-    tag: "Montane · Elevation Stratified",
+    tag: "Montane · elevation stratified",
     gridPoints: 45,
-    records: "489,105",
+    survivors: "29 / 30 / 29 / 27 / 29",
     regimes: "k=5 GMM Regimes",
-    primaryPCM: "RT60 & savE® OM55",
-    summary: "Tarai plains (~300m) to Greater Himalayas (>2500m). Sub-zero frost constraints mandate higher Tm PCMs to prevent winter phase freeze-out.",
+    primaryPCM: "PureTemp 58 (PureTemp 53 in C1)",
+    summary: "Five regimes on the older 57 °C design basis. Physics agreement is weak and not significant; simulated solar fractions (12–19%) are below the 54–84% band.",
   },
 ];
 
@@ -160,19 +161,19 @@ function OverviewPage({ onNavigate }) {
         <div className="results-grid" style={{ marginBottom: 32 }}>
           <div className="result-stat-card">
             <div className="result-stat-value">133 GW</div>
-            <div className="result-stat-label">Solar Share in India's 254 GW Renewables (1:1.9 Ratio)</div>
+            <div className="result-stat-label"><Rich text="Solar Share in India's 254 GW Renewables (1:1.9 Ratio) {{cn}}" /></div>
           </div>
           <div className="result-stat-card">
             <div className="result-stat-value">48–50%</div>
-            <div className="result-stat-label">Global Final Energy Demand Consumed by Thermal Heat</div>
+            <div className="result-stat-label"><Rich text="Global Final Energy Demand Consumed by Thermal Heat {{cn}}" /></div>
           </div>
           <div className="result-stat-card">
             <div className="result-stat-value">6–8%</div>
-            <div className="result-stat-label">Residential Electricity Consumed by Water Heating Alone</div>
+            <div className="result-stat-label"><Rich text="Residential Electricity Consumed by Water Heating Alone {{cn}}" /></div>
           </div>
           <div className="result-stat-card">
             <div className="result-stat-value">45–70%</div>
-            <div className="result-stat-label">Typical Conventional SWH Seasonal Thermal Efficiency</div>
+            <div className="result-stat-label"><Rich text="Typical Conventional SWH Seasonal Thermal Efficiency {{cn}}" /></div>
           </div>
         </div>
 
@@ -205,11 +206,15 @@ function OverviewPage({ onNavigate }) {
           </table>
         </div>
 
+        <p className="section-desc" style={{ marginTop: 16, marginBottom: 0 }}>
+          Company table and capacity figures come from the Review 2 presentation, which does not cite a
+          published source <Rich text="{{cn}}" />.
+        </p>
+
         <div className="finding-item" style={{ marginTop: 24 }}>
-          <span className="finding-icon"></span>
           <div className="finding-text">
-            <strong>The Deployment Gap in India:</strong> While international pioneers like Sunamp (UK) commercially deploy
-            latent heat batteries, Indian systems (Emmvee, Racold) predominantly use sensible water buffers. India faces higher climatic
+            <strong>The Deployment Gap in India:</strong> The presentation contrasts latent heat batteries from Sunamp (UK)
+            with Indian systems from Emmvee that use a sensible water buffer only <Rich text="{{cn}}" />. India faces higher climatic
             heterogeneity, requiring climate-adaptive PCM selection rather than one-size-fits-all hardware.
           </div>
         </div>
@@ -218,13 +223,29 @@ function OverviewPage({ onNavigate }) {
       {/* ── Overall System Architecture ── */}
       <div className="content-section" id="architecture">
         <div className="plots-section-header">
-          <h2>End-to-End System Architecture</h2>
+          <h2>Project Architecture</h2>
         </div>
         <p className="section-desc">
           Modular research architecture spanning climate reanalysis, multi-criteria material selection,
           numerical surrogate modeling, dynamic control, and embedded deployment.
         </p>
         <div className="section-divider" />
+
+        <div className="diagram">
+          <Figure
+            src={`${process.env.PUBLIC_URL}/diagrams/project-architecture.png`}
+            title="Project architecture: Objectives 1 to 4 with real-time feedback"
+            alt="Block diagram of the four project objectives. Objective 1 selects PCMs from climate data, Objective 2 optimises the PCM system design, Objective 3 is a deep reinforcement learning controller, and Objective 4 deploys the prototype, with a real-time feedback loop from temperature, flow rate, PCM state and hot-water output."
+            caption="Project architecture, Review 2 presentation, slide 3.2."
+          />
+          <p className="diagram-caption">
+            Project architecture, Objectives 1 to 4 with real-time feedback (Review 2 presentation, slide 3.2 <Rich text="{{cite:Group12Review2}}" />).
+            <span className="diagram-flag"> Not redrawn: </span>
+            the Objective 1 box in this figure predates the implemented pipeline. It names "GNN / K-means" for clustering and lists three
+            ranking methods (TOPSIS, VIKOR, GRA); the pipeline uses a Gaussian Mixture Model and four methods (TOPSIS, PROMETHEE II, GRA, VIKOR).
+            The Objective 1 diagram and the pipeline below are current.
+          </p>
+        </div>
 
         <div className="arch-flow-container">
           <div className="arch-step">
@@ -233,7 +254,7 @@ function OverviewPage({ onNavigate }) {
               <div className="arch-step-header">
                 <h4>Meteorological Data Layer</h4>
               </div>
-              <p>10-year hourly ECMWF ERA5 & NASA POWER reanalysis (637 population-weighted points across 4 states).</p>
+              <p>10-year ECMWF ERA5 <Rich text="{{cite:Hersbach2020ERA5}}" /> and NASA POWER <Rich text="{{cite:Stackhouse2021POWER}}" /> reanalysis (578 population-weighted points across 4 states).</p>
             </div>
           </div>
 
@@ -245,7 +266,7 @@ function OverviewPage({ onNavigate }) {
               <div className="arch-step-header">
                 <h4>Climate Clustering (GMM)</h4>
               </div>
-              <p>Gaussian Mixture Models (k=3, k=5) discovering micro-climatic regimes per state territory.</p>
+              <p>Gaussian Mixture Models (k=3 for three states, k=5 for Uttarakhand) discovering climate regimes per state <Rich text="{{cn}}" />.</p>
             </div>
           </div>
 
@@ -257,7 +278,7 @@ function OverviewPage({ onNavigate }) {
               <div className="arch-step-header">
                 <h4>Multi-Criteria Decision Analysis</h4>
               </div>
-              <p>TOPSIS, PROMETHEE II, GRA, VIKOR consensus ranking candidates across 8 thermophysical properties.</p>
+              <p>TOPSIS <Rich text="{{cite:HwangYoon1981MADM}}" />, PROMETHEE II <Rich text="{{cite:BransVincke1985PROMETHEE}}" />, GRA <Rich text="{{cite:Deng1982GreySystems}}" /> and VIKOR <Rich text="{{cite:OpricovicTzeng2004VIKOR}}" /> consensus ranking of candidates across 8 criteria.</p>
             </div>
           </div>
 
@@ -299,6 +320,68 @@ function OverviewPage({ onNavigate }) {
         </div>
       </div>
 
+      {/* ── Objective 1 pipeline, described once ── */}
+      <div className="content-section" id="pipeline">
+        <div className="plots-section-header">
+          <h2>Objective 1: End-to-End Pipeline</h2>
+          <span className="plots-count-badge">9 Stages</span>
+        </div>
+        <p className="section-desc">
+          One pipeline turns ten years of reanalysis data into a validated Top-3 PCM list for each climate regime. It is
+          the same for all four states; what differs by state is listed after the stages, and the results are on the Objective 1 page.
+        </p>
+        <div className="section-divider" />
+
+        <div className="diagram">
+          <Figure
+            src={`${process.env.PUBLIC_URL}/diagrams/objective1-architecture.png`}
+            title="Objective 1 framework: from meteorological data to validated Top-3 PCM candidates"
+            alt="Six-stage flow diagram: data collection, preprocessing and harmonisation, climate feature engineering, climate region discovery with a Gaussian mixture model, PCM suitability evaluation with multi-criteria decision making, and physics validation with the final Top-3 output."
+            caption="Objective 1 framework, Review 2 presentation, slide 4.2."
+          />
+          <p className="diagram-caption">
+            Objective 1 framework, six stages (Review 2 presentation, slide 4.2 <Rich text="{{cite:Group12Review2}}" />).
+            The figure does not show the design-basis steps below: the 60 °C delivery target, SHARE_PCM = 0.5 and the latent-heat calibration.
+          </p>
+        </div>
+
+        <ol className="pipeline-list">
+          {PIPELINE_STAGES.map((st, i) => (
+            <li key={st.title} className="pipeline-stage">
+              <span className="pipeline-stage-num">{String(i + 1).padStart(2, "0")}</span>
+              <div>
+                <h3>{st.title}</h3>
+                <p dangerouslySetInnerHTML={{ __html: richHtml(st.body) }} />
+                <div className="pipeline-stage-meta">Output: {st.out}</div>
+              </div>
+            </li>
+          ))}
+        </ol>
+        <p className="section-desc" style={{ marginTop: 20 }}>{STATE_DIFFERENCES}</p>
+      </div>
+
+      {/* ── Algorithms ── */}
+      <div className="content-section" id="methods">
+        <div className="plots-section-header">
+          <h2>Algorithms Used</h2>
+          <span className="plots-count-badge">{METHODS.length} Algorithms</span>
+        </div>
+        <p className="section-desc">
+          The statistical and decision methods behind stages 4, 7 and 8, with the reason each was chosen.
+        </p>
+        <div className="section-divider" />
+        <div className="methods-grid">
+          {METHODS.map((m) => (
+            <div key={m.title} className="method-card">
+              <div className="method-card-tag">{m.tag}</div>
+              <h3>{m.title}</h3>
+              <p><Rich text={m.desc} /></p>
+              <div className="method-card-why" dangerouslySetInnerHTML={{ __html: richHtml(m.why) }} />
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* ── 4 Research Objectives Roadmap ── */}
       <div className="content-section" id="objectives">
         <div className="plots-section-header">
@@ -319,13 +402,13 @@ function OverviewPage({ onNavigate }) {
                 </div>
               </div>
 
-              <p className="objective-card-desc">{obj.desc}</p>
+              <p className="objective-card-desc"><Rich text={obj.desc} /></p>
 
               <div className="objective-card-outputs">
                 <span className="objective-outputs-label">Key Deliverables & Milestones:</span>
                 <div className="tag-list" style={{ marginTop: 6 }}>
                   {obj.outputs.map((out) => (
-                    <span key={out} className="tag tag-zinc"> {out}</span>
+                    <span key={out} className="tag tag-zinc"><Rich text={out} /></span>
                   ))}
                 </div>
               </div>
@@ -357,7 +440,6 @@ function OverviewPage({ onNavigate }) {
           {TERRITORIES.map((t) => (
             <div key={t.name} className="territory-card">
               <div className="territory-card-header">
-                <span className="territory-card-icon">{t.icon}</span>
                 <div>
                   <h3 style={{ margin: 0 }}>{t.name}</h3>
                   <span className="tag tag-zinc" style={{ marginTop: 4, display: "inline-block" }}>{t.tag}</span>
@@ -372,8 +454,8 @@ function OverviewPage({ onNavigate }) {
                   <span className="rec-prop-value">{t.gridPoints} Points</span>
                 </div>
                 <div className="rec-prop">
-                  <span className="rec-prop-label">Cleaned Records</span>
-                  <span className="rec-prop-value">{t.records}</span>
+                  <span className="rec-prop-label">Calibrated Survivors</span>
+                  <span className="rec-prop-value">{t.survivors}</span>
                 </div>
                 <div className="rec-prop">
                   <span className="rec-prop-label">GMM Clusters</span>
@@ -402,8 +484,11 @@ function OverviewPage({ onNavigate }) {
         <div className="sdg-grid">
           {PROJECT_META.sdgs.map((sdg) => (
             <div key={sdg.num} className="sdg-card">
-              <div className="sdg-badge">SDG {sdg.num}</div>
-              <h4>{sdg.title}</h4>
+              <img
+                className="sdg-tile"
+                src={`${process.env.PUBLIC_URL}/sdg/sdg-${sdg.num}.png`}
+                alt={`SDG ${sdg.num}: ${sdg.title}`}
+              />
               <p>{sdg.desc}</p>
             </div>
           ))}

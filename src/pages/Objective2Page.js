@@ -10,7 +10,7 @@ const O2_DELIVERABLES = [
   {
     id: "D2.1",
     name: "Frozen Input Package",
-    contents: "Objective 1 regime records, medoid hourly weather, PCM database, state-specific draw schedules (Assam: 100 L/day discrete draws at 07:00 and 19:00 IST; multi-state baseline: 300 L/day), manifest.json.",
+    contents: "Objective 1 regime records, medoid hourly weather, PCM database, canonical 300 L/day demand profile, manifest.json.",
     criterion: "Versioned machine-readable JSON/CSV files pass SHA-256 schema checks.",
     status: "Completed (Frozen)",
     tag: "Data Ingestion",
@@ -85,56 +85,48 @@ const O2_WORKFLOW_STEPS = [
   {
     step: "01",
     title: "Frozen Input Ingestion",
-    icon: "",
     tag: "Level A Hand-Off",
-    desc: "Directly ingests Objective 1 outputs without modifying rankings: regime assignments, medoid hourly weather (GHI, Tamb, wind, RH), screened PCM database, and validated draw schedules (Assam: 100 L/day via two 50 kg draws at 07:00 & 19:00 IST without smoothing; multi-state baseline: 300 L/day).",
+    desc: "Directly ingests Objective 1 outputs without modifying rankings: regime assignments, medoid hourly weather (GHI, Tamb, wind, RH), screened PCM database, and the canonical 300 L/day household draw schedule.",
   },
   {
     step: "02",
     title: "Geometry & Envelope Engine",
-    icon: "",
     tag: "Form Factor",
     desc: "Parameterizes capsule designs: maximum conduction thickness t_pcm (10–45 mm), capsule geometries (spherical nodules, horizontal tubes, cylindrical rods), packing volume fraction (20–40%), and interstitial flow channels.",
   },
   {
     step: "03",
     title: "2-Node Grey-Box Enthalpy Solver",
-    icon: "️",
     tag: "Physics Ground Truth",
     desc: "Solves transient energy balances across 8,760 hourly time-steps. Tracks water temperature Tw, PCM bulk temperature Tp, and phase melt fraction f using an effective heat capacity enthalpy formulation with phase transition bounds.",
   },
   {
     step: "04",
     title: "Latin Hypercube Sampling (DOE)",
-    icon: "",
     tag: "Space Filling",
     desc: "Generates space-filling design configurations across 8 continuous/discrete variables. Simulates 1,200 design candidates across contrasting regimes to build the empirical training distribution.",
   },
   {
     step: "05",
     title: "AI Surrogate Neural Architecture",
-    icon: "",
     tag: "ML Acceleration",
     desc: "Dual-stage surrogate: Stage 1 filters infeasible/freezing geometries via XGBoost classifier; Stage 2 predicts annual solar fraction, melting duration, and hydraulic loss via a 4-layer MLP / Gaussian Process Regressor.",
   },
   {
     step: "06",
     title: "Multi-Objective Pareto Optimization",
-    icon: "",
     tag: "NSGA-II / MOPSO",
     desc: "Runs multi-objective genetic algorithms to resolve trade-offs: maximizing annual solar fraction (SF) and delivery reliability while simultaneously minimizing PCM capital mass, capsule count, and pumping parasitic power.",
   },
   {
     step: "07",
     title: "Ground-Truth Physics Verification",
-    icon: "",
     tag: "Zero Hallucination",
     desc: "Every Pareto-optimal candidate selected by the AI surrogate is fed back into the full 8,760-hour numerical simulator. A surrogate prediction is never adopted without 100% numerical verification.",
   },
   {
     step: "08",
     title: "Objective 3 DRL Interface Freeze",
-    icon: "",
     tag: "Control Interface",
     desc: "Freezes the physical state space st = [Tw, Tp, f, GHI, Tamb, wind, time], 3-way valve actuation constraints (Charge/Discharge/Bypass), and safety shield bounds for real-time reinforcement learning control.",
   },
@@ -146,7 +138,7 @@ const PARAMETER_BOUNDS = [
   { param: "Capsule Count", symbol: "N_capsule", bounds: "40 – 240 units", unit: "Count", rationale: "Determined by tank internal volume and target PCM mass fraction." },
   { param: "Water Mass Flow Rate", symbol: "m_dot", bounds: "0.02 – 0.15 kg/s", unit: "kg/s", rationale: "Regulates convective heat transfer coefficient h_c and pumping pressure drop." },
   { param: "PCM Volume Fraction", symbol: "V_pcm / V_tank", bounds: "20% – 40%", unit: "%", rationale: "Ensures sufficient sensible water buffer remains for high-draw morning peaks." },
-  { param: "Target Delivery Temp", symbol: "T_delivery", bounds: "≥ 50.0 °C", unit: "°C", rationale: "Physics benchmark delivery threshold (T_w ≥ 50.0°C) ensuring useful domestic hot water." },
+  { param: "Target Delivery Temp", symbol: "T_delivery", bounds: "≥ 45.0 °C", unit: "°C", rationale: "Standard domestic hot water threshold preventing bacterial legionella growth." },
   { param: "Maximum Pressure Drop", symbol: "ΔP_max", bounds: "≤ 8.5 kPa", unit: "kPa", rationale: "Limits parasitic pump electricity consumption within gravity/low-power solar loops." },
 ];
 
@@ -155,10 +147,10 @@ function Objective2Page() {
   const [thickness, setThickness] = useState(25);
   const [capsuleCount, setCapsuleCount] = useState(120);
   const [flowRate, setFlowRate] = useState(0.06);
-  const [selectedPCM, setSelectedPCM] = useState("RT54HC");
+  const [selectedPCM, setSelectedPCM] = useState("RT44HC");
 
-  // Approximate physics calculation for the interactive estimator (properties from authoritative pcm database)
-  const pcmLatentHeat = selectedPCM === "RT54HC" ? 200 : selectedPCM === "savE OM50" ? 189 : 160;
+  // Approximate physics calculation for the interactive estimator
+  const pcmLatentHeat = selectedPCM === "RT44HC" ? 250 : selectedPCM === "savE OM50" ? 210 : 230;
   const capsuleVolLiters = (Math.PI * Math.pow(thickness / 1000, 2) * 0.4) * 1000;
   const totalPcmMassKg = (capsuleCount * capsuleVolLiters * 0.88).toFixed(1);
   const estimatedStorageCapacityMJ = ((totalPcmMassKg * pcmLatentHeat) / 1000).toFixed(2);
@@ -216,7 +208,7 @@ function Objective2Page() {
 
         <div className="findings-list">
           <div className="finding-item">
-            <span className="finding-icon">1️⃣</span>
+            <span className="finding-icon">1.</span>
             <div className="finding-text">
               <strong>Thermal Resistance & Conduction Limitations:</strong> How do PCM capsule conduction thickness (t_pcm),
               capsule geometry (spherical nodules vs. cylindrical macro-tubes), and packing density influence melt completion
@@ -225,7 +217,7 @@ function Objective2Page() {
           </div>
 
           <div className="finding-item">
-            <span className="finding-icon">2️⃣</span>
+            <span className="finding-icon">2.</span>
             <div className="finding-text">
               <strong>Multi-Objective Trade-Offs:</strong> Which geometric design maximizes useful annual solar fraction (SF)
               and delivery-temperature availability (≥45°C) while strictly bounding unmet demand, parasitic pumping energy,
@@ -234,7 +226,7 @@ function Objective2Page() {
           </div>
 
           <div className="finding-item">
-            <span className="finding-icon">3️⃣</span>
+            <span className="finding-icon">3.</span>
             <div className="finding-text">
               <strong>Regime-Specific Geometry Invariance:</strong> Does an optimal capsule geometry derived for arid Rajasthan
               remain optimal under humid monsoonal Assam or sub-zero Himalayan Uttarakhand?
@@ -242,7 +234,7 @@ function Objective2Page() {
           </div>
 
           <div className="finding-item">
-            <span className="finding-icon">4️⃣</span>
+            <span className="finding-icon">4.</span>
             <div className="finding-text">
               <strong>AI Surrogate Acceleration:</strong> Can deep learning and Gaussian Process surrogates reproduce the 8,760-hour
               grey-box simulator with &lt;6% relative error near the feasibility boundary, reducing optimization time from days to seconds?
@@ -265,7 +257,6 @@ function Objective2Page() {
         <div className="methods-grid">
           {O2_WORKFLOW_STEPS.map((s) => (
             <div key={s.step} className="method-card">
-              <span className="method-card-icon">{s.icon}</span>
               <div className="method-card-tag">{s.tag}</div>
               <h3>{s.step}. {s.title}</h3>
               <p>{s.desc}</p>
@@ -298,9 +289,9 @@ function Objective2Page() {
                 value={selectedPCM}
                 onChange={(e) => setSelectedPCM(e.target.value)}
               >
-                <option value="RT54HC">RT54HC (Assam MCDM Rank 1) — 200 kJ/kg</option>
-                <option value="savE OM50">savE® OM50 (Assam / Rajasthan) — 189 kJ/kg</option>
-                <option value="RT60">RT60 (Uttarakhand C0/C4) — 160 kJ/kg</option>
+                <option value="RT44HC">RT44HC (Assam / TN C1) — 250 kJ/kg</option>
+                <option value="savE OM50">savE® OM50 (Rajasthan C1/C2) — 210 kJ/kg</option>
+                <option value="RT60">RT60 (Uttarakhand C0/C4) — 230 kJ/kg</option>
               </select>
             </div>
 
@@ -383,7 +374,7 @@ function Objective2Page() {
             </div>
 
             <div className="estimator-status-note">
-               <strong>Physics Feasibility Check:</strong> Configuration satisfies the household draw constraint (evaluated under 100 L/day discrete draws for Assam and 300 L/day multi-state baseline)
+               <strong>Physics Feasibility Check:</strong> Configuration satisfies the 300 L/day household draw constraint
               and operates within allowable hydraulic pressure loss (&lt; 8.5 kPa).
             </div>
           </div>
@@ -482,7 +473,6 @@ function Objective2Page() {
         <div className="section-divider" />
 
         <div className="finding-item">
-          <span className="finding-icon"></span>
           <div className="finding-text">
             <strong>State Space Vector (s_t):</strong>{" "}
             <code>s_t = [T_w(t), T_p(t), f(t), GHI(t), T_amb(t), v_wind(t), hour_sin, hour_cos, demand(t)]</code>.
@@ -491,7 +481,6 @@ function Objective2Page() {
         </div>
 
         <div className="finding-item" style={{ marginTop: 12 }}>
-          <span className="finding-icon">️</span>
           <div className="finding-text">
             <strong>Action Space & Valve Actuation:</strong> Discrete 3-action or continuous valve opening α ∈ [0, 1] controlling:
             <ul style={{ marginTop: 6, paddingLeft: 20 }}>
@@ -503,7 +492,6 @@ function Objective2Page() {
         </div>
 
         <div className="finding-item" style={{ marginTop: 12 }}>
-          <span className="finding-icon">️</span>
           <div className="finding-text">
             <strong>Safety Shield & Constraints:</strong> Objective 2 establishes physical hard constraints preventing thermal shock
             and boiling. If T_collector &gt; 95°C, safety bypass automatically activates; if T_w &lt; 40°C during draw, electrical backup

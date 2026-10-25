@@ -1,67 +1,15 @@
 import { useState, useEffect, useMemo } from "react";
+import { PAGES, getPage } from "../data/navigation";
 
 /* ─────────────────────────────────────────────────────────
    Sidebar.js — Multi-Page & Context-Aware Navigation
    ───────────────────────────────────────────────────────── */
 
-const PAGES = [
-  {
-    id: "overview",
-    label: "Project Overview",
-    icon: "",
-    badge: "Review 2",
-    badgeType: "brand",
-  },
-  {
-    id: "objective1",
-    label: "Objective 1: Selection",
-    icon: "",
-    badge: "100%",
-    badgeType: "complete",
-  },
-  {
-    id: "objective2",
-    label: "Objective 2: Design & AI",
-    icon: "",
-    badge: "~92%",
-    badgeType: "progress",
-  },
-];
-
-const SECTIONS_BY_PAGE = {
-  overview: [
-    { id: "motivation", label: "Motivation & Industry Benchmark" },
-    { id: "architecture", label: "System Architecture" },
-    { id: "objectives", label: "4-Objective Progress" },
-    { id: "territories", label: "4-State Climate Scope" },
-    { id: "sdgs", label: "UN SDG Alignment" },
-  ],
-  objective1: [
-    { id: "top", label: "Objective 1 Pipeline" },
-    { id: "state-selector", label: "State Territory Selection" },
-    { id: "implementation-flow", label: "7-Phase Implementation" },
-    { id: "preprocessing", label: "Preprocessing & QC Audit" },
-    { id: "interactive-plots", label: "Interactive Plots Suite" },
-    { id: "clustering", label: "Cross-State Findings" },
-    { id: "methods", label: "Theoretical Algorithms" },
-    { id: "results", label: "Recommended PCMs" },
-  ],
-  objective2: [
-    { id: "top", label: "Objective 2 Scope" },
-    { id: "research-questions", label: "Engineering Questions" },
-    { id: "workflow", label: "Optimization Workflow" },
-    { id: "interactive-explorer", label: "Design Space Estimator" },
-    { id: "parameters", label: "System Bounds & Limits" },
-    { id: "deliverables", label: "Deliverables (D2.1–D2.9)" },
-    { id: "objective3-handoff", label: "Objective 3 Hand-Off" },
-  ],
-};
-
 function Sidebar({ currentPage, onNavigate }) {
   const [activeSection, setActiveSection] = useState("");
 
   const currentSections = useMemo(
-    () => SECTIONS_BY_PAGE[currentPage] || [],
+    () => (getPage(currentPage) || { sections: [] }).sections,
     [currentPage]
   );
 
@@ -103,8 +51,9 @@ function Sidebar({ currentPage, onNavigate }) {
 
         {/* Grouped Page + Section Navigation */}
         <nav className="navigation" style={{ flex: 1 }}>
-          {Object.entries(SECTIONS_BY_PAGE).map(([pageId, sections]) => {
-            const page = PAGES.find((p) => p.id === pageId);
+          {PAGES.map((page) => {
+            const pageId = page.id;
+            const sections = page.sections;
             const isActivePage = currentPage === pageId;
             return (
               <div key={pageId} className="nav-page-group">
@@ -117,23 +66,19 @@ function Sidebar({ currentPage, onNavigate }) {
                 </button>
 
                 {/* Sub-topics — only visible for the active page */}
-                {isActivePage && (
+                {isActivePage && sections.length > 0 && (
                   <div className="nav-page-sections">
                     {sections.map((item) => (
                       <a
                         key={item.id}
                         className={`nav-link ${activeSection === item.id ? "active" : ""}`}
-                        href={`#${item.id}`}
+                        href={`#/${pageId}/${item.id}`}
                         onClick={(e) => {
                           e.preventDefault();
-                          const target = document.getElementById(item.id);
-                          if (target) {
-                            target.scrollIntoView({ behavior: "smooth", block: "start" });
-                            setActiveSection(item.id);
-                          }
+                          setActiveSection(item.id);
+                          onNavigate(pageId, item.id);
                         }}
                       >
-                        <span className="nav-link-dot" />
                         <span>{item.label}</span>
                       </a>
                     ))}

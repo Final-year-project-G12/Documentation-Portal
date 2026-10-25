@@ -6,12 +6,6 @@ import Sidebar from "./Sidebar";
    ───────────────────────────────────────────────────────── */
 
 function PortalLayout({ currentPage, onNavigate, children }) {
-  const pageTitles = {
-    overview: "Project Overview & Review 2 Hub",
-    objective1: "Objective 1: Climate-Region-Aware PCM Recommendation",
-    objective2: "Objective 2: AI-Driven Storage Design Optimization",
-  };
-
   return (
     <div className="portal-shell">
       <Sidebar currentPage={currentPage} onNavigate={onNavigate} />
