@@ -1,161 +1,215 @@
 import { useState } from "react";
+import Bullets from "../components/Bullets";
+import { Rich } from "../components/Cite";
+import { Terms } from "../components/Terms";
+import { resetTerms } from "../data/terms";
 
 /* ─────────────────────────────────────────────────────────
    Objective2Page.js — AI-Driven Storage Design Optimization
    Final Year Project — Group 12 | Department of CSE
    Amrita School of Engineering
+
+   Content follows OBJECTIVE2/Objective---2: docs/00–11, METHODS.md,
+   configs/system_config_shared.yaml, configs/design_bounds_shared.yaml and
+   the Objective 3 environment contract. Where the docs do not give a
+   source, the text says so with [citation needed].
    ───────────────────────────────────────────────────────── */
 
 const O2_DELIVERABLES = [
   {
-    id: "D2.1",
-    name: "Frozen Input Package",
-    contents: "Objective 1 regime records, medoid hourly weather, PCM database, canonical 300 L/day demand profile, manifest.json.",
-    criterion: "Versioned machine-readable JSON/CSV files pass SHA-256 schema checks.",
-    status: "Completed (Frozen)",
-    tag: "Data Ingestion",
+    id: "Phase 1",
+    name: "Frozen configuration",
+    contents: "system_config_shared.yaml and design_bounds_shared.yaml, identical for all four states.",
+    criterion: "Hardware and bounds are not tuned per state, so climate is the only varying factor.",
+    status: "Frozen (config_v1.0_2026-09-05)",
+    done: true,
+    tag: "Configuration",
   },
   {
-    id: "D2.2",
-    name: "Geometry & Constraint Engine",
-    contents: "Capsule generator (spheres, cylinders, slabs), packing density, surface-area-to-volume ratio, hydraulic pressure drop estimator.",
-    criterion: "Every generated geometric design receives a binary valid/invalid status with explicit rejection reason.",
-    status: "Completed",
-    tag: "CAD & Physics",
+    id: "Phase 2",
+    name: "Geometry & constraint engine",
+    contents: "Design vector [capsule_diameter_m, n_capsule, flow_rate_kg_s]; volume, area, spacing and pressure-drop checks.",
+    criterion: "Every design gets a valid/invalid flag with one reason code; 8 boundary cases are deterministic in all four states.",
+    status: "Verified (all four states)",
+    done: true,
+    tag: "Geometry",
   },
   {
-    id: "D2.3",
-    name: "Verified Grey-Box Simulator",
-    contents: "2-node lumped enthalpy balance solver (water Tw, PCM Tp, phase fraction f), collector ODE, stratification, and demand submodels.",
-    criterion: "100% energy conservation balance, Stefan limiting-case check, and baseline calibration pass.",
-    status: "Verified",
-    tag: "Thermal Solver",
+    id: "Phase 3",
+    name: "Grey-box enthalpy simulator",
+    contents: "Enthalpy-method PCM model, flat-plate collector, packed-bed heat transfer and a 5-minute time step.",
+    criterion: "Released as sim_v1_<state> once residual is under 0.5% and at least 3 of 5 gates are clean.",
+    status: "Released (all four states)",
+    done: true,
+    tag: "Thermal solver",
   },
   {
-    id: "D2.4",
-    name: "LHS Design of Experiments (DOE)",
-    contents: "Latin Hypercube Sampling over design vector x = [t_pcm, g, d, a, N_capsule, N_layer, s, m_dot], runtime telemetry, and seed tracking.",
-    criterion: "Case-level train/validation/test partitions exist without data leakage across climate regimes.",
-    status: "Generated (1,200 runs)",
-    tag: "Simulation Bank",
+    id: "Phase 4",
+    name: "Simulator verification gates",
+    contents: "5 gates: energy conservation, limiting cases, baseline comparison, published benchmark, sensitivity.",
+    criterion: "Go/No-Go: GO in all four states; 5/5 clean only in Rajasthan, 4/5 elsewhere.",
+    status: "GO (all four states)",
+    done: true,
+    tag: "Verification",
   },
   {
-    id: "D2.5",
-    name: "Validated AI Surrogate Model",
-    contents: "Binary feasibility classifier + multi-output MLP/XGBoost regressors predicting annual solar fraction, charging time, and pressure drop.",
-    criterion: "Hold-out test error R² ≥ 0.94 globally and < 6% relative error near the feasibility boundary.",
-    status: "Trained & Validated",
-    tag: "Deep Learning",
+    id: "Phase 5",
+    name: "Latin Hypercube DOE",
+    contents: "165 (Rajasthan, Assam) or 215 (Tamil Nadu, Uttarakhand) cases per state; 111 or 145 are valid.",
+    criterion: "About 32.6–32.7% of cases are rejected by the geometry bounds; they are kept for the feasibility classifier.",
+    status: "Generated (all four states)",
+    done: true,
+    tag: "Simulation bank",
   },
   {
-    id: "D2.6",
-    name: "Optimized Design Catalogue",
-    contents: "One Pareto-optimal set (NSGA-II) and one selected deployable design per regime-PCM pair.",
-    criterion: "Every Pareto-optimal surrogate recommendation is re-evaluated by the ground-truth numerical simulator.",
-    status: "Synthesized",
+    id: "Phase 6",
+    name: "ExtraTrees surrogate",
+    contents: "One ExtraTreesRegressor per target plus a feasibility classifier, each compared with a linear baseline.",
+    criterion: "Useful-energy hold-out R² is 0.9977–0.99989 across states; the framework target was above 0.80.",
+    status: "Trained (all four states)",
+    done: true,
+    tag: "Machine learning",
+  },
+  {
+    id: "Phase 7",
+    name: "Random search and confirmation",
+    contents: "400 random candidates per regime-PCM pair (Assam: 1,000); the top 5 per pair are re-run in the real simulator.",
+    criterion: "Every proposed design is re-simulated; mean surrogate-vs-simulator error is 0.02–0.51%.",
+    status: "Done; Assam unvalidated",
+    done: false,
     tag: "Optimization",
   },
   {
-    id: "D2.7",
-    name: "Robustness & Uncertainty Report",
-    contents: "Monte Carlo perturbation over stochastic weather sequences, household demand surges (±25%), and PCM thermophysical property bounds.",
-    criterion: "Reliability probability of meeting ≥45°C delivery threshold reported under 1,000 perturbed draws.",
-    status: "Completed",
+    id: "Phase 8",
+    name: "Robustness, cards and hand-off",
+    contents: "120 Monte Carlo re-runs per design, recommendation cards and the Objective 3 contract file.",
+    criterion: "Robust means P(demand) of at least 75% and P(temp-safe) of at least 95%; no regime meets it.",
+    status: "Done for 3 of 4 states",
+    done: false,
     tag: "Uncertainty",
-  },
-  {
-    id: "D2.8",
-    name: "Recommendation Cards (Design)",
-    contents: "Regime, winning PCM, capsule shape, conduction distance, capsule count, flow rate, solar fraction, and pumping loss.",
-    criterion: "One deployable specification card per regime and shortlisted PCM across all 4 states.",
-    status: "Drafted",
-    tag: "Deliverable",
-  },
-  {
-    id: "D2.9",
-    name: "Objective 3 DRL Hand-off Package",
-    contents: "State vector s_t, continuous action space limits, transition function, reward inputs, and safety shield specifications.",
-    criterion: "Objective 3 RL agent can instantiate Gym/PettingZoo environment without reopening physical hardware decisions.",
-    status: "Finalized",
-    tag: "Control Interface",
   },
 ];
 
 const O2_WORKFLOW_STEPS = [
   {
     step: "01",
-    title: "Frozen Input Ingestion",
-    tag: "Level A Hand-Off",
-    desc: "Directly ingests Objective 1 outputs without modifying rankings: regime assignments, medoid hourly weather (GHI, Tamb, wind, RH), screened PCM database, and the canonical 300 L/day household draw schedule.",
+    title: "Frozen Configuration",
+    tag: "Phase 1",
+    points: [
+      "Fixes the hardware once, identical for all four states.",
+      "Collector: 1.5 m² flat-plate {{cite:Singh2025PCMSWH}}; tank: 50 L {{cite:Chen2025TaguchiGRAPCM}}.",
+      "Limits: 75 °C water, 65 °C PCM and a 45 °C delivery target.",
+      "Why: if hardware also varied by state, climate effects would be confounded with hardware effects.",
+    ],
   },
   {
     step: "02",
-    title: "Geometry & Envelope Engine",
-    tag: "Form Factor",
-    desc: "Parameterizes capsule designs: maximum conduction thickness t_pcm (10–45 mm), capsule geometries (spherical nodules, horizontal tubes, cylindrical rods), packing volume fraction (20–40%), and interstitial flow channels.",
+    title: "Geometry & Constraint Engine",
+    tag: "Phase 2",
+    points: [
+      "Takes a design vector of capsule diameter, capsule count and flow rate.",
+      "Capsules are spheres in a staggered layout; other shapes are future work.",
+      "Pressure drop comes from the Ergun packed-bed equation {{cite:Ergun1952PackedColumns}}.",
+      "Returns valid or invalid, with one reason code.",
+    ],
   },
   {
     step: "03",
-    title: "2-Node Grey-Box Enthalpy Solver",
-    tag: "Physics Ground Truth",
-    desc: "Solves transient energy balances across 8,760 hourly time-steps. Tracks water temperature Tw, PCM bulk temperature Tp, and phase melt fraction f using an effective heat capacity enthalpy formulation with phase transition bounds.",
+    title: "Grey-Box Enthalpy Simulator",
+    tag: "Phase 3",
+    points: [
+      "Simulates a full year with a 5-minute time step.",
+      "Parts: lumped enthalpy PCM model, flat-plate collector, packed-bed heat transfer.",
+      "Why not CFD or pure ML: CFD is too slow for thousands of runs, and there is no hardware data to train on.",
+      "Model sources: Hottel–Whillier–Bliss collector {{cite:HottelWhillier1958Collector,Bliss1959CollectorFactor}}; Wakao–Kaguei heat transfer {{cite:WakaoKaguei1982PackedBeds}}.",
+    ],
   },
   {
     step: "04",
-    title: "Latin Hypercube Sampling (DOE)",
-    tag: "Space Filling",
-    desc: "Generates space-filling design configurations across 8 continuous/discrete variables. Simulates 1,200 design candidates across contrasting regimes to build the empirical training distribution.",
+    title: "Verification Gates",
+    tag: "Phase 4",
+    points: [
+      "Runs a 5-gate battery before any design result is trusted.",
+      "All four states get GO; only Rajasthan is 5/5 clean.",
+      "Assam fails Gate 3: plain water beats the shortlisted PCM and a matched-Tm synthetic PCM.",
+      "Gate 4 compares solar fraction with a 54–84% benchmark band {{cite:Singh2025PCMSWH}}.",
+    ],
   },
   {
     step: "05",
-    title: "AI Surrogate Neural Architecture",
-    tag: "ML Acceleration",
-    desc: "Dual-stage surrogate: Stage 1 filters infeasible/freezing geometries via XGBoost classifier; Stage 2 predicts annual solar fraction, melting duration, and hydraulic loss via a 4-layer MLP / Gaussian Process Regressor.",
+    title: "Latin Hypercube Sampling (DOE)",
+    tag: "Phase 5",
+    points: [
+      "Samples diameter, flow rate and capsule count with Latin Hypercube Sampling {{cite:McKayBeckmanConover1979LHS}}.",
+      "Adds 6 boundary cases per regime-PCM pair and no-PCM baseline cases.",
+      "Totals: 215 / 165 / 165 / 215 cases for Tamil Nadu / Rajasthan / Assam / Uttarakhand.",
+      "Infeasible cases stay in the data so the classifier sees negative examples.",
+    ],
   },
   {
     step: "06",
-    title: "Multi-Objective Pareto Optimization",
-    tag: "NSGA-II / MOPSO",
-    desc: "Runs multi-objective genetic algorithms to resolve trade-offs: maximizing annual solar fraction (SF) and delivery reliability while simultaneously minimizing PCM capital mass, capsule count, and pumping parasitic power.",
+    title: "ExtraTrees Surrogate",
+    tag: "Phase 6",
+    points: [
+      "Trains one 300-tree ExtraTrees model per target, plus a feasibility classifier {{cite:Geurts2006ExtraTrees}}.",
+      "Each model is compared with a linear-regression baseline on the same split.",
+      "Useful-energy hold-out R² is 0.9977–0.99989, on only 18–30 valid hold-out rows per state.",
+      "Caveat: linear regression ties or beats the trees on several targets, so the design region is close to linear.",
+      "The surrogate only ranks proposals; the real simulator makes the final call.",
+    ],
   },
   {
     step: "07",
-    title: "Ground-Truth Physics Verification",
-    tag: "Zero Hallucination",
-    desc: "Every Pareto-optimal candidate selected by the AI surrogate is fed back into the full 8,760-hour numerical simulator. A surrogate prediction is never adopted without 100% numerical verification.",
+    title: "Random Search, Then Confirm",
+    tag: "Phase 7",
+    points: [
+      "Scores 400 random designs per regime-PCM pair with the surrogate (Assam: 1,000).",
+      "Re-runs the top 5 per pair in the real simulator.",
+      "Selection: drop unsafe designs, keep those within 5% of the best useful energy, then minimise pump energy, PCM mass and capsule count.",
+      "Not NSGA-II: a full genetic search needs far more simulator calls than the 40-hour-per-state budget allows.",
+      "Caveat: the reduced search was not checked against NSGA-II or active learning.",
+    ],
   },
   {
     step: "08",
-    title: "Objective 3 DRL Interface Freeze",
-    tag: "Control Interface",
-    desc: "Freezes the physical state space st = [Tw, Tp, f, GHI, Tamb, wind, time], 3-way valve actuation constraints (Charge/Discharge/Bypass), and safety shield bounds for real-time reinforcement learning control.",
+    title: "Robustness & Objective 3 Hand-off",
+    tag: "Phase 8",
+    points: [
+      "Re-simulates each chosen design 120 times in the real simulator, not the surrogate.",
+      "Each run perturbs latent heat, weather, demand and mains temperature {{cite:Chopra2023MonteCarloETC}}.",
+      "Writes recommendation cards and an Objective 3 contract file for Tamil Nadu, Rajasthan and Uttarakhand.",
+      "Assam has no Phase 8 and no contract file yet.",
+    ],
   },
 ];
 
 const PARAMETER_BOUNDS = [
-  { param: "Conduction Thickness (t_pcm)", symbol: "t_pcm", bounds: "10 – 45 mm", unit: "mm", rationale: "Prevents internal thermal resistance bottlenecks in organic paraffin PCMs." },
-  { param: "Capsule Shape Options", symbol: "g", bounds: "Spherical / Cylindrical / Slabs", unit: "Category", rationale: "Balances surface-to-volume ratio with manufacturing and packing simplicity." },
-  { param: "Capsule Count", symbol: "N_capsule", bounds: "40 – 240 units", unit: "Count", rationale: "Determined by tank internal volume and target PCM mass fraction." },
-  { param: "Water Mass Flow Rate", symbol: "m_dot", bounds: "0.02 – 0.15 kg/s", unit: "kg/s", rationale: "Regulates convective heat transfer coefficient h_c and pumping pressure drop." },
-  { param: "PCM Volume Fraction", symbol: "V_pcm / V_tank", bounds: "20% – 40%", unit: "%", rationale: "Ensures sufficient sensible water buffer remains for high-draw morning peaks." },
-  { param: "Target Delivery Temp", symbol: "T_delivery", bounds: "≥ 45.0 °C", unit: "°C", rationale: "Standard domestic hot water threshold preventing bacterial legionella growth." },
-  { param: "Maximum Pressure Drop", symbol: "ΔP_max", bounds: "≤ 8.5 kPa", unit: "kPa", rationale: "Limits parasitic pump electricity consumption within gravity/low-power solar loops." },
+  { param: "Capsule diameter", symbol: "capsule_diameter_m", bounds: "20 – 80 mm", unit: "mm", rationale: "Sampled directly; PCM thickness is derived from it." },
+  { param: "PCM conduction thickness", symbol: "pcm_thickness_m", bounds: "20 – 100 mm", unit: "mm", rationale: "Derived as diameter / 2. A diameter under 40 mm breaks the 20 mm floor, which rejects about a third of the diameter range." },
+  { param: "Capsule count", symbol: "capsule_count", bounds: "8 – 24 units", unit: "Count", rationale: "Frozen bound; the config records no further reason. {{cn}}" },
+  { param: "Capsule shape and layout", symbol: "capsule_shape", bounds: "Sphere, staggered only", unit: "Category", rationale: "Cut to fit the 40-hour-per-state budget; other shapes are future work." },
+  { param: "PCM Volume Fraction", symbol: "pcm_volume_fraction", bounds: "10% – 20%", unit: "%", rationale: "DOE levels 10 / 15 / 20%, following the PCM-volume sweep in {{cite:Chen2025TaguchiGRAPCM}}." },
+  { param: "Water mass flow rate", symbol: "flow_rate_kg_s", bounds: "0.010 – 0.050 kg/s", unit: "kg/s", rationale: "Pump flow range of the frozen config." },
+  { param: "Target delivery temperature", symbol: "delivery.target_temp_C", bounds: "≥ 45.0 °C", unit: "°C", rationale: "Usable hot water. Objective 1 uses a 60 °C delivery basis, so the two differ." },
+  { param: "Maximum water temperature", symbol: "max_water_temp_C", bounds: "≤ 75 °C", unit: "°C", rationale: "Scald prevention." },
+  { param: "Maximum PCM temperature", symbol: "max_pcm_temp_C", bounds: "≤ 65 °C", unit: "°C", rationale: "Material-stability limit, from manufacturer datasheets {{cite:RubithermPCM,PlussPCM}}." },
+  { param: "Maximum pressure", symbol: "max_pressure_bar", bounds: "≤ 3.5 bar", unit: "bar", rationale: "Frozen limit, checked in the geometry gate." },
 ];
 
-function Objective2Page() {
-  // Interactive mini design estimator state
-  const [thickness, setThickness] = useState(25);
-  const [capsuleCount, setCapsuleCount] = useState(120);
-  const [flowRate, setFlowRate] = useState(0.06);
-  const [selectedPCM, setSelectedPCM] = useState("RT44HC");
+const TANK_L = 50;
 
-  // Approximate physics calculation for the interactive estimator
-  const pcmLatentHeat = selectedPCM === "RT44HC" ? 250 : selectedPCM === "savE OM50" ? 210 : 230;
-  const capsuleVolLiters = (Math.PI * Math.pow(thickness / 1000, 2) * 0.4) * 1000;
-  const totalPcmMassKg = (capsuleCount * capsuleVolLiters * 0.88).toFixed(1);
-  const estimatedStorageCapacityMJ = ((totalPcmMassKg * pcmLatentHeat) / 1000).toFixed(2);
-  const estSolarFraction = Math.min(84, Math.max(54, (58 + (pcmLatentHeat / 250) * 12 + (flowRate / 0.15) * 8 - (thickness - 20) * 0.35))).toFixed(1);
-  const estChargingHours = Math.max(2.2, (4.8 * (thickness / 25) * (0.06 / flowRate)).toFixed(1));
+function Objective2Page() {
+  resetTerms();
+  // Geometry checker state: two of the three design variables, checked against the frozen bounds
+  const [diameterMm, setDiameterMm] = useState(40);
+  const [capsuleCount, setCapsuleCount] = useState(16);
+
+  const thicknessMm = diameterMm / 2;
+  const capsuleLiters = (Math.PI / 6) * Math.pow(diameterMm / 1000, 3) * 1000;
+  const totalLiters = capsuleCount * capsuleLiters;
+  const volumeShare = (totalLiters / TANK_L) * 100;
+  const thicknessOk = thicknessMm >= 20 && thicknessMm <= 100;
+  const shareOk = volumeShare >= 10 && volumeShare <= 20;
 
   return (
     <section className="content" id="top">
@@ -168,30 +222,46 @@ function Objective2Page() {
 
         <h1>AI-Driven PCM Storage Design Optimization</h1>
 
-        <p className="intro">
-          Objective 1 answers <strong>which PCM is optimal for each discovered climate regime</strong>. Objective 2 answers{" "}
-          <strong>what physical capsule geometry, volume allocation, and operating flow rate make that PCM most effective</strong>.
-          By coupling Latin Hypercube Sampling with a 2-node lumped-enthalpy thermal solver and an AI surrogate neural network,
-          this layer synthesizes Pareto-optimal thermal storage configurations for domestic solar water heating.
-        </p>
 
         <div className="results-grid" style={{ marginBottom: 40 }}>
           <div className="result-stat-card">
-            <div className="result-stat-value">12 Phases</div>
+            <div className="result-stat-value">8 Phases</div>
             <div className="result-stat-label">End-to-End Computational Workflow</div>
           </div>
           <div className="result-stat-card">
-            <div className="result-stat-value">1,200 Runs</div>
-            <div className="result-stat-label">Latin Hypercube Sampling DOE Cases</div>
+            <div className="result-stat-value">165–215</div>
+            <div className="result-stat-label">LHS DOE Cases per State (111–145 valid)</div>
           </div>
           <div className="result-stat-card">
-            <div className="result-stat-value">R² ≥ 0.94</div>
-            <div className="result-stat-label">AI Surrogate Model Accuracy on Hold-out Test</div>
+            <div className="result-stat-value">R² 0.9977–0.9999</div>
+            <div className="result-stat-label">ExtraTrees Hold-out R², Useful Energy, per State</div>
           </div>
           <div className="result-stat-card">
-            <div className="result-stat-value">D2.1–D2.9</div>
-            <div className="result-stat-label">Rigorous Deliverables Traceability</div>
+            <div className="result-stat-value">3 of 4</div>
+            <div className="result-stat-label">States with a Completed Phase 8 and Objective 3 Contract</div>
           </div>
+        </div>
+      </div>
+
+      {/* ── 8-Step Implementation Workflow ── */}
+      <div className="content-section" id="workflow">
+        <div className="plots-section-header">
+          <h2>Computational Optimization Pipeline</h2>
+          <span className="plots-count-badge">8 Phases</span>
+        </div>
+        <p className="section-desc">
+          The eight phases, from the frozen configuration to the Objective 3 hand-off.
+        </p>
+        <div className="section-divider" />
+
+        <div className="methods-grid">
+          {O2_WORKFLOW_STEPS.map((s) => (
+            <div key={s.step} className="method-card">
+              <div className="method-card-tag">{s.tag}</div>
+              <h3>{s.step}. {s.title}</h3>
+              <Bullets items={s.points} />
+            </div>
+          ))}
         </div>
       </div>
 
@@ -202,180 +272,108 @@ function Objective2Page() {
           <span className="plots-count-badge">Problem Formulation</span>
         </div>
         <p className="section-desc">
-          Key physical and computational questions addressed by the Objective 2 methodology.
+          Questions the Phase 1–8 pipeline was built to answer.
         </p>
         <div className="section-divider" />
 
-        <div className="findings-list">
-          <div className="finding-item">
-            <span className="finding-icon">1.</span>
-            <div className="finding-text">
-              <strong>Thermal Resistance & Conduction Limitations:</strong> How do PCM capsule conduction thickness (t_pcm),
-              capsule geometry (spherical nodules vs. cylindrical macro-tubes), and packing density influence melt completion
-              time under low-irradiance monsoonal days?
-            </div>
-          </div>
-
-          <div className="finding-item">
-            <span className="finding-icon">2.</span>
-            <div className="finding-text">
-              <strong>Multi-Objective Trade-Offs:</strong> Which geometric design maximizes useful annual solar fraction (SF)
-              and delivery-temperature availability (≥45°C) while strictly bounding unmet demand, parasitic pumping energy,
-              and material volume?
-            </div>
-          </div>
-
-          <div className="finding-item">
-            <span className="finding-icon">3.</span>
-            <div className="finding-text">
-              <strong>Regime-Specific Geometry Invariance:</strong> Does an optimal capsule geometry derived for arid Rajasthan
-              remain optimal under humid monsoonal Assam or sub-zero Himalayan Uttarakhand?
-            </div>
-          </div>
-
-          <div className="finding-item">
-            <span className="finding-icon">4.</span>
-            <div className="finding-text">
-              <strong>AI Surrogate Acceleration:</strong> Can deep learning and Gaussian Process surrogates reproduce the 8,760-hour
-              grey-box simulator with &lt;6% relative error near the feasibility boundary, reducing optimization time from days to seconds?
-            </div>
-          </div>
-        </div>
+        <Bullets
+          items={[
+            "<strong>Geometry:</strong> how do capsule diameter, capsule count and flow rate change useful energy, PCM temperature and pump energy?",
+            "<strong>PCM or plain tank:</strong> does the Objective 1 PCM beat a plain tank under the 75 °C and 65 °C safety limits?",
+            "Finding so far: a plain tank is selected in most regimes.",
+            "<strong>Climate dependence:</strong> does the best design change with the climate regime when the hardware is frozen?",
+            "<strong>Surrogate accuracy:</strong> can an ExtraTrees surrogate stand in for the year-long simulator?",
+            "Finding so far: mean surrogate-vs-simulator error on confirmed designs is 0.02–0.51%.",
+            "<strong>Robustness:</strong> do the chosen designs hold up when weather, demand, latent heat and mains temperature vary?",
+            "Finding so far: no regime in any completed state meets the robustness rule.",
+          ]}
+        />
       </div>
 
-      {/* ── 8-Step Implementation Workflow ── */}
-      <div className="content-section" id="workflow">
-        <div className="plots-section-header">
-          <h2>Computational Optimization Pipeline</h2>
-          <span className="plots-count-badge">8 Core Milestones</span>
-        </div>
-        <p className="section-desc">
-          Structured computational flow connecting frozen Objective 1 inputs to verified Pareto designs.
-        </p>
-        <div className="section-divider" />
-
-        <div className="methods-grid">
-          {O2_WORKFLOW_STEPS.map((s) => (
-            <div key={s.step} className="method-card">
-              <div className="method-card-tag">{s.tag}</div>
-              <h3>{s.step}. {s.title}</h3>
-              <p>{s.desc}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* ── Interactive Design Space Explorer ── */}
+      {/* ── Geometry checker ── */}
       <div className="content-section" id="interactive-explorer">
         <div className="plots-section-header">
-          <h2>Interactive Storage Design Estimator</h2>
-          <span className="plots-count-badge">Physics Surrogate Demo</span>
+          <h2>Capsule Geometry Checker</h2>
+          <span className="plots-count-badge">Frozen Bounds</span>
         </div>
         <p className="section-desc">
-          Explore how capsule conduction thickness, capsule count, flow rate, and PCM selection impact estimated storage capacity,
-          annual solar fraction, and diurnal charging dynamics.
+          Move the sliders to test a capsule design against two of the frozen bounds.
         </p>
+        <Bullets
+          items={[
+            "This is plain geometry for spheres in the frozen 50 L tank, not a performance estimate.",
+            "It checks the thickness range (20–100 mm) and the PCM volume share (10–20%) only.",
+            "The real Phase 2 gate also checks spacing, free-flow area and pressure drop.",
+          ]}
+        />
         <div className="section-divider" />
 
         <div className="design-estimator-wrapper">
           <div className="estimator-controls">
             <div className="estimator-control-group">
               <label>
-                Selected PCM Candidate:
-                <span className="estimator-val">{selectedPCM}</span>
-              </label>
-              <select
-                className="estimator-select"
-                value={selectedPCM}
-                onChange={(e) => setSelectedPCM(e.target.value)}
-              >
-                <option value="RT44HC">RT44HC (Assam / TN C1) — 250 kJ/kg</option>
-                <option value="savE OM50">savE® OM50 (Rajasthan C1/C2) — 210 kJ/kg</option>
-                <option value="RT60">RT60 (Uttarakhand C0/C4) — 230 kJ/kg</option>
-              </select>
-            </div>
-
-            <div className="estimator-control-group">
-              <label>
-                Capsule Conduction Thickness (t_pcm):
-                <span className="estimator-val">{thickness} mm</span>
+                Capsule diameter:
+                <span className="estimator-val">{diameterMm} mm</span>
               </label>
               <input
                 type="range"
-                min="10"
-                max="45"
-                step="1"
-                value={thickness}
-                onChange={(e) => setThickness(Number(e.target.value))}
+                min="20"
+                max="80"
+                step="2"
+                value={diameterMm}
+                onChange={(e) => setDiameterMm(Number(e.target.value))}
               />
-              <span className="range-hint">Thinner = faster charging; Thicker = higher PCM packing efficiency</span>
+              <span className="range-hint">Frozen range 20–80 mm; thickness is half the diameter</span>
             </div>
 
             <div className="estimator-control-group">
               <label>
-                Capsule Count (N_capsule):
+                Capsule count:
                 <span className="estimator-val">{capsuleCount} capsules</span>
               </label>
               <input
                 type="range"
-                min="40"
-                max="240"
-                step="10"
+                min="8"
+                max="24"
+                step="1"
                 value={capsuleCount}
                 onChange={(e) => setCapsuleCount(Number(e.target.value))}
               />
-              <span className="range-hint">Regulates total latent energy capacity in 250L water tank</span>
-            </div>
-
-            <div className="estimator-control-group">
-              <label>
-                Water Mass Flow Rate (m_dot):
-                <span className="estimator-val">{flowRate} kg/s</span>
-              </label>
-              <input
-                type="range"
-                min="0.02"
-                max="0.15"
-                step="0.01"
-                value={flowRate}
-                onChange={(e) => setFlowRate(Number(e.target.value))}
-              />
-              <span className="range-hint">Higher flow = better heat transfer, higher parasitic pressure drop</span>
+              <span className="range-hint">Frozen range 8–24 capsules</span>
             </div>
           </div>
 
           <div className="estimator-display">
-            <div className="estimator-display-title">Surrogate Output Estimations</div>
+            <div className="estimator-display-title">Geometry Results</div>
 
             <div className="estimator-metrics-grid">
               <div className="estimator-metric-box">
-                <span className="metric-box-label">Estimated PCM Mass</span>
-                <span className="metric-box-val">{totalPcmMassKg} kg</span>
-                <span className="metric-box-sub">~{(totalPcmMassKg / 2.5).toFixed(0)}% Tank Volume</span>
+                <span className="metric-box-label">Conduction Thickness</span>
+                <span className="metric-box-val">{thicknessMm.toFixed(0)} mm</span>
+                <span className="metric-box-sub">{thicknessOk ? "Within 20–100 mm" : "Outside 20–100 mm"}</span>
               </div>
 
               <div className="estimator-metric-box">
-                <span className="metric-box-label">Latent Storage Energy</span>
-                <span className="metric-box-val">{estimatedStorageCapacityMJ} MJ</span>
-                <span className="metric-box-sub">{(estimatedStorageCapacityMJ / 3.6).toFixed(2)} kWh equivalent</span>
+                <span className="metric-box-label">Volume per Capsule</span>
+                <span className="metric-box-val">{capsuleLiters.toFixed(3)} L</span>
+                <span className="metric-box-sub">Sphere, π/6 × D³</span>
               </div>
 
               <div className="estimator-metric-box">
-                <span className="metric-box-label">Predicted Solar Fraction</span>
-                <span className="metric-box-val" style={{ color: "#4ade80" }}>{estSolarFraction}%</span>
-                <span className="metric-box-sub">Target Band: 54–84%</span>
+                <span className="metric-box-label">Total PCM Volume</span>
+                <span className="metric-box-val">{totalLiters.toFixed(2)} L</span>
+                <span className="metric-box-sub">{capsuleCount} capsules</span>
               </div>
 
               <div className="estimator-metric-box">
-                <span className="metric-box-label">Nominal Charging Time</span>
-                <span className="metric-box-val" style={{ color: "#fbbf24" }}>{estChargingHours} hrs</span>
-                <span className="metric-box-sub">Full melt duration at noon GHI</span>
+                <span className="metric-box-label">Share of 50 L Tank</span>
+                <span className="metric-box-val">{volumeShare.toFixed(1)}%</span>
+                <span className="metric-box-sub">{shareOk ? "Within 10–20%" : "Outside 10–20%"}</span>
               </div>
             </div>
 
             <div className="estimator-status-note">
-               <strong>Physics Feasibility Check:</strong> Configuration satisfies the 300 L/day household draw constraint
-              and operates within allowable hydraulic pressure loss (&lt; 8.5 kPa).
+              <strong>Bounds check:</strong> {thicknessOk && shareOk ? "both bounds met." : "at least one bound is not met."}
             </div>
           </div>
         </div>
@@ -385,10 +383,10 @@ function Objective2Page() {
       <div className="content-section" id="parameters">
         <div className="plots-section-header">
           <h2>Design Vector & System Constraints</h2>
-          <span className="plots-count-badge">system_config.yaml</span>
+          <span className="plots-count-badge">design_bounds_shared.yaml</span>
         </div>
         <p className="section-desc">
-          Mathematical decision boundaries and search domains enforced across the Latin Hypercube Sampling DOE.
+          Search bounds and limits, frozen and identical for all four states.
         </p>
         <div className="section-divider" />
 
@@ -397,10 +395,10 @@ function Objective2Page() {
             <thead>
               <tr>
                 <th>Design Parameter</th>
-                <th>Symbol</th>
-                <th>Search Bounds</th>
+                <th>Config Key</th>
+                <th>Bounds</th>
                 <th>Unit</th>
-                <th>Engineering Rationale</th>
+                <th>Rationale</th>
               </tr>
             </thead>
             <tbody>
@@ -410,7 +408,7 @@ function Objective2Page() {
                   <td><code>{p.symbol}</code></td>
                   <td style={{ color: "#fbbf24", fontWeight: 600 }}>{p.bounds}</td>
                   <td>{p.unit}</td>
-                  <td style={{ fontSize: "0.82rem" }}>{p.rationale}</td>
+                  <td style={{ fontSize: "0.82rem" }}><Rich text={p.rationale} /></td>
                 </tr>
               ))}
             </tbody>
@@ -418,14 +416,14 @@ function Objective2Page() {
         </div>
       </div>
 
-      {/* ── Deliverables Matrix (D2.1 to D2.9) ── */}
+      {/* ── Phase deliverables ── */}
       <div className="content-section" id="deliverables">
         <div className="plots-section-header">
-          <h2>Objective 2 Deliverables & Verification Status</h2>
-          <span className="plots-count-badge">D2.1 – D2.9</span>
+          <h2>Objective 2 Phase Deliverables & Verification Status</h2>
+          <span className="plots-count-badge">Phases 1 – 8</span>
         </div>
         <p className="section-desc">
-          Formal engineering deliverables tracked for Project Review 2 and final hand-off.
+          What each phase produced, how it was checked, and where it stands.
         </p>
         <div className="section-divider" />
 
@@ -433,11 +431,11 @@ function Objective2Page() {
           <table className="data-table">
             <thead>
               <tr>
-                <th>ID</th>
-                <th>Deliverable Name</th>
                 <th>Phase</th>
-                <th>Minimum Technical Content</th>
-                <th>Verification Criterion</th>
+                <th>Deliverable Name</th>
+                <th>Area</th>
+                <th>Content</th>
+                <th>Verification</th>
                 <th>Status</th>
               </tr>
             </thead>
@@ -447,10 +445,10 @@ function Objective2Page() {
                   <td style={{ fontWeight: 700, color: "#ffffff" }}>{d.id}</td>
                   <td style={{ fontWeight: 600, color: "#f4f4f5" }}>{d.name}</td>
                   <td><span className="tag tag-zinc">{d.tag}</span></td>
-                  <td style={{ fontSize: "0.82rem" }}>{d.contents}</td>
-                  <td style={{ fontSize: "0.82rem" }}>{d.criterion}</td>
+                  <td style={{ fontSize: "0.82rem" }}><Terms text={d.contents} /></td>
+                  <td style={{ fontSize: "0.82rem" }}><Terms text={d.criterion} /></td>
                   <td>
-                    <span className={`tag ${d.status.includes("Completed") || d.status.includes("Verified") || d.status.includes("Finalized") ? "tag-brand" : "tag-amber"}`}>
+                    <span className={`tag ${d.done ? "tag-brand" : "tag-amber"}`}>
                       {d.status}
                     </span>
                   </td>
@@ -465,39 +463,36 @@ function Objective2Page() {
       <div className="content-section" id="objective3-handoff">
         <div className="plots-section-header">
           <h2>Downstream Objective 3 Interface Hand-off</h2>
-          <span className="plots-count-badge">DRL Control Gym</span>
+          <span className="plots-count-badge">Contract JSON</span>
         </div>
         <p className="section-desc">
-          Frozen environment specifications passed to Objective 3 (Deep Reinforcement Learning Controller).
+          Environment contract passed to Objective 3 (the DRL controller), one file per state.
         </p>
         <div className="section-divider" />
 
-        <div className="finding-item">
-          <div className="finding-text">
-            <strong>State Space Vector (s_t):</strong>{" "}
-            <code>s_t = [T_w(t), T_p(t), f(t), GHI(t), T_amb(t), v_wind(t), hour_sin, hour_cos, demand(t)]</code>.
-            All state observations normalized with empirical bounds derived from the 10-year ERA5 climate distributions.
-          </div>
-        </div>
-
-        <div className="finding-item" style={{ marginTop: 12 }}>
-          <div className="finding-text">
-            <strong>Action Space & Valve Actuation:</strong> Discrete 3-action or continuous valve opening α ∈ [0, 1] controlling:
-            <ul style={{ marginTop: 6, paddingLeft: 20 }}>
-              <li><strong>Action 0 (Bypass):</strong> Direct collector-to-load flow during peak daytime hot-water demand.</li>
-              <li><strong>Action 1 (Charge):</strong> Solar collector heat routed into PCM storage capsules to drive melting.</li>
-              <li><strong>Action 2 (Discharge):</strong> Water circulated through PCM latent heat bed during evening/night demand.</li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="finding-item" style={{ marginTop: 12 }}>
-          <div className="finding-text">
-            <strong>Safety Shield & Constraints:</strong> Objective 2 establishes physical hard constraints preventing thermal shock
-            and boiling. If T_collector &gt; 95°C, safety bypass automatically activates; if T_w &lt; 40°C during draw, electrical backup
-            activates with heavy reward penalty.
-          </div>
-        </div>
+        <Bullets
+          items={[
+            "<strong>Boundary:</strong> Objective 3 chooses the real-time action and nothing else.",
+            "It cannot change the PCM, capsule geometry, tank volume, safety limits or the physics model.",
+            {
+              text: "<strong>State:</strong> 15 fields per control step; some are measurable, others need an estimator.",
+              details: "Measurable: I_t, T_amb_t, T_water_t, T_in_t, T_out_t, D_t, t_day, d_season, mdot_t, dp_t, mode_t. Estimator needed: T_pcm_t, f_melt_t, H_pcm_t, E_unmet_t.",
+            },
+            {
+              text: "<strong>Action:</strong> a mode (charge, discharge or bypass), with an optional continuous flow rate.",
+              details: "Hybrid version (mode + flow_rate_kg_s within 0.010–0.050 kg/s) is recommended; control step is 300 s.",
+            },
+            "<strong>Safety shield:</strong> a rule-based wrapper with a 3 °C guard band below the hard limits.",
+            "Water at 72 °C or higher forces bypass; PCM at 62 °C or higher (PCM regimes) forces bypass or discharge.",
+            "It also acts on over-pressure, out-of-range flow, a dry-run pump and missing sensor readings.",
+            {
+              text: "<strong>Reward:</strong> delivered energy minus unmet energy, pump energy, safety penalty and bypass switching.",
+              details: "r_t = w1·(Q_delivered/ref) − w2·(E_unmet/ref) − w3·(E_pump/ref) − w4·Penalty_safety − w5·Penalty_bypass; defaults w1…w5 = 1.0 / 1.0 / 0.1 / 10.0 / 0.05.",
+            },
+            "Caveat: no backup heater is modelled in any state, so unmet energy is genuinely undelivered heat.",
+            "Caveat: only one medoid weather year exists per regime, so training, validation and test weather are not split yet.",
+          ]}
+        />
       </div>
     </section>
   );

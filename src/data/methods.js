@@ -1,46 +1,70 @@
-/* Algorithm cards shown on the Overview page (moved from the Objective 1 page). Tokens as in pipeline.js. */
+/* Algorithm cards on the Overview page, as short bullets. `points` use the
+   same tokens as pipeline.js ({{cite:Key}}, {{cn}}). */
 
 export const METHODS = [
   {
     tag: "Clustering",
     title: "Gaussian Mixture Models (BIC-Optimal)",
-    desc: "Probabilistic clustering accounting for climate feature covariances (temperature, DTR, GHI, humidity). Optimal regime count k determined via Bayesian Information Criterion (BIC) {{cite:Schwarz1978BIC}} and silhouette validation {{cite:Rousseeuw1987Silhouettes}}. Mixture-model clustering itself {{cn}}.",
-    why: "<strong>Why:</strong> Captures overlapping climate gradients. Rejected: K-Means (assumes spherical clusters) & Hierarchical (O(N²) scaling).",
+    points: [
+      "Groups points by probability, using how climate features vary together (temperature, DTR, GHI, humidity).",
+      "Picks the regime count k with BIC {{cite:Schwarz1978BIC}} and silhouette validation {{cite:Rousseeuw1987Silhouettes}}.",
+      "Mixture-model clustering fits by expectation-maximisation {{cite:Dempster1977EM}}.",
+      "Why: it captures overlapping climate gradients.",
+      "Rejected: K-Means (assumes spherical clusters) and hierarchical clustering (O(N²) scaling).",
+    ],
   },
   {
     tag: "MCDM 1",
     title: "TOPSIS (Ideal Solution Proximity)",
-    desc: "Ranks candidates by relative closeness to the positive ideal solution (max latent heat, thermal conductivity) and distance from negative ideal {{cite:HwangYoon1981MADM}}.",
-    why: "<strong>Why:</strong> Intuitive geometric distance metric. Sensitive to extreme property outliers.",
+    points: [
+      "Ranks candidates by closeness to the best possible option (max latent heat, thermal conductivity) and distance from the worst {{cite:HwangYoon1981MADM}}.",
+      "Why: a simple, intuitive geometric distance.",
+      "Caveat: sensitive to extreme property outliers.",
+    ],
   },
   {
     tag: "MCDM 2",
     title: "PROMETHEE II (Outranking Flow)",
-    desc: "Builds pairwise preference indices using Gaussian and V-shape criterion functions, calculating net outranking flows (Phi+ − Phi−) for a complete preorder {{cite:BransVincke1985PROMETHEE}}.",
-    why: "<strong>Why:</strong> Non-compensatory evaluation prevents high latent heat from masking poor cycling stability.",
+    points: [
+      "Compares candidates in pairs using Gaussian and V-shape criterion functions {{cite:BransVincke1985PROMETHEE}}.",
+      "Nets each candidate's outranking flows (Phi+ − Phi−) into a complete ranking.",
+      "Why: non-compensatory, so high latent heat cannot hide poor cycling stability.",
+    ],
   },
   {
     tag: "MCDM 3",
     title: "VIKOR (Compromise Ranking)",
-    desc: "Determines compromise ranking measure Q based on maximum group utility S and individual regret R with parameter v=0.5 {{cite:OpricovicTzeng2004VIKOR}}.",
-    why: "<strong>Why:</strong> Explicitly evaluates closeness to ideal while mitigating maximum individual property regret.",
+    points: [
+      "Computes a compromise score Q from group utility S and individual regret R, with parameter v=0.5 {{cite:OpricovicTzeng2004VIKOR}}.",
+      "Why: it scores closeness to the ideal while limiting the largest single-property regret.",
+    ],
   },
   {
     tag: "MCDM 4",
     title: "GRA (Grey Relational Analysis)",
-    desc: "Measures relational degree between candidate property sequences and reference ideal sequence via grey relational coefficients (xi=0.5) {{cite:Deng1982GreySystems}}.",
-    why: "<strong>Why:</strong> Operates effectively on small candidate sets without strict distributional assumptions.",
+    points: [
+      "Scores how closely each candidate's properties follow the ideal profile, using grey relational coefficients (xi=0.5) {{cite:Deng1982GreySystems}}.",
+      "Why: works on small candidate sets without strict distribution assumptions.",
+    ],
   },
   {
     tag: "Consensus",
     title: "Borda Count & Copeland Cross-Check",
-    desc: "Aggregates independent ranks from all 4 MCDM schools into a robust consensus rank, eliminating single-method biases. Borda and Copeland aggregation {{cn}}; Kendall’s W {{cn}}.",
-    why: "<strong>Why:</strong> Borda consensus smooths structural method outliers (such as GRA's linear normalization).",
+    points: [
+      "Adds up the ranks from all 4 MCDM methods into one consensus rank.",
+      "This removes the bias of any single method.",
+      "Borda aggregation {{cite:Dwork2001RankAggregation}}; Copeland aggregation {{cite:SaariMerlin1996Copeland}}; Kendall’s W {{cite:KendallBabingtonSmith1939}}.",
+      "Why: Borda smooths structural method outliers, such as GRA's linear normalization.",
+    ],
   },
   {
     tag: "Physics",
     title: "2-Node Lumped-Enthalpy Tank Model",
-    desc: "Dynamically simulates water tank (Tw) and PCM capsule (Tp/f) node interactions using Backward Euler implicit time-stepping driven by 10-year real weather. The 54–84% solar-fraction band comes from the PCM-SWH review {{cite:Singh2025PCMSWH}}.",
-    why: "<strong>Why:</strong> Provides ground-truth annual solar fraction benchmarks (54–84%) to validate whether MCDM rankings predict physical thermal delivery.",
+    points: [
+      "Simulates two nodes: the water tank (Tw) and the PCM capsule (Tp, phase fraction f).",
+      "Steps forward in time with backward Euler, driven by 10-year real weather.",
+      "The 54–84% solar-fraction band comes from the PCM-SWH review {{cite:Singh2025PCMSWH}}.",
+      "Why: it gives annual solar-fraction benchmarks to test whether MCDM rankings predict real thermal delivery.",
+    ],
   },
 ];

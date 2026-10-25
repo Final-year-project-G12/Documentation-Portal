@@ -2530,3 +2530,119 @@ h3 {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+
+.plot-grid-wide {
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 28px 24px;
+}
+
+.plot-grid-wide .plot-type {
+  margin-bottom: 0;
+}
+
+.plot-grid-wide .plot-type h3 {
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+}
+
+.plot-grid-wide .plot-type-caption {
+  margin: 8px 0 0;
+  font-size: 0.8rem;
+}
+
+/* ─── Glossary terms: dotted underline, definition box on hover ─── */
+.term {
+  text-decoration: underline dotted;
+  text-decoration-color: var(--neutral-500);
+  text-underline-offset: 3px;
+  cursor: help;
+}
+
+.term:hover,
+.term:focus {
+  text-decoration-color: #ffffff;
+  outline: none;
+}
+
+.term-popover {
+  position: fixed;
+  z-index: 1100;
+  padding: 10px 12px;
+  background: #18181b;
+  border: 1px solid var(--surface-border-strong);
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--neutral-200);
+  pointer-events: none;
+}
+
+.term-popover strong {
+  display: block;
+  margin-bottom: 2px;
+  color: #ffffff;
+}
+
+/* ─── Bullet lists (simple-prose pass) ─── */
+.bullets {
+  list-style: disc;
+  padding-left: 1.2em;
+  margin: 0 0 12px;
+  max-width: 860px;
+}
+
+.bullets li {
+  margin: 6px 0;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--neutral-300);
+}
+
+.bullets li::marker {
+  color: var(--neutral-500);
+}
+
+.bullets li strong {
+  color: #ffffff;
+}
+
+.bullet-details {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.78rem;
+  color: var(--neutral-500);
+}
+
+.intro-bullets li {
+  font-size: 1.02rem;
+  color: var(--neutral-300);
+}
+
+.method-card .bullets li,
+.territory-card .bullets li,
+.objective-card .bullets li {
+  font-size: 0.82rem;
+}
+
+.pipeline-stage .bullets {
+  margin-bottom: 8px;
+}
+
+.note-groups {
+  margin-top: 20px;
+}
+
+.note-group {
+  padding: 12px 0 4px;
+  border-top: 1px solid var(--surface-border);
+}
+
+.note-label {
+  margin: 0 0 4px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #ffffff;
+}

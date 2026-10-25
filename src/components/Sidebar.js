@@ -45,7 +45,7 @@ function Sidebar({ currentPage, onNavigate }) {
         >
           <div className="brand-mark">PCM</div>
           <div className="brand-text">
-            <span className="brand-title">Documentation Portal</span>
+            <span className="brand-title">G012 Final Year Project</span>
           </div>
         </button>
 

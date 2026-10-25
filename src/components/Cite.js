@@ -1,4 +1,6 @@
 import { REF_INDEX } from "../data/references";
+import { termsHtml } from "../data/terms";
+import { Terms } from "./Terms";
 
 /* Inline IEEE-style citation: <Cite k="Key" /> or <Cite k={["A", "B"]} />.
    Each number links to its entry on the References page. An unknown key
@@ -36,13 +38,14 @@ export function CitationNeeded() {
    tokens, so data tables written as plain strings can carry citations. */
 export function Rich({ text }) {
   const parts = String(text).split(/(\{\{cite:[^}]+\}\}|\{\{cn\}\})/g);
+  const used = new Set(); // each glossary term is marked once per block
   return (
     <>
       {parts.map((p, i) => {
         if (p === "{{cn}}") return <CitationNeeded key={i} />;
         const m = p.match(/^\{\{cite:([^}]+)\}\}$/);
         if (m) return <Cite key={i} k={m[1].split(",").map((s) => s.trim())} />;
-        return <span key={i}>{p}</span>;
+        return <Terms key={i} text={p} used={used} />;
       })}
     </>
   );
@@ -50,7 +53,7 @@ export function Rich({ text }) {
 
 /* Same tokens as <Rich>, but returns an HTML string for dangerouslySetInnerHTML. */
 export function richHtml(text) {
-  return String(text)
+  const replaced = String(text)
     .replace(/\{\{cn\}\}/g, '<span class="cite-needed">[citation needed]</span>')
     .replace(/\{\{cite:([^}]+)\}\}/g, (_, ks) =>
       ks
@@ -63,4 +66,5 @@ export function richHtml(text) {
         )
         .join(" ")
     );
+  return termsHtml(replaced);
 }

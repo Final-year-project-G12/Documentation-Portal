@@ -15,7 +15,6 @@ export const PAGES = [
     sections: [
       { id: "motivation", label: "Motivation & Industry Benchmark" },
       { id: "architecture", label: "Project Architecture" },
-      { id: "pipeline", label: "Objective 1 Pipeline" },
       { id: "methods", label: "Algorithms Used" },
       { id: "objectives", label: "4-Objective Progress" },
       { id: "territories", label: "4-State Climate Scope" },
@@ -28,6 +27,7 @@ export const PAGES = [
     topLabel: "Objective 1",
     sections: [
       { id: "top", label: "Objective 1 Results" },
+      { id: "pipeline", label: "Objective 1 Pipeline" },
       { id: "comparison", label: "State Comparison" },
       { id: "preprocessing", label: "Preprocessing & QC" },
       { id: "state-results", label: "Results by State" },
@@ -40,11 +40,11 @@ export const PAGES = [
     topLabel: "Objective 2",
     sections: [
       { id: "top", label: "Objective 2 Scope" },
-      { id: "research-questions", label: "Engineering Questions" },
       { id: "workflow", label: "Optimization Workflow" },
-      { id: "interactive-explorer", label: "Design Space Estimator" },
+      { id: "research-questions", label: "Engineering Questions" },
+      { id: "interactive-explorer", label: "Geometry Checker" },
       { id: "parameters", label: "System Bounds & Limits" },
-      { id: "deliverables", label: "Deliverables (D2.1–D2.9)" },
+      { id: "deliverables", label: "Phase Deliverables" },
       { id: "objective3-handoff", label: "Objective 3 Hand-Off" },
     ],
   },

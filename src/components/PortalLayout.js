@@ -1,5 +1,6 @@
 import "../styles/global.css";
 import Sidebar from "./Sidebar";
+import { TermPopover } from "./Terms";
 
 /* ─────────────────────────────────────────────────────────
    PortalLayout.js — App Shell with Glassmorphic Top Nav
@@ -8,6 +9,7 @@ import Sidebar from "./Sidebar";
 function PortalLayout({ currentPage, onNavigate, children }) {
   return (
     <div className="portal-shell">
+      <TermPopover />
       <Sidebar currentPage={currentPage} onNavigate={onNavigate} />
 
       <div className="portal-content-wrapper">

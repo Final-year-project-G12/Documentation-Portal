@@ -1,9 +1,12 @@
 import { useEffect } from "react";
+import Bullets from "../components/Bullets";
 import { REFERENCES } from "../data/references";
+import { resetTerms } from "../data/terms";
 
 /* References — every work cited anywhere in the portal, IEEE format,
    numbered in order of first use. In-text citations link to #/references/<key>. */
 function ReferencesPage() {
+  resetTerms();
   useEffect(() => {
     const scrollToRef = () => {
       const cleaned = (window.location.hash || "").replace(/^#\/?/, "").split("?")[0];
@@ -24,11 +27,14 @@ function ReferencesPage() {
           <span className="eyebrow-badge">References</span>
         </div>
         <h1>References</h1>
-        <p className="intro">
-          Works cited in this portal, numbered in order of first use. Records are taken from the
-          project bibliography (<code>docs/references.bib</code>); entries that bibliography marks
-          as incomplete are labelled as such rather than completed from memory.
-        </p>
+        <Bullets
+          className="intro-bullets"
+          items={[
+            "Works cited in this portal, numbered in order of first use.",
+            "Records come from the project bibliography (<code>docs/references.bib</code>).",
+            "Entries that the bibliography marks as incomplete are labelled as such, not completed from memory.",
+          ]}
+        />
       </div>
 
       <ol className="references-list">

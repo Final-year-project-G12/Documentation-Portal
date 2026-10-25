@@ -1,7 +1,8 @@
-import { Rich, richHtml } from "../components/Cite";
+import { Rich } from "../components/Cite";
+import Bullets from "../components/Bullets";
 import Figure from "../components/Figure";
-import { PIPELINE_STAGES, STATE_DIFFERENCES } from "../data/pipeline";
 import { METHODS } from "../data/methods";
+import { resetTerms } from "../data/terms";
 
 /* ─────────────────────────────────────────────────────────
    OverviewPage.js — Central Project Hub (Review 2 Presentation)
@@ -49,7 +50,12 @@ const OBJECTIVES_ROADMAP = [
     id: "obj1",
     num: "Objective 1",
     title: "Climate-Region-Aware PCM Recommendation",
-    desc: "10-year ERA5 {{cite:Hersbach2020ERA5}} and NASA POWER {{cite:Stackhouse2021POWER}} meteorological clustering (GMM) across 4 contrasting Indian territories (578 points). Multi-criteria decision analysis (TOPSIS {{cite:HwangYoon1981MADM}}, PROMETHEE II {{cite:BransVincke1985PROMETHEE}}, GRA {{cite:Deng1982GreySystems}}, VIKOR {{cite:OpricovicTzeng2004VIKOR}}) coupled with Borda consensus and a 2-node lumped-enthalpy physics check.",
+    desc: [
+      "Clusters 10 years of ERA5 {{cite:Hersbach2020ERA5}} and NASA POWER {{cite:Stackhouse2021POWER}} weather data (GMM) across 4 contrasting Indian territories (578 points).",
+      "Ranks PCMs with multi-criteria decision analysis: TOPSIS {{cite:HwangYoon1981MADM}}, PROMETHEE II {{cite:BransVincke1985PROMETHEE}}, GRA {{cite:Deng1982GreySystems}} and VIKOR {{cite:OpricovicTzeng2004VIKOR}}.",
+      "Combines the four rankings by Borda consensus.",
+      "Checks the ranking with a 2-node lumped-enthalpy physics model.",
+    ],
     outputs: ["14 Climate Regimes (3 + 3 + 5 + 3)", "4-Method MCDM Consensus Ranks", "Physics check against the 54–84% solar-fraction band {{cite:Singh2025PCMSWH}}", "Per-Regime PCM Recommendation Cards"],
     linkPage: "objective1",
   },
@@ -57,7 +63,11 @@ const OBJECTIVES_ROADMAP = [
     id: "obj2",
     num: "Objective 2",
     title: "AI-Driven Storage Design Optimization",
-    desc: "Consumes frozen Objective 1 PCM shortlists to optimize capsule geometry (spherical/cylindrical macro-encapsulation, thickness, count) and water flow rates. Employs Latin Hypercube Sampling (LHS), 2-node grey-box enthalpy simulation, and an AI surrogate model (NSGA-II / MOPSO).",
+    desc: [
+      "Takes the frozen Objective 1 PCM shortlists as input.",
+      "Optimizes capsule geometry (spherical or cylindrical macro-encapsulation, thickness, count) and water flow rates.",
+      "Uses Latin Hypercube Sampling (LHS), a 2-node grey-box enthalpy simulation and an AI surrogate model (NSGA-II / MOPSO).",
+    ],
     outputs: ["Frozen Multi-State Input Packages", "LHS Design of Experiments (DOE)", "AI Surrogate Feasibility & Performance Regressors", "Objective 3 Environment Hand-off"],
     linkPage: "objective2",
   },
@@ -65,7 +75,11 @@ const OBJECTIVES_ROADMAP = [
     id: "obj3",
     num: "Objective 3",
     title: "Adaptive DRL Control & Dynamic Actuation",
-    desc: "Deep Reinforcement Learning (DRL) agent (PPO / Actor-Critic) operating over state vector s_t = [Tw, Tp, f, GHI, Tamb, wind, time]. Controls charging, discharging, and bypass valve positions to maximize hot water delivery availability under stochastic weather.",
+    desc: [
+      "A Deep Reinforcement Learning (DRL) agent (PPO / Actor-Critic) reads the state vector s_t = [Tw, Tp, f, GHI, Tamb, wind, time].",
+      "It sets the charging, discharging and bypass valve positions.",
+      "Goal: maximize hot water delivery availability under stochastic weather.",
+    ],
     outputs: ["Trained PPO Controller", "Simulated Performance vs Rule-Based Baselines", "Robustness under Demand & Cloud Spikes"],
     linkPage: null,
   },
@@ -73,7 +87,11 @@ const OBJECTIVES_ROADMAP = [
     id: "obj4",
     num: "Objective 4",
     title: "Embedded Closed-Loop Hardware Prototype",
-    desc: "Physical embedded system deployment on ESP32 / Raspberry Pi featuring DS18B20 multi-point temperature probes, irradiance sensors, and actuated solenoid valves driving a miniature PCM storage vessel.",
+    desc: [
+      "Runs as a physical embedded system on an ESP32 / Raspberry Pi.",
+      "Reads DS18B20 multi-point temperature probes and irradiance sensors.",
+      "Drives actuated solenoid valves on a miniature PCM storage vessel.",
+    ],
     outputs: ["Embedded Firmware (C++ / MicroPython)", "IoT Telemetry Dashboard", "Hardware-in-the-Loop Experimental Verification"],
     linkPage: null,
   },
@@ -87,7 +105,10 @@ const TERRITORIES = [
     survivors: "8 / 10 / 8",
     regimes: "k=3 GMM Regimes",
     primaryPCM: "RT57HC (all clusters)",
-    summary: "Three regimes (southern plains, western interior, north-east coast). Physics agreement is weak and not significant (ρ = −0.333, +0.103, +0.024).",
+    summary: [
+      "Three regimes: southern plains, western interior, north-east coast.",
+      "Physics agreement is weak and not significant (ρ = −0.333, +0.103, +0.024).",
+    ],
   },
   {
     name: "Rajasthan",
@@ -96,7 +117,10 @@ const TERRITORIES = [
     survivors: "4 / 8 / 11",
     regimes: "k=3 GMM Regimes",
     primaryPCM: "savE® OM55 / PureTemp 60 / palmitic-stearic–EG",
-    summary: "Three regimes with Udaipur, Nagaur and Jaipur medoids. The physics check is negative or partial (ρ = −0.200, −0.168, +0.569).",
+    summary: [
+      "Three regimes, with Udaipur, Nagaur and Jaipur medoids.",
+      "The physics check is negative or partial (ρ = −0.200, −0.168, +0.569).",
+    ],
   },
   {
     name: "Assam",
@@ -105,7 +129,11 @@ const TERRITORIES = [
     survivors: "35 / 33 / 33",
     regimes: "k=3 GMM Regimes",
     primaryPCM: "savE® OM49 (all clusters)",
-    summary: "Brahmaputra and Barak valleys with cluster-mean relative humidity of 76–79%. 80 points in the current grid. Physics agreement is negative against simulated hours at or above 50 °C (ρ = −0.16, −0.46, −0.41).",
+    summary: [
+      "Brahmaputra and Barak valleys; cluster-mean relative humidity is 76–79%.",
+      "The current grid has 80 points.",
+      "Physics agreement is negative against simulated hours at or above 50 °C (ρ = −0.16, −0.46, −0.41).",
+    ],
   },
   {
     name: "Uttarakhand",
@@ -114,11 +142,16 @@ const TERRITORIES = [
     survivors: "29 / 30 / 29 / 27 / 29",
     regimes: "k=5 GMM Regimes",
     primaryPCM: "PureTemp 58 (PureTemp 53 in C1)",
-    summary: "Five regimes on the older 57 °C design basis. Physics agreement is weak and not significant; simulated solar fractions (12–19%) are below the 54–84% band.",
+    summary: [
+      "Five regimes, on the older 57 °C design basis.",
+      "Physics agreement is weak and not significant.",
+      "Simulated solar fractions (12–19%) are below the 54–84% band.",
+    ],
   },
 ];
 
 function OverviewPage({ onNavigate }) {
+  resetTerms();
   return (
     <section className="content" id="top">
 
@@ -127,12 +160,15 @@ function OverviewPage({ onNavigate }) {
       <div className="page-hero">
         <h1>Climate-Adaptive Intelligent Control and Optimization of PCM Thermal Storage for Solar Water Heating</h1>
 
-        <p className="intro">
-          Solar water heating systems face severe intermittency due to nighttime absence of radiation and daytime monsoonal cloud cover.
-          By integrating <strong>Phase Change Materials (PCMs)</strong> for latent heat storage with machine learning climate clustering,
-          multi-criteria decision making, AI surrogate design optimization, and deep reinforcement learning, this project delivers an autonomous,
-          end-to-end climate-adaptive solar thermal energy solution.
-        </p>
+        <Bullets
+          className="intro-bullets"
+          items={[
+            "Solar water heaters face severe intermittency: no radiation at night and monsoon cloud cover by day.",
+            "The project stores spare heat in <strong>Phase Change Materials (PCMs)</strong> as latent heat.",
+            "It adds machine learning climate clustering, multi-criteria decision making, AI surrogate design optimization and deep reinforcement learning.",
+            "The result is an autonomous, end-to-end, climate-adaptive solar thermal energy solution.",
+          ]}
+        />
 
         <div className="overview-cta-row">
           <button className="overview-cta-btn primary" onClick={() => onNavigate("objective1")}>
@@ -161,19 +197,19 @@ function OverviewPage({ onNavigate }) {
         <div className="results-grid" style={{ marginBottom: 32 }}>
           <div className="result-stat-card">
             <div className="result-stat-value">133 GW</div>
-            <div className="result-stat-label"><Rich text="Solar Share in India's 254 GW Renewables (1:1.9 Ratio) {{cn}}" /></div>
+            <div className="result-stat-label"><Rich text="Solar Share in India's 254 GW Renewables (1:1.9 Ratio) {{cite:PVMagIndia2025Solar}} {{cn}}" /></div>
           </div>
           <div className="result-stat-card">
             <div className="result-stat-value">48–50%</div>
-            <div className="result-stat-label"><Rich text="Global Final Energy Demand Consumed by Thermal Heat {{cn}}" /></div>
+            <div className="result-stat-label"><Rich text="Global Final Energy Demand Consumed by Thermal Heat {{cite:IEA2023Heat}}" /></div>
           </div>
           <div className="result-stat-card">
             <div className="result-stat-value">6–8%</div>
-            <div className="result-stat-label"><Rich text="Residential Electricity Consumed by Water Heating Alone {{cn}}" /></div>
+            <div className="result-stat-label"><Rich text="Household Energy Used for Water Heating Alone (slide value, not independently verified) {{cite:AlMamun2023SWHReview}}" /></div>
           </div>
           <div className="result-stat-card">
             <div className="result-stat-value">45–70%</div>
-            <div className="result-stat-label"><Rich text="Typical Conventional SWH Seasonal Thermal Efficiency {{cn}}" /></div>
+            <div className="result-stat-label"><Rich text="Conventional SWH Annual Efficiency (slide value, not independently verified) {{cite:AlMamun2023SWHReview}}" /></div>
           </div>
         </div>
 
@@ -211,13 +247,14 @@ function OverviewPage({ onNavigate }) {
           published source <Rich text="{{cn}}" />.
         </p>
 
-        <div className="finding-item" style={{ marginTop: 24 }}>
-          <div className="finding-text">
-            <strong>The Deployment Gap in India:</strong> The presentation contrasts latent heat batteries from Sunamp (UK)
-            with Indian systems from Emmvee that use a sensible water buffer only <Rich text="{{cn}}" />. India faces higher climatic
-            heterogeneity, requiring climate-adaptive PCM selection rather than one-size-fits-all hardware.
-          </div>
-        </div>
+        <h3 style={{ marginTop: 28 }}>The Deployment Gap in India</h3>
+        <Bullets
+          items={[
+            "The presentation contrasts latent heat batteries from Sunamp (UK) {{cite:SunampPlentigrade}} with Emmvee's Indian systems, which use a sensible water buffer only {{cn}}.",
+            "India has higher climatic heterogeneity.",
+            "So PCM selection must adapt to climate, not use one-size-fits-all hardware.",
+          ]}
+        />
       </div>
 
       {/* ── Overall System Architecture ── */}
@@ -226,8 +263,7 @@ function OverviewPage({ onNavigate }) {
           <h2>Project Architecture</h2>
         </div>
         <p className="section-desc">
-          Modular research architecture spanning climate reanalysis, multi-criteria material selection,
-          numerical surrogate modeling, dynamic control, and embedded deployment.
+          The project runs from climate data to material choice, design optimization, control and hardware.
         </p>
         <div className="section-divider" />
 
@@ -240,11 +276,15 @@ function OverviewPage({ onNavigate }) {
           />
           <p className="diagram-caption">
             Project architecture, Objectives 1 to 4 with real-time feedback (Review 2 presentation, slide 3.2 <Rich text="{{cite:Group12Review2}}" />).
-            <span className="diagram-flag"> Not redrawn: </span>
-            the Objective 1 box in this figure predates the implemented pipeline. It names "GNN / K-means" for clustering and lists three
-            ranking methods (TOPSIS, VIKOR, GRA); the pipeline uses a Gaussian Mixture Model and four methods (TOPSIS, PROMETHEE II, GRA, VIKOR).
-            The Objective 1 diagram and the pipeline below are current.
           </p>
+          <Bullets
+            items={[
+              "<strong>Not redrawn:</strong> the Objective 1 box in this figure predates the implemented pipeline.",
+              "It names \"GNN / K-means\" for clustering; the pipeline uses a Gaussian Mixture Model.",
+              "It lists three ranking methods (TOPSIS, VIKOR, GRA); the pipeline uses four (TOPSIS, PROMETHEE II, GRA, VIKOR).",
+              "The Objective 1 diagram and the pipeline on the Objective 1 page are current.",
+            ]}
+          />
         </div>
 
         <div className="arch-flow-container">
@@ -266,7 +306,7 @@ function OverviewPage({ onNavigate }) {
               <div className="arch-step-header">
                 <h4>Climate Clustering (GMM)</h4>
               </div>
-              <p>Gaussian Mixture Models (k=3 for three states, k=5 for Uttarakhand) discovering climate regimes per state <Rich text="{{cn}}" />.</p>
+              <p><Rich text="A Gaussian mixture model {{cite:Dempster1977EM}} groups each state's points into climate regimes (k=3 for three states, k=5 for Uttarakhand)." /></p>
             </div>
           </div>
 
@@ -278,7 +318,7 @@ function OverviewPage({ onNavigate }) {
               <div className="arch-step-header">
                 <h4>Multi-Criteria Decision Analysis</h4>
               </div>
-              <p>TOPSIS <Rich text="{{cite:HwangYoon1981MADM}}" />, PROMETHEE II <Rich text="{{cite:BransVincke1985PROMETHEE}}" />, GRA <Rich text="{{cite:Deng1982GreySystems}}" /> and VIKOR <Rich text="{{cite:OpricovicTzeng2004VIKOR}}" /> consensus ranking of candidates across 8 criteria.</p>
+              <p><Rich text="Four methods rank candidates on 8 criteria and a consensus is taken: TOPSIS {{cite:HwangYoon1981MADM}}, PROMETHEE II {{cite:BransVincke1985PROMETHEE}}, GRA {{cite:Deng1982GreySystems}}, VIKOR {{cite:OpricovicTzeng2004VIKOR}}." /></p>
             </div>
           </div>
 
@@ -290,7 +330,7 @@ function OverviewPage({ onNavigate }) {
               <div className="arch-step-header">
                 <h4>Surrogate Design Optimization</h4>
               </div>
-              <p>LHS sampling + 2-node enthalpy simulation training AI surrogate regressors for MOPSO / NSGA-II geometry design.</p>
+              <p><Rich text="Latin Hypercube sampling and a 2-node enthalpy simulation train AI surrogate regressors; MOPSO / NSGA-II then search the geometry design." /></p>
             </div>
           </div>
 
@@ -302,7 +342,7 @@ function OverviewPage({ onNavigate }) {
               <div className="arch-step-header">
                 <h4>Deep Reinforcement Learning</h4>
               </div>
-              <p>PPO agent controlling charging/discharging valve actuation under stochastic weather.</p>
+              <p><Rich text="A PPO agent controls the charging and discharging valves under stochastic weather." /></p>
             </div>
           </div>
 
@@ -314,50 +354,10 @@ function OverviewPage({ onNavigate }) {
               <div className="arch-step-header">
                 <h4>Embedded Hardware Prototype</h4>
               </div>
-              <p>ESP32 / Pi closed-loop hardware deployment with temperature probes and valve relay actuation.</p>
+              <p>An ESP32 / Pi board closes the loop with temperature probes and relay-driven valves.</p>
             </div>
           </div>
         </div>
-      </div>
-
-      {/* ── Objective 1 pipeline, described once ── */}
-      <div className="content-section" id="pipeline">
-        <div className="plots-section-header">
-          <h2>Objective 1: End-to-End Pipeline</h2>
-          <span className="plots-count-badge">9 Stages</span>
-        </div>
-        <p className="section-desc">
-          One pipeline turns ten years of reanalysis data into a validated Top-3 PCM list for each climate regime. It is
-          the same for all four states; what differs by state is listed after the stages, and the results are on the Objective 1 page.
-        </p>
-        <div className="section-divider" />
-
-        <div className="diagram">
-          <Figure
-            src={`${process.env.PUBLIC_URL}/diagrams/objective1-architecture.png`}
-            title="Objective 1 framework: from meteorological data to validated Top-3 PCM candidates"
-            alt="Six-stage flow diagram: data collection, preprocessing and harmonisation, climate feature engineering, climate region discovery with a Gaussian mixture model, PCM suitability evaluation with multi-criteria decision making, and physics validation with the final Top-3 output."
-            caption="Objective 1 framework, Review 2 presentation, slide 4.2."
-          />
-          <p className="diagram-caption">
-            Objective 1 framework, six stages (Review 2 presentation, slide 4.2 <Rich text="{{cite:Group12Review2}}" />).
-            The figure does not show the design-basis steps below: the 60 °C delivery target, SHARE_PCM = 0.5 and the latent-heat calibration.
-          </p>
-        </div>
-
-        <ol className="pipeline-list">
-          {PIPELINE_STAGES.map((st, i) => (
-            <li key={st.title} className="pipeline-stage">
-              <span className="pipeline-stage-num">{String(i + 1).padStart(2, "0")}</span>
-              <div>
-                <h3>{st.title}</h3>
-                <p dangerouslySetInnerHTML={{ __html: richHtml(st.body) }} />
-                <div className="pipeline-stage-meta">Output: {st.out}</div>
-              </div>
-            </li>
-          ))}
-        </ol>
-        <p className="section-desc" style={{ marginTop: 20 }}>{STATE_DIFFERENCES}</p>
       </div>
 
       {/* ── Algorithms ── */}
@@ -375,8 +375,7 @@ function OverviewPage({ onNavigate }) {
             <div key={m.title} className="method-card">
               <div className="method-card-tag">{m.tag}</div>
               <h3>{m.title}</h3>
-              <p><Rich text={m.desc} /></p>
-              <div className="method-card-why" dangerouslySetInnerHTML={{ __html: richHtml(m.why) }} />
+              <Bullets items={m.points} />
             </div>
           ))}
         </div>
@@ -388,7 +387,7 @@ function OverviewPage({ onNavigate }) {
           <h2>Core Research Objectives & Progress Matrix</h2>
         </div>
         <p className="section-desc">
-          Current phase-wise progress across all four planned research objectives.
+          Where each of the four planned research objectives stands.
         </p>
         <div className="section-divider" />
 
@@ -402,7 +401,7 @@ function OverviewPage({ onNavigate }) {
                 </div>
               </div>
 
-              <p className="objective-card-desc"><Rich text={obj.desc} /></p>
+              <Bullets className="objective-card-bullets" items={obj.desc} />
 
               <div className="objective-card-outputs">
                 <span className="objective-outputs-label">Key Deliverables & Milestones:</span>
@@ -431,8 +430,7 @@ function OverviewPage({ onNavigate }) {
           <h2>4-State Contrasting Climate Scope</h2>
         </div>
         <p className="section-desc">
-          Four Indian states intentionally selected to cover contrasting extremes of solar irradiance,
-          humidity, elevation, and seasonal monsoonal dynamics.
+          Four states were picked to cover contrasting sunlight, humidity, elevation and monsoon patterns.
         </p>
         <div className="section-divider" />
 
@@ -446,7 +444,7 @@ function OverviewPage({ onNavigate }) {
                 </div>
               </div>
 
-              <p style={{ fontSize: "0.85rem", color: "var(--neutral-300)", marginBottom: 16 }}>{t.summary}</p>
+              <Bullets items={t.summary} />
 
               <div className="territory-props">
                 <div className="rec-prop">
@@ -477,7 +475,7 @@ function OverviewPage({ onNavigate }) {
           <h2>United Nations Sustainable Development Goals (SDGs)</h2>
         </div>
         <p className="section-desc">
-          Direct contributions to sustainable, affordable, and zero-carbon energy transition targets.
+          The project contributes directly to four UN goals on clean, affordable, low-carbon energy.
         </p>
         <div className="section-divider" />
 
