@@ -208,6 +208,11 @@ export const REFERENCES = [
     text: 'P. Geurts, D. Ernst, and L. Wehenkel, "Extremely randomized trees," Mach. Learn., vol. 63, no. 1, pp. 3–42, 2006.',
   },
   {
+    key: "Deb2002NSGA2",
+    bib: "Deb2002NSGA2",
+    text: 'K. Deb, A. Pratap, S. Agarwal, and T. Meyarivan, "A fast and elitist multiobjective genetic algorithm: NSGA-II," IEEE Trans. Evol. Comput., vol. 6, no. 2, pp. 182–197, Apr. 2002. [Bib entry notes "no local PDF"; Objective 2 docs cite it for the NSGA-II step.]',
+  },
+  {
     key: "Chopra2023MonteCarloETC",
     bib: "Chopra2023MonteCarloETC",
     text: 'K. Chopra, V. V. Tyagi, S. Popli, and A. K. Pandey, "Technical & financial feasibility assessment of heat pipe evacuated tube collector for water heating using Monte Carlo technique for buildings," Energy, vol. 267, Art. no. 126338, 2023.',

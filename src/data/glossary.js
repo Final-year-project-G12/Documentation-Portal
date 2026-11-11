@@ -64,7 +64,7 @@ export const GLOSSARY = [
   { key: "regime", name: "Regime", match: ["regimes", "regime"], def: "One cluster, read as a climate type." },
 
   // ── Ranking and validation ─────────────────────────────
-  { key: "mcdm", name: "MCDM", match: ["multi-criteria decision making", "multi-criteria decision analysis", "MCDM"], cs: true, def: "Multi-criteria decision making: ranks options that are good on some criteria and poor on others." },
+  { key: "mcdm", name: "MCDM", match: ["multi-criteria decision making", "multi-criteria decision analysis", "MCDM"], cs: true, def: "Multi-criteria decision making: ranks options that excel on different criteria." },
   { key: "topsis", name: "TOPSIS", match: ["TOPSIS"], cs: true, def: "Ranks options by closeness to the best imaginary option and distance from the worst." },
   { key: "promethee", name: "PROMETHEE II", match: ["PROMETHEE II", "PROMETHEE"], cs: true, def: "Ranks options by how strongly each beats the others, criterion by criterion." },
   { key: "vikor", name: "VIKOR", match: ["VIKOR"], cs: true, def: "Finds a compromise option that limits the worst shortfall on any single criterion." },
@@ -83,12 +83,18 @@ export const GLOSSARY = [
   { key: "surrogate", name: "Surrogate model", match: ["surrogate"], def: "A fast machine-learning model that imitates a slow simulator." },
   { key: "nsga", name: "NSGA-II", match: ["NSGA-II"], cs: true, def: "A genetic algorithm that searches for the best trade-offs between several goals." },
   { key: "mopso", name: "MOPSO", match: ["MOPSO"], cs: true, def: "Multi-objective particle swarm optimisation: a swarm of candidate designs moves toward good trade-offs." },
-  { key: "pareto", name: "Pareto front", match: ["Pareto"], cs: true, def: "The set of designs where no goal can improve without another getting worse." },
+  { key: "pareto", name: "Pareto front", match: ["Pareto"], cs: true, def: "The set of designs where no goal can improve without trading off another." },
   { key: "drl", name: "DRL (deep reinforcement learning)", match: ["deep reinforcement learning", "Deep Reinforcement Learning", "DRL"], cs: true, def: "A controller that learns by trial and reward using a neural network." },
   { key: "ppo", name: "PPO", match: ["PPO"], cs: true, def: "Proximal policy optimisation: a common deep reinforcement learning algorithm." },
   { key: "extratrees", name: "ExtraTrees", match: ["ExtraTrees"], cs: true, def: "A tree-ensemble model that picks split points at random, which keeps it stable on small tables." },
   { key: "montecarlo", name: "Monte Carlo", match: ["Monte Carlo"], cs: true, def: "Re-running a simulation many times with randomly varied inputs to see how results spread." },
   { key: "greybox", name: "Grey-box model", match: ["grey-box", "Grey-box", "Grey-Box"], cs: true, def: "A model built on known physics equations with a few fitted parameters." },
+  { key: "heldout", name: "Held-out test", match: ["held-out test", "held-out"], def: "Weather years kept out of every design decision and evaluated once, under a lock, to check the chosen design on unseen data." },
+  { key: "gwindow", name: "g_window", match: ["g_window"], cs: true, def: "Extra heat delivered at or above 45 °C between 18:00 and 09:00 per year, compared with a water-only tank at the same flow, weather, demand and shield." },
+  { key: "band", name: "Repeatability band", match: ["repeatability band"], def: "How much a result moves from year-to-year weather, time step, node count and property changes. Differences smaller than the band are treated as noise." },
+  { key: "sobol", name: "Sobol sequence", match: ["Sobol"], cs: true, def: "A low-discrepancy sequence that spreads sample points evenly over the design space." },
+  { key: "taguchi", name: "Taguchi screening", match: ["Taguchi"], cs: true, def: "A small orthogonal set of runs (here L9) that shows which design variables matter before the full search." },
+  { key: "activelearning", name: "Active learning", match: ["active learning"], def: "The search simulates the designs where several surrogate models disagree most, then refits them." },
 ];
 
 export const GLOSSARY_BY_KEY = Object.fromEntries(GLOSSARY.map((g) => [g.key, g]));

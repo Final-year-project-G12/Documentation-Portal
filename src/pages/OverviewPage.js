@@ -64,11 +64,12 @@ const OBJECTIVES_ROADMAP = [
     num: "Objective 2",
     title: "AI-Driven Storage Design Optimization",
     desc: [
-      "Takes the frozen Objective 1 PCM shortlists as input.",
-      "Optimizes capsule geometry (spherical or cylindrical macro-encapsulation, thickness, count) and water flow rates.",
-      "Uses Latin Hypercube Sampling (LHS), a 2-node grey-box enthalpy simulation and an AI surrogate model (NSGA-II / MOPSO).",
+      "Takes the Objective 1 PCM shortlist of each regime as a fixed input.",
+      "Searches capsule inner radius, PCM volume fraction, flow rate and arrangement on a multi-node tank simulation.",
+      "Uses a surrogate-assisted, constrained multi-objective search: Taguchi screening, a Sobol design, surrogate comparison and NSGA-II {{cite:Deb2002NSGA2}} with active learning. The simulator evaluates every reported number.",
+      "Rajasthan, Tamil Nadu and Uttarakhand use this method; Assam is still on an earlier chain.",
     ],
-    outputs: ["Frozen Multi-State Input Packages", "LHS Design of Experiments (DOE)", "AI Surrogate Feasibility & Performance Regressors", "Objective 3 Environment Hand-off"],
+    outputs: ["Chosen Design per Regime", "One-Shot Held-out Test on Untouched Years", "Repeatability Band and Paired Water-Only Baseline", "Objective 3 Environment Contract v2 (Rajasthan)"],
     linkPage: "objective2",
   },
   {
@@ -107,7 +108,7 @@ const TERRITORIES = [
     primaryPCM: "RT57HC (all clusters)",
     summary: [
       "Three regimes: southern plains, western interior, north-east coast.",
-      "Physics agreement is weak and not significant (ρ = −0.333, +0.103, +0.024).",
+      "Physics comparison is an exploratory complement to the ranking (ρ = −0.333, +0.103, +0.024).",
     ],
   },
   {
@@ -119,20 +120,21 @@ const TERRITORIES = [
     primaryPCM: "savE® OM55 / PureTemp 60 / palmitic-stearic–EG",
     summary: [
       "Three regimes, with Udaipur, Nagaur and Jaipur medoids.",
-      "The physics check is negative or partial (ρ = −0.200, −0.168, +0.569).",
+      "The physics check is weak and not significant (ρ = −0.200, −0.168, +0.569; p = 0.80, 0.69, 0.067), so predictive validity is not established.",
     ],
   },
   {
     name: "Assam",
     tag: "Subtropical · monsoon attenuated",
     gridPoints: 80,
-    survivors: "35 / 33 / 33",
+    survivors: "0 confirmed (33 / 32 / 32 conditional)",
     regimes: "k=3 GMM Regimes",
-    primaryPCM: "savE® OM49 (all clusters)",
+    primaryPCM: "Pending: none confirmed (reference ranking: savE® OM49)",
     summary: [
       "Brahmaputra and Barak valleys; cluster-mean relative humidity is 76–79%.",
       "The current grid has 80 points.",
-      "Physics agreement is negative against simulated hours at or above 50 °C (ρ = −0.16, −0.46, −0.41).",
+      "No candidate is confirmed feasible, so formal MCDM ranking was not performed and Monte Carlo was skipped.",
+      "The physics comparison against an older K = 4 ranking is inconclusive (ρ = −0.28 to −0.30 against delivery rate, +0.62 to +0.64 against solar fraction).",
     ],
   },
   {
@@ -143,9 +145,9 @@ const TERRITORIES = [
     regimes: "k=5 GMM Regimes",
     primaryPCM: "PureTemp 58 (PureTemp 53 in C1)",
     summary: [
-      "Five regimes, on the older 57 °C design basis.",
-      "Physics agreement is weak and not significant.",
-      "Simulated solar fractions (12–19%) are below the 54–84% band.",
+      "Five regimes, on the older 57 °C design basis. Objective 2 uses a K = 4 version of these regimes, which is not reconciled.",
+      "Physics comparison is exploratory (ρ from −0.34 to +0.17).",
+      "Simulated solar fractions (12–19%) sit below the 54–84% reference band, so the physics check is read as context.",
     ],
   },
 ];
@@ -163,7 +165,7 @@ function OverviewPage({ onNavigate }) {
         <Bullets
           className="intro-bullets"
           items={[
-            "Solar water heaters face severe intermittency: no radiation at night and monsoon cloud cover by day.",
+            "Solar water heaters work with a variable resource: no radiation at night and monsoon cloud cover by day.",
             "The project stores spare heat in <strong>Phase Change Materials (PCMs)</strong> as latent heat.",
             "It adds machine learning climate clustering, multi-criteria decision making, AI surrogate design optimization and deep reinforcement learning.",
             "The result is an autonomous, end-to-end, climate-adaptive solar thermal energy solution.",
@@ -205,11 +207,11 @@ function OverviewPage({ onNavigate }) {
           </div>
           <div className="result-stat-card">
             <div className="result-stat-value">6–8%</div>
-            <div className="result-stat-label"><Rich text="Household Energy Used for Water Heating Alone (slide value, not independently verified) {{cite:AlMamun2023SWHReview}}" /></div>
+            <div className="result-stat-label"><Rich text="Household Energy Used for Water Heating Alone (Review 2 slide value) {{cite:AlMamun2023SWHReview}}" /></div>
           </div>
           <div className="result-stat-card">
             <div className="result-stat-value">45–70%</div>
-            <div className="result-stat-label"><Rich text="Conventional SWH Annual Efficiency (slide value, not independently verified) {{cite:AlMamun2023SWHReview}}" /></div>
+            <div className="result-stat-label"><Rich text="Conventional SWH Annual Efficiency (Review 2 slide value) {{cite:AlMamun2023SWHReview}}" /></div>
           </div>
         </div>
 
@@ -243,11 +245,11 @@ function OverviewPage({ onNavigate }) {
         </div>
 
         <p className="section-desc" style={{ marginTop: 16, marginBottom: 0 }}>
-          Company table and capacity figures come from the Review 2 presentation, which does not cite a
-          published source <Rich text="{{cn}}" />.
+          Company table and capacity figures come from the Review 2 presentation
+          <Rich text="{{cn}}" />.
         </p>
 
-        <h3 style={{ marginTop: 28 }}>The Deployment Gap in India</h3>
+        <h3 style={{ marginTop: 28 }}>The PCM Deployment Opportunity in India</h3>
         <Bullets
           items={[
             "The presentation contrasts latent heat batteries from Sunamp (UK) {{cite:SunampPlentigrade}} with Emmvee's Indian systems, which use a sensible water buffer only {{cn}}.",
@@ -279,9 +281,9 @@ function OverviewPage({ onNavigate }) {
           </p>
           <Bullets
             items={[
-              "<strong>Not redrawn:</strong> the Objective 1 box in this figure predates the implemented pipeline.",
-              "It names \"GNN / K-means\" for clustering; the pipeline uses a Gaussian Mixture Model.",
-              "It lists three ranking methods (TOPSIS, VIKOR, GRA); the pipeline uses four (TOPSIS, PROMETHEE II, GRA, VIKOR).",
+              "<strong>Note:</strong> the Objective 1 box in this figure shows the plan at the time of Review 2.",
+              "It names \"GNN / K-means\" for clustering; the implemented pipeline uses a Gaussian Mixture Model.",
+              "It lists three ranking methods (TOPSIS, VIKOR, GRA); the pipeline extends this to four (TOPSIS, PROMETHEE II, GRA, VIKOR).",
               "The Objective 1 diagram and the pipeline on the Objective 1 page are current.",
             ]}
           />
@@ -318,7 +320,7 @@ function OverviewPage({ onNavigate }) {
               <div className="arch-step-header">
                 <h4>Multi-Criteria Decision Analysis</h4>
               </div>
-              <p><Rich text="Four methods rank candidates on 8 criteria and a consensus is taken: TOPSIS {{cite:HwangYoon1981MADM}}, PROMETHEE II {{cite:BransVincke1985PROMETHEE}}, GRA {{cite:Deng1982GreySystems}}, VIKOR {{cite:OpricovicTzeng2004VIKOR}}." /></p>
+              <p><Rich text="Four methods rank candidates on 8 criteria (9 in Tamil Nadu) and a consensus is taken: TOPSIS {{cite:HwangYoon1981MADM}}, PROMETHEE II {{cite:BransVincke1985PROMETHEE}}, GRA {{cite:Deng1982GreySystems}}, VIKOR {{cite:OpricovicTzeng2004VIKOR}}." /></p>
             </div>
           </div>
 
@@ -330,7 +332,7 @@ function OverviewPage({ onNavigate }) {
               <div className="arch-step-header">
                 <h4>Surrogate Design Optimization</h4>
               </div>
-              <p><Rich text="Latin Hypercube sampling and a 2-node enthalpy simulation train AI surrogate regressors; MOPSO / NSGA-II then search the geometry design." /></p>
+              <p><Rich text="A multi-node enthalpy simulation, Taguchi screening and a Sobol design train surrogate models; NSGA-II {{cite:Deb2002NSGA2}} with active learning then searches radius, PCM fraction and flow, and a one-shot held-out test checks the choice." /></p>
             </div>
           </div>
 

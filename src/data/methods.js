@@ -10,7 +10,7 @@ export const METHODS = [
       "Picks the regime count k with BIC {{cite:Schwarz1978BIC}} and silhouette validation {{cite:Rousseeuw1987Silhouettes}}.",
       "Mixture-model clustering fits by expectation-maximisation {{cite:Dempster1977EM}}.",
       "Why: it captures overlapping climate gradients.",
-      "Rejected: K-Means (assumes spherical clusters) and hierarchical clustering (O(N²) scaling).",
+      "Chosen over K-Means (assumes spherical clusters) and hierarchical clustering (O(N²) scaling).",
     ],
   },
   {
@@ -19,7 +19,7 @@ export const METHODS = [
     points: [
       "Ranks candidates by closeness to the best possible option (max latent heat, thermal conductivity) and distance from the worst {{cite:HwangYoon1981MADM}}.",
       "Why: a simple, intuitive geometric distance.",
-      "Caveat: sensitive to extreme property outliers.",
+      "Note: extreme property values influence the distances, so it is paired with three other methods.",
     ],
   },
   {
@@ -28,7 +28,7 @@ export const METHODS = [
     points: [
       "Compares candidates in pairs using Gaussian and V-shape criterion functions {{cite:BransVincke1985PROMETHEE}}.",
       "Nets each candidate's outranking flows (Phi+ − Phi−) into a complete ranking.",
-      "Why: non-compensatory, so high latent heat cannot hide poor cycling stability.",
+      "Why: every criterion counts, so latent heat is weighed alongside cycling stability.",
     ],
   },
   {
