@@ -3,6 +3,7 @@ import PortalLayout from "./components/PortalLayout";
 import OverviewPage from "./pages/OverviewPage";
 import Objective1Page from "./pages/Objective1Page";
 import Objective2Page from "./pages/Objective2Page";
+import Objective3Page from "./pages/Objective3Page";
 import ReferencesPage from "./pages/ReferencesPage";
 import { DEFAULT_PAGE, getPage, parseHash, buildHash } from "./data/navigation";
 
@@ -68,6 +69,7 @@ function App() {
       {route.page === "overview" && <OverviewPage onNavigate={navigateTo} />}
       {route.page === "objective1" && <Objective1Page />}
       {route.page === "objective2" && <Objective2Page />}
+      {route.page === "objective3" && <Objective3Page />}
       {route.page === "references" && <ReferencesPage />}
     </PortalLayout>
   );

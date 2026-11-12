@@ -49,6 +49,16 @@ export const PAGES = [
     ],
   },
   {
+    id: "objective3",
+    label: "Objective 3: DRL Control",
+    topLabel: "Objective 3",
+    sections: [
+      { id: "top", label: "Objective 3 Status" },
+      { id: "scope", label: "Planned Scope" },
+      { id: "inputs", label: "Inputs from Objective 2" },
+    ],
+  },
+  {
     id: "references",
     label: "References",
     topLabel: null, // sidebar only

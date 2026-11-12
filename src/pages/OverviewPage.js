@@ -82,7 +82,7 @@ const OBJECTIVES_ROADMAP = [
       "Goal: maximize hot water delivery availability under stochastic weather.",
     ],
     outputs: ["Trained PPO Controller", "Simulated Performance vs Rule-Based Baselines", "Robustness under Demand & Cloud Spikes"],
-    linkPage: null,
+    linkPage: "objective3",
   },
   {
     id: "obj4",
