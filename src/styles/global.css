@@ -3167,3 +3167,14 @@ h3 {
 .ui-state-head h3 { margin: 0; font-size: 1.35rem; }
 .ui-state-type { color: var(--neutral-400); font-size: 0.86rem; }
 
+/* Small screens */
+@media (max-width: 640px) {
+  .ui-step-panel, .ui-panel { padding: 16px; }
+  .ui-steps-rail { grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); }
+  .ui-podium { gap: 4px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-podium-block, .ui-pbar-fill { animation: none !important; }
+  .ui-acc-body, .ui-progress-fill { transition: none !important; }
+}
