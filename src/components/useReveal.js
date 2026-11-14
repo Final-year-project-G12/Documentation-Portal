@@ -20,13 +20,18 @@ const REVEAL_SELECTOR = [
   ".objective-card",
   ".territory-card",
   ".method-card",
-  ".sdg-card",
+  ".ui-sdg",
   ".arch-step",
   ".pipeline-stage",
   ".diagram",
   ".data-table-wrapper",
   ".note-group",
   ".plot-type",
+  ".ui-card",
+  ".ui-intro-card",
+  ".ui-steps",
+  ".ui-obj-tabs",
+  ".ui-accordion",
 ].join(",");
 
 const STAGGER_MS = 70;
