@@ -1192,7 +1192,8 @@ function Objective1Page() {
         <Bullets
           items={[
             "Choose a state.",
-            "The plot types shown exist for all four states; Uttarakhand also has two extra bump charts for its fourth and fifth clusters.",
+            "Rajasthan and Tamil Nadu have one bump chart per cluster; Uttarakhand has one bump chart covering its four clusters.",
+            "Assam shows only its data and clustering plots while its PCM ranking is being updated.",
             "Click a plot to enlarge it.",
             "\"Interactive view\" opens the interactive version in the same viewer; \"New tab\" opens it in a separate tab.",
           ]}
