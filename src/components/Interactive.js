@@ -120,3 +120,16 @@ export function Accordion({ items, defaultOpen = 0 }) {
   );
 }
 
+/* Show / hide a block behind a button. */
+export function Reveal({ label, hideLabel, children }) {
+  const [shown, setShown] = useState(false);
+  return (
+    <div className="ui-reveal">
+      <button className="ui-btn ghost" aria-expanded={shown} onClick={() => setShown(!shown)}>
+        {shown ? hideLabel || "Hide" : label} <span aria-hidden="true">{shown ? "▴" : "▾"}</span>
+      </button>
+      {shown && <div className="ui-reveal-body tab-panel">{children}</div>}
+    </div>
+  );
+}
+
