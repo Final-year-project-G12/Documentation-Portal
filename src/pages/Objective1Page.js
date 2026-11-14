@@ -1337,6 +1337,8 @@ function Objective1Page() {
               <tr>
                 <th>Cluster</th>
                 <th>Rank-1 PCM</th>
+                <th>Rank 2</th>
+                <th>Rank 3</th>
                 <th>Melting point</th>
                 <th>Latent heat</th>
                 <th>Method agreement (W) · Physics ρ</th>
@@ -1348,6 +1350,8 @@ function Objective1Page() {
                 <tr key={r.cluster}>
                   <td style={{ fontWeight: 600, color: "#ffffff" }}>{r.cluster}</td>
                   <td style={{ color: "#ffffff" }}>{r.pcm}</td>
+                  <td>{r.top2 || "—"}</td>
+                  <td>{r.top3 || "—"}</td>
                   <td>{r.tm}</td>
                   <td>{r.latentHeat}</td>
                   <td>{r.mc}</td>
