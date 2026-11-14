@@ -3,6 +3,7 @@ import Bullets from "../components/Bullets";
 import Figure from "../components/Figure";
 import { METHODS } from "../data/methods";
 import { resetTerms } from "../data/terms";
+import useReveal from "../components/useReveal";
 
 /* ─────────────────────────────────────────────────────────
    OverviewPage.js — Central Project Hub (Review 2 Presentation)
@@ -153,8 +154,9 @@ const TERRITORIES = [
 
 function OverviewPage({ onNavigate }) {
   resetTerms();
+  const revealRef = useReveal();
   return (
-    <section className="content" id="top">
+    <section className="content animated-page" id="top" ref={revealRef}>
 
 
       {/* ── Hero Section ── */}
