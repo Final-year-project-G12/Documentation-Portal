@@ -876,19 +876,19 @@ const STATE_ORDER = ["rajasthan", "tamilnadu", "uttarakhand", "assam"];
 const COMPARISON_ROWS = [
   {
     label: "Population-weighted points",
-    values: { rajasthan: "320", tamilnadu: "133", uttarakhand: "45", assam: "80 (older documents: 129)" },
+    values: { rajasthan: "320", tamilnadu: "133", uttarakhand: "45", assam: "80" },
   },
   {
     label: "Climate regimes (GMM)",
-    values: { rajasthan: "3", tamilnadu: "3", uttarakhand: "5", assam: "3" },
+    values: { rajasthan: "3", tamilnadu: "3", uttarakhand: "4", assam: "3" },
   },
   {
     label: "Melting-point target",
     values: {
       rajasthan: "67 °C; capped 55.5 / 61.1 / 59.2 °C",
       tamilnadu: "67 °C (physics script uses a 50 °C delivery constant)",
-      uttarakhand: "57 °C; capped 55.2 °C (C1) and 56.5 °C (C2)",
-      assam: "56 °C; capped about 50 °C (older documents: 44 °C)",
+      uttarakhand: "57 °C; capped 56.5 °C (C2) and 55.2 °C (C3)",
+      assam: "56 °C; capped about 49–50 °C",
     },
   },
   {
@@ -896,8 +896,8 @@ const COMPARISON_ROWS = [
     values: {
       rajasthan: "4 / 8 / 11",
       tamilnadu: "8 / 10 / 8",
-      uttarakhand: "20 each (29 / 30 / 29 / 27 / 29 pass the filter)",
-      assam: "0 confirmed (33 / 32 / 32 conditionally feasible; cards list 35 / 33 / 33)",
+      uttarakhand: "29 / 29 / 29 / 30",
+      assam: "Pending",
     },
   },
   {
@@ -905,8 +905,8 @@ const COMPARISON_ROWS = [
     values: {
       rajasthan: "1.00 / 0.77 / 0.42",
       tamilnadu: "0.85 / 0.48 / 0.78",
-      uttarakhand: "0.80 / 0.84 / 0.78 / 0.71 / 0.80",
-      assam: "0.94 / 0.94 / 0.94 (reference ranking of the conditional pool)",
+      uttarakhand: "0.80 / 0.80 / 0.78 / 0.84",
+      assam: "Pending",
     },
   },
   {
