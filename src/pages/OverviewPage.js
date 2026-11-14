@@ -6,6 +6,7 @@ import { METHODS } from "../data/methods";
 import { resetTerms } from "../data/terms";
 import useReveal from "../components/useReveal";
 import { StatTiles, ChipTabs, StepExplorer, ProgressBar, Callout } from "../components/Interactive";
+import { MOTIVATION_FLOW, RESEARCH_GAPS, PROBLEM_STATEMENT, RESEARCH_THEMES, INDUSTRY_EXPERT, LITERATURE, TRADEOFFS, FUTURE_SCOPE } from "../data/overviewContent";
 
 /* ─────────────────────────────────────────────────────────
    OverviewPage.js — Central Project Hub (Review 2 Presentation)
@@ -70,7 +71,7 @@ const OBJECTIVES_ROADMAP = [
       "Takes the Objective 1 PCM shortlist of each regime as a fixed input.",
       "Searches capsule inner radius, PCM volume fraction, flow rate and arrangement on a multi-node tank simulation.",
       "Uses a surrogate-assisted, constrained multi-objective search: Taguchi screening, a Sobol design, surrogate comparison and NSGA-II {{cite:Deb2002NSGA2}} with active learning. The simulator evaluates every reported number.",
-      "Rajasthan, Tamil Nadu and Uttarakhand use this method; Assam is still on an earlier chain.",
+      "Chosen designs are reported for all four states (Rajasthan and Uttarakhand 50 L, Tamil Nadu 100 L, Assam 500 L tank).",
     ],
     outputs: ["Chosen Design per Regime", "One-Shot Held-out Test on Untouched Years", "Repeatability Band and Paired Water-Only Baseline", "Objective 3 Environment Contract v2 (Rajasthan)"],
     linkPage: "objective2",
@@ -78,25 +79,30 @@ const OBJECTIVES_ROADMAP = [
   {
     id: "obj3",
     num: "Objective 3",
-    title: "Adaptive DRL Control & Dynamic Actuation",
+    title: "DRL-Based Adaptive Controller",
     desc: [
-      "A Deep Reinforcement Learning (DRL) agent (PPO / Actor-Critic) reads the state vector s_t = [Tw, Tp, f, GHI, Tamb, wind, time].",
-      "It sets the charging, discharging and bypass valve positions.",
-      "Goal: maximize hot water delivery availability under stochastic weather.",
+      "Uses the Objective 2 tank simulator as the training environment.",
+      "Every hour the controller reads sunlight, temperatures, the melted share of the PCM, hot-water demand and time of day, then picks charge, idle or bypass.",
+      "A built-in safety guard stops the collector at 72 °C (water) and 62 °C (PCM), just below the hard limits of 75 °C and 65 °C; the controller cannot switch it off.",
+      "The reward counts hot water delivered and penalises unmet demand, broken limits, needless switching and every guard activation.",
+      "Six agents (PPO, DQN, RecurrentPPO, QRDQN, MaskablePPO, SAC) train on the same environment and are compared with simple rules {{cite:Emami2026DRLSolar}}.",
     ],
-    outputs: ["Trained PPO Controller", "Simulated Performance vs Rule-Based Baselines", "Robustness under Demand & Cloud Spikes"],
+    outputs: ["SAC selected (Tamil Nadu), DQN selected (Rajasthan)", "Keeps about 95–98% of delivered heat with far fewer guard activations", "No hard limit broken", "Train 2016–2020 · validate 2021–2023 · test 2011–2015"],
     linkPage: "objective3",
   },
   {
     id: "obj4",
     num: "Objective 4",
-    title: "Embedded Closed-Loop Hardware Prototype",
+    title: "Software-in-the-Loop Validation (MATLAB Digital Twin)",
     desc: [
-      "Runs as a physical embedded system on an ESP32 / Raspberry Pi.",
-      "Reads DS18B20 multi-point temperature probes and irradiance sensors.",
-      "Drives actuated solenoid valves on a miniature PCM storage vessel.",
+      "The tank, PCM capsules, collector and pump are rebuilt in MATLAB as a line-for-line port of the Objective 2 physics, with noisy sensors, sensor dropout, a stale-data fail-safe and the same safety guard.",
+      "Built for three states: Tamil Nadu (SAC, 100 L single-node tank), Rajasthan (DQN, 50 L 10-node stratified tank) and Uttarakhand (PPO, 50 L, 50 °C target).",
+      "Compares three arms: plain tank, PCM with always-charge, and PCM with the learned controller, which separates the PCM benefit from the AI benefit.",
+      "The same weather and controller run in Python and MATLAB and take the same actions.",
+      "Tests: one-day charge/discharge cycle, six edge cases plus a dead and a stuck sun sensor, a 72 h retention test, and PCM swap and flow sweeps.",
+      "Trials on real hardware (Raspberry Pi / ESP32) are future work.",
     ],
-    outputs: ["Embedded Firmware (C++ / MicroPython)", "IoT Telemetry Dashboard", "Hardware-in-the-Loop Experimental Verification"],
+    outputs: ["MATLAB digital twin for 3 states", "No hard limit broken in any test", "Finding: a dead sun sensor is not caught (Rajasthan 701 vs 430 guard hours); an irradiance plausibility rule is the next fix"],
     linkPage: null,
   },
 ];
@@ -160,8 +166,8 @@ const ARCH_STEPS = [
   { title: "Climate Clustering (GMM)", text: "A Gaussian mixture model {{cite:Dempster1977EM}} groups each state's points into climate regimes (k=3 for three states, k=4 for Uttarakhand)." },
   { title: "Multi-Criteria Decision Analysis", text: "Four methods rank candidates on 8 criteria (9 in Tamil Nadu) and a consensus is taken: TOPSIS {{cite:HwangYoon1981MADM}}, PROMETHEE II {{cite:BransVincke1985PROMETHEE}}, GRA {{cite:Deng1982GreySystems}}, VIKOR {{cite:OpricovicTzeng2004VIKOR}}." },
   { title: "Surrogate Design Optimization", text: "A multi-node enthalpy simulation, Taguchi screening and a Sobol design train surrogate models; NSGA-II {{cite:Deb2002NSGA2}} with active learning then searches radius, PCM fraction and flow, and a one-shot held-out test checks the choice." },
-  { title: "Deep Reinforcement Learning", text: "A PPO agent controls the charging and discharging valves under stochastic weather." },
-  { title: "Embedded Hardware Prototype", text: "An ESP32 / Pi board closes the loop with temperature probes and relay-driven valves." },
+  { title: "Deep Reinforcement Learning", text: "Six learning agents train on the Objective 2 tank simulator and choose charge, idle or bypass every hour behind a safety guard; SAC (Tamil Nadu) and DQN (Rajasthan) are selected {{cite:Emami2026DRLSolar}}." },
+  { title: "Software-in-the-Loop Validation", text: "A MATLAB digital twin of the tank, capsules, collector and pump tests the trained controller with noisy and failing sensors in three states; real hardware (Raspberry Pi / ESP32) is future work." },
 ];
 
 /* Completion per objective (Review presentation, implementation overview slide). */
@@ -199,7 +205,9 @@ function OverviewPage({ onNavigate }) {
   const [methodIdx, setMethodIdx] = useState(0);
   const [objId, setObjId] = useState(OBJECTIVES_ROADMAP[0].id);
   const [stateIdx, setStateIdx] = useState(0);
-  const revealRef = useReveal([industryFilter, methodIdx, objId, stateIdx]);
+  const [litId, setLitId] = useState(LITERATURE[0].id);
+  const revealRef = useReveal([industryFilter, methodIdx, objId, stateIdx, litId]);
+  const litGroup = LITERATURE.find((g) => g.id === litId);
 
   const companies = INDUSTRY_COMPARISON.filter((c) => industryFilter === "all" || c.pcmUsed === industryFilter);
   const method = METHODS[methodIdx];
@@ -243,10 +251,20 @@ function OverviewPage({ onNavigate }) {
           <h2>Motivation & Industrial State-of-the-Art</h2>
         </div>
         <p className="section-desc">
-          Why latent heat storage with PCMs is critical for transforming solar water heating in India.
+          How a solar water heater works today, what goes wrong, and what this project improves.
         </p>
         <div className="section-divider" />
 
+        <div className="ui-card-grid ui-flow-grid">
+          {MOTIVATION_FLOW.map((m, i) => (
+            <div key={m.kicker} className="ui-card ui-flow-card">
+              <div className="ui-card-kicker">{String(i + 1).padStart(2, "0")} · {m.kicker}</div>
+              <Bullets items={m.points} />
+            </div>
+          ))}
+        </div>
+
+        <h3>Why it matters</h3>
         <StatTiles items={MOTIVATION_STATS} />
 
         <h3>Who uses PCM storage today?</h3>
@@ -278,6 +296,65 @@ function OverviewPage({ onNavigate }) {
             ]}
           />
         </Callout>
+      </div>
+
+      {/* ── Research gaps & problem statement ── */}
+      <div className="content-section" id="gaps">
+        <div className="plots-section-header">
+          <h2>Research Gaps & Problem Statement</h2>
+          <span className="plots-count-badge">{RESEARCH_GAPS.length} Gaps</span>
+        </div>
+        <p className="section-desc">What the literature leaves open, and the problem this project takes on.</p>
+        <div className="section-divider" />
+
+        <div className="ui-card-grid">
+          {RESEARCH_GAPS.map((g, i) => (
+            <div key={g.title} className="ui-card">
+              <div className="ui-card-kicker">Gap {i + 1}</div>
+              <h4>{g.title}</h4>
+              <p dangerouslySetInnerHTML={{ __html: richHtml(g.text) }} />
+            </div>
+          ))}
+        </div>
+
+        <Callout title="Overall problem" tone="warn">
+          <span dangerouslySetInnerHTML={{ __html: richHtml(PROBLEM_STATEMENT.overall) }} />
+        </Callout>
+        <Callout title="Novel idea">
+          <span dangerouslySetInnerHTML={{ __html: richHtml(PROBLEM_STATEMENT.novel) }} />
+        </Callout>
+      </div>
+
+      {/* ── Literature survey ── */}
+      <div className="content-section" id="literature">
+        <div className="plots-section-header">
+          <h2>Literature Survey</h2>
+          <span className="plots-count-badge">{LITERATURE.reduce((n, g) => n + g.papers.length, 0)} Papers</span>
+        </div>
+        <p className="section-desc">Pick a theme to see what each study set out to do, how, and what it leaves for future work.</p>
+        <div className="section-divider" />
+
+        <ChipTabs
+          size="lg"
+          ariaLabel="Literature themes"
+          options={LITERATURE.map((g) => ({ id: g.id, label: g.label, sub: `${g.papers.length} papers` }))}
+          value={litId}
+          onChange={setLitId}
+        />
+        <div key={litId} className="ui-lit-grid tab-panel">
+          {litGroup.papers.map((p) => (
+            <div key={p.author} className="ui-card ui-lit-card">
+              <div className="ui-card-kicker">{p.year}</div>
+              <h4>{p.author} <Rich text={`{{cite:${p.cite}}}`} /></h4>
+              <p className="ui-lit-objective">{p.objective}</p>
+              <dl className="ui-lit-meta">
+                <dt>Parameters</dt><dd>{p.parameters}</dd>
+                <dt>Methods</dt><dd>{p.methods}</dd>
+                <dt>Future work</dt><dd>{p.future}</dd>
+              </dl>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* ── Architecture ── */}
@@ -436,6 +513,48 @@ function OverviewPage({ onNavigate }) {
             </button>
           </div>
         </div>
+      </div>
+
+      {/* ── Trade-offs, limitations & future scope ── */}
+      <div className="content-section" id="limitations">
+        <div className="plots-section-header">
+          <h2>Trade-offs, Limitations & Future Scope</h2>
+        </div>
+        <p className="section-desc">What the whole project gives up, where it stops, and what comes next.</p>
+        <div className="section-divider" />
+
+        <div className="ui-two-col">
+          <div className="ui-panel">
+            <div className="ui-card-kicker">Design & method trade-offs</div>
+            <Bullets items={TRADEOFFS} />
+          </div>
+          <div className="ui-panel">
+            <div className="ui-card-kicker">Limitations & future scope</div>
+            <Bullets items={FUTURE_SCOPE} />
+          </div>
+        </div>
+      </div>
+
+      {/* ── Research themes ── */}
+      <div className="content-section" id="themes">
+        <div className="plots-section-header">
+          <h2>Research Themes Covered</h2>
+          <span className="plots-count-badge">{RESEARCH_THEMES.length} Special Issues</span>
+        </div>
+        <p className="section-desc">Journal special issues whose themes this work addresses.</p>
+        <div className="section-divider" />
+
+        <div className="ui-two-col">
+          {RESEARCH_THEMES.map((t) => (
+            <div key={t.journal} className="ui-card">
+              <div className="ui-card-kicker">Deadline · {t.deadline}</div>
+              <h4>{t.journal}</h4>
+              <p style={{ marginBottom: 10 }}><Rich text={t.issue} /></p>
+              <Bullets items={t.points} />
+            </div>
+          ))}
+        </div>
+        <Callout title="Industry expert reference">{INDUSTRY_EXPERT}</Callout>
       </div>
 
       {/* ── SDGs ── */}
