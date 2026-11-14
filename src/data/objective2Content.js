@@ -320,3 +320,26 @@ export const O2_VERIFICATION = [
   { name: "Experimental validation", area: "Validation", result: "No hardware or field data exist.", status: "Not done", ok: false },
 ];
 
+export const O2_LIMITATIONS = [
+  { title: "Boundary-limited", text: "Chosen designs sit at radius 39.5–40 mm and fraction 28–30%. In Rajasthan, raising the fraction from 25% to 30% still adds 16.5–21.1 kWh, above the band, so the 30% cap is still limiting. A diagnostic with radius up to 50 mm and fraction up to 40% still ends on the new bounds; v3 stays the approved box." },
+  { title: "Flow optimum is a model artefact", text: "The collector factor does not depend on flow. A flow-dependent version changes g_window by at most 1.43 kWh and is a sensitivity only." },
+  { title: "Level depends on stack position", text: "Moving the capsule stack from bottom to top changes the chosen Rajasthan designs' gain by 40–68 kWh, about two to three times the band. The sign of the gain does not change, and the best PCM is the same at every position." },
+  { title: "Sizing", text: "50 L with 1.5 m² (33.3 L/m²) is below IS 12976:2023. On the older model a 112.5 L tank passed the 65 °C limit without the shield; only that direction is usable." },
+  { title: "CFD", text: "OpenFOAM reproduces neither Tan 2009 nor Dong 2022 and its mesh study is not grid-independent; Fluent is a 2-D planar proxy. Neither is validation." },
+  { title: "Hold times are model values", text: "Retention hours come from the frozen capsule constants; a faster-capsule bound (c = 7.1) lengthens the 45 °C hold by 0.4–1.7 h, so the frozen values are slightly short rather than optimistic." },
+  { title: "Not modelled", text: "No monthly mains-temperature series, no PCM volume change and no kinetic supercooling delay (a proxy changes the 45 °C hold by under 1 h)." },
+  { title: "Delivery basis", text: "Objective 1 sizes PCMs for 60 °C delivery; Objective 2 scores energy at 45 °C (Uttarakhand 50 °C). Both arms of every paired run use the same metric, so the comparison holds; whether Objective 1 would shortlist differently at 45 °C is open." },
+  { title: "No measurements", text: "The model has not been compared with hardware or field data." },
+  { title: "Not run end to end", text: "The full --stage all chain has not been executed (hours long, and the held-out lock refuses it); stages were run individually." },
+];
+
+export const O3_HANDOFF = [
+  "<strong>Boundary:</strong> Objective 3 chooses the real-time action and nothing else. It cannot change the PCM, capsule geometry, tank volume, safety limits or the physics model.",
+  { text: "<strong>State:</strong> top and bottom tank-node temperatures, a recoverable-energy estimate and minutes since the last draw, plus weather and demand.", details: "The delivery temperature is the top node; the collector inlet is the bottom node. Recoverable energy above 45 °C is an estimate, not a sensor." },
+  { text: "<strong>Action:</strong> a mode (charge, discharge or bypass) with an optional continuous flow rate.", details: "Flow within 0.010–0.050 kg/s; simulator step 150 s." },
+  "<strong>Safety shield:</strong> forces bypass at 72 °C at the top node and 62 °C in the PCM, and clamps flow to the envelope.",
+  "<strong>Reward:</strong> a suggestion built from delivered energy at 45 °C, overheating hours, safety violations and switching; the weights are chosen in Objective 3.",
+  "<strong>Weather:</strong> training 2016–2020, validation 2021–2023. The held-out years (2011–2015; Uttarakhand 2024–2025) were used by Objective 2 and must not be used to tune a controller.",
+  "<strong>Comparison rule:</strong> a controller is compared with the same-flow water-only twin and the passive PCM design.",
+  "<strong>Status:</strong> contract v3 written for Rajasthan, Tamil Nadu and Uttarakhand; Assam's file is not a valid input.",
+];
