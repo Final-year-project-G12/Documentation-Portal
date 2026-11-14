@@ -186,3 +186,36 @@ export const O2_WORKFLOW_STEPS = [
   },
 ];
 
+export const RESEARCH_QUESTIONS = [
+  {
+    q: "PCM or plain tank?",
+    detail: "Does the Objective 1 PCM beat a water-only tank at the same flow under the 75 °C and 65 °C limits?",
+    finding: "Yes on the window metric in all three Rajasthan and all three Tamil Nadu regimes and in three of four Uttarakhand regimes. In Uttarakhand regime 3 it does not, and the recommendation is a water-only tank.",
+  },
+  {
+    q: "How much longer does hot water last?",
+    detail: "Hold time at or above 45 °C after charging stops (300 L/day, capped at 72 h).",
+    finding: "Rajasthan: 52–59 h with the PCM against 44–50 h for the same-volume water-only tank, about 8.6 to 10.3 h longer. These are model values, not measurements, and are not comparable with literature hold times quoted at 30 °C.",
+  },
+  {
+    q: "What the gain does not show",
+    detail: "Night-serve duration and the volume delivered at 45 °C in the same fixed tank.",
+    finding: "Capsules take about 20–30% of the water volume, so night-serve duration is not better: tau_serve gain is about −0.12 to +0.03 h in Rajasthan, while evening energy delivered up to 45 °C is higher by about 0.25 kWh per night.",
+  },
+  {
+    q: "Does the best design change with climate?",
+    detail: "Does the PCM or geometry differ by regime?",
+    finding: "The PCM differs by regime (Rajasthan: savE® OM55, PureTemp 60, PureTemp 58), but every chosen design sits at the edge of the searched box, so the true best amount is unknown.",
+  },
+  {
+    q: "Can a surrogate replace the simulator?",
+    detail: "Is the machine-learning model accurate enough to report numbers from?",
+    finding: "No. It ranks and proposes only; its absolute error exceeds the year-to-year scale, so every reported number is a simulator run.",
+  },
+  {
+    q: "Why does Objective 3 need a controller?",
+    detail: "Is the case for control seasonal re-ranking of the PCM, or hour-by-hour operation?",
+    finding: "Hour-by-hour operation. The PCM tank has fewer water-side shield hours than the water-only tank but about 280–1,200 PCM-side throttle hours a year, which a controller can manage.",
+  },
+];
+
