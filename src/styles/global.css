@@ -2830,3 +2830,35 @@ h3 {
     transform: none !important;
   }
 }
+
+
+/* ─────────────────────────────────────────────────────────
+   Interactive UI — components from src/components/Interactive.js
+   and the card layouts on the Overview and Objective 1 pages.
+   ───────────────────────────────────────────────────────── */
+
+/* Stat tiles */
+.ui-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 12px;
+  margin: 8px 0 28px;
+}
+.ui-stat-tile.result-stat-card {
+  border: 1px solid var(--surface-border);
+  border-radius: 12px;
+  background: var(--surface-card);
+  padding: 16px 16px 14px;
+}
+.ui-stat-value.result-stat-value {
+  font-size: 1.55rem;
+  line-height: 1.15;
+  margin-bottom: 6px;
+}
+.ui-stat-grid.compact .ui-stat-value.result-stat-value { font-size: 1.2rem; }
+.ui-stat-label {
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--neutral-400);
+}
+
