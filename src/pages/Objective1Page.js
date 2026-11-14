@@ -314,7 +314,7 @@ const STATES_CONFIG = {
     name: "Tamil Nadu",
     short: "TN",
     climateType: "Tropical Maritime & Semi-Arid (Southern India)",
-    tag: "133 Grid Points · k=3 Regimes · re-run 2026-10-25",
+    tag: "133 Grid Points · k=3 Regimes · 9 ranking criteria",
     stats: [
       { value: "133", label: "Population-Weighted Points (87.5% population coverage)" },
       { value: "−0.33 / +0.10 / +0.02", label: "Spearman ρ, MCDM rank vs. simulated rank" },
@@ -328,7 +328,9 @@ const STATES_CONFIG = {
       "The calculation assumes a 300 L/day draw.",
       "133 population points are clustered into three regimes with a diagonal-covariance GMM.",
       "A five-cluster run was also explored; k = 3 was retained because it scored higher on silhouette and bootstrap ARI {{cite:Schwarz1978BIC,Rousseeuw1987Silhouettes}}.",
+      "The regimes have 46 / 41 / 46 points covering 20.5 / 20.4 / 30.3 M people.",
       "RT57HC is the Borda #1 in every cluster, a consistent pick across all three regimes.",
+      "Tamil Nadu ranks on nine criteria: the eight shared ones plus thermal margin.",
     ],
     spearmanSummary: "C0: −0.333 · C1: +0.103 · C2: +0.024",
     verdict: "Exploratory",
