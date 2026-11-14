@@ -3174,3 +3174,16 @@ h3 {
   .ui-podium-block, .ui-pbar-fill { animation: none !important; }
   .ui-acc-body, .ui-progress-fill { transition: none !important; }
 }
+
+/* Overview — Review 4 sections */
+.ui-flow-grid { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+.ui-flow-card .bullets { margin: 0; }
+.ui-flow-card .bullets li { font-size: 0.84rem; }
+.ui-lit-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin: 4px 0 12px; }
+.ui-lit-card h4 { line-height: 1.35; }
+.ui-lit-objective { color: var(--neutral-200) !important; margin-bottom: 12px !important; }
+.ui-lit-meta { display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; margin: 0; padding-top: 10px; border-top: 1px solid var(--surface-border); }
+.ui-lit-meta dt { font-size: 0.66rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--neutral-500); padding-top: 2px; }
+.ui-lit-meta dd { margin: 0; font-size: 0.8rem; color: var(--neutral-300); line-height: 1.5; }
+.ui-two-col { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; margin: 8px 0 14px; }
+.ui-two-col .ui-panel .ui-card-kicker { margin-bottom: 10px; }
