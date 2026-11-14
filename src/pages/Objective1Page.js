@@ -914,8 +914,8 @@ const COMPARISON_ROWS = [
     values: {
       rajasthan: "−0.200 / −0.168 / +0.569",
       tamilnadu: "−0.333 / +0.103 / +0.024",
-      uttarakhand: "+0.023 / −0.168 / −0.338 / +0.169 / −0.140",
-      assam: "vs. delivery −0.28 / −0.30 / −0.28; vs. solar fraction +0.63 / +0.62 / +0.64 (historical K=4 ranking; inconclusive)",
+      uttarakhand: "+0.105 / −0.140 / −0.338 / −0.168",
+      assam: "Pending",
     },
   },
   {
@@ -923,8 +923,8 @@ const COMPARISON_ROWS = [
     values: {
       rajasthan: "p = 0.80 / 0.69 / 0.067 vs. Borda; not established",
       tamilnadu: "p = 0.42 / 0.78 / 0.95; not significant",
-      uttarakhand: "p = 0.92 / 0.48 / 0.14 / 0.48 / 0.56; not significant",
-      assam: "p ≈ 0.08–0.10 (delivery); Top-1 agreement 0 of 3",
+      uttarakhand: "p = 0.66 / 0.56 / 0.14 / 0.48; not significant",
+      assam: "Pending",
     },
   },
   {
@@ -932,8 +932,8 @@ const COMPARISON_ROWS = [
     values: {
       rajasthan: "savE® OM55 / PureTemp 60 / palmitic-stearic acid with expanded graphite",
       tamilnadu: "RT57HC in all three clusters",
-      uttarakhand: "PureTemp 58 (PureTemp 53 in Cluster 1)",
-      assam: "None confirmed; savE® OM49 tops the reference ranking in all three clusters",
+      uttarakhand: "PureTemp 58 (PureTemp 53 in Cluster 3, high Himalaya)",
+      assam: "Pending",
     },
   },
   {
@@ -941,8 +941,8 @@ const COMPARISON_ROWS = [
     values: {
       rajasthan: "Cluster 0 pool has 4 candidates; Cluster 2 has the widest spread between methods (W 0.42)",
       tamilnadu: "Physics comparison is exploratory (n = 8–10); Cluster 1 has the widest spread between methods (W 0.48)",
-      uttarakhand: "57 °C basis; simulated solar fractions (12–19%) sit below the 54–84% band",
-      assam: "Formal MCDM not performed; Monte Carlo skipped; point count follows the current grid (80)",
+      uttarakhand: "57 °C basis; K = 4 since 2026-11-13; simulated solar fractions (12–20%) sit below the 54–84% band",
+      assam: "Climate regimes complete; PCM screening and ranking for the K = 3 regimes are being updated",
     },
   },
 ];
