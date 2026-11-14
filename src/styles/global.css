@@ -3044,3 +3044,16 @@ h3 {
 .ui-podium-place.first .ui-podium-name { color: #ffffff; font-size: 0.86rem; }
 @keyframes podiumRise { from { transform: scaleY(0); } to { transform: scaleY(1); } }
 
+/* Progress bar */
+.ui-pbar { display: flex; align-items: center; gap: 10px; }
+.ui-pbar-track { flex: 1; height: 6px; border-radius: 6px; background: var(--surface-border); overflow: hidden; }
+.ui-pbar-fill {
+  height: 100%;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--accent-crimson), var(--accent-amber));
+  animation: barGrow 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  transform-origin: left;
+}
+.ui-pbar-value { font-family: 'Space Grotesk', sans-serif; font-size: 0.8rem; font-weight: 700; color: #ffffff; min-width: 40px; text-align: right; }
+@keyframes barGrow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
