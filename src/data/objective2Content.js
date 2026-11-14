@@ -112,3 +112,77 @@ export const O2_STATES = [
   },
 ];
 
+/* The 8-step chain used for Rajasthan, Tamil Nadu and Uttarakhand. */
+export const O2_WORKFLOW_STEPS = [
+  {
+    title: "Frozen inputs",
+    points: [
+      "Takes each regime's Objective 1 Top-3 PCMs as a fixed shortlist; the tank, collector and demand are fixed, not optimised.",
+      "Rajasthan: 1.5 m² flat-plate collector {{cite:Singh2025PCMSWH}}, 50 L tank {{cite:Chen2025TaguchiGRAPCM}}, 300 L/day, 45 °C delivery target. Tamil Nadu uses 100 L and 2.5 m²; Uttarakhand delivers at 50 °C.",
+      "Limits: 75 °C water, 65 °C PCM. A design whose PCM peak exceeds 65 °C in any simulated year is infeasible.",
+      "Sizing note: 50 L with 1.5 m² is 33.3 L/m², below the 40–100 L/m² of IS 12976:2023 §4.2. The compact tank is the fixed condition of this work.",
+    ],
+  },
+  {
+    title: "Design space and geometry",
+    points: [
+      "Design variables: capsule inner radius (10–40 mm), PCM volume fraction (2–30% of the tank), flow rate (0.010–0.050 kg/s) and arrangement (single-layer, staggered or radial).",
+      "The capsule count follows from the fraction. The shell is 0.8 mm aluminium.",
+      "An exact packing check (passage fraction at least 0.05, spacing at least 3 mm) rejects impossible designs.",
+      "The fraction cap was raised from 20% to 30% on 2026-10-27 (v3); results from the 20% cap are archived.",
+    ],
+  },
+  {
+    title: "Multi-node enthalpy simulator",
+    points: [
+      "A 10-node stratified tank with capsule enthalpy, a flat-plate collector and a 150 s time step (300 s failed the convergence check).",
+      "Demand follows the local hour; an earlier version used the UTC hour, which changed plain-tank annual energy by about 31% in regime 0.",
+      "A simulated year takes seconds, so thousands of designs are affordable; CFD for every design is not.",
+    ],
+  },
+  {
+    title: "Paired metrics",
+    points: [
+      "Every gain is a paired difference against a water-only tank at the same flow, weather year, demand, shield and tank model.",
+      "g_window: extra energy delivered at or above 45 °C between 18:00 and 09:00 per year; g_annual is the whole-year version.",
+      "d_overheat: shield hours of the PCM tank minus the water-only tank. It includes a PCM-side throttle at 62 °C that a water-only tank cannot have, so it is positive by construction.",
+      "The repeatability band comes from year-to-year scatter, time step, node count and property perturbations. Gains smaller than the band are ties.",
+    ],
+  },
+  {
+    title: "Screening and DOE",
+    points: [
+      "A Taguchi L9 screening with ANOVA shows which variables matter for each regime-PCM pair: PCM amount matters most, flow rate least {{cite:Chen2025TaguchiGRAPCM}}.",
+      "A 128-point scrambled-Sobol DOE then covers the v3 box for every pair, about 1,150 simulated designs per state (Rajasthan: 1,152, of which 1,089 valid).",
+      "Years are split by role: explore 2016–2020, select 2021–2023, held-out 2011–2015 (Uttarakhand 2024–2025).",
+    ],
+  },
+  {
+    title: "Surrogate comparison",
+    points: [
+      "Families per pair: a 5-member neural-network ensemble, XGBoost and a quadratic ridge RSM (Tamil Nadu compares five families).",
+      "Judged on rank agreement and error against the year-to-year scale, not on a global R².",
+      "Rajasthan: XGBoost wins 6 and RSM 3 of 9 pairs. Uttarakhand: XGBoost 11, RSM 1 of 12. Tamil Nadu: a stacked ensemble in 9 of 9.",
+      "The surrogate only ranks and proposes. The simulator evaluates every reported number.",
+    ],
+  },
+  {
+    title: "NSGA-II with active learning",
+    points: [
+      "NSGA-II {{cite:Deb2002NSGA2}} with constrained domination minimises −g_window, −g_annual and d_overheat on the winning surrogate, over 3 seeds.",
+      "Committee-disagreement active learning simulates the 10 designs where the models disagree most, then refits; it stops when the hypervolume moves by under 1% for two rounds. About 200–300 designs are simulated per PCM.",
+      "A dense grid (720 simulator runs per regime) cross-checks the rank-1 PCM of each regime: the search result is as good as the grid within the band. The grid contains the box vertices, so the pass is not fully independent.",
+      "A Gaussian-process Bayesian search, run independently for Tamil Nadu and Rajasthan, finds nothing clearly better.",
+    ],
+  },
+  {
+    title: "Selection and one-shot held-out test",
+    points: [
+      "Candidates within the band of the best g_window form a tied set (S0). A fixed funnel (S0 → S1 → S2) then decides on overheating, PCM mass, capsule count and temperature margin.",
+      "The funnel was fixed before the held-out run and its fingerprint is stored in a lock file.",
+      "The held-out test covers the chosen design and the best design of every other shortlisted PCM, so it cannot be a cherry-pick.",
+      "Any re-run that would re-decide a design is refused while the lock exists.",
+    ],
+  },
+];
+
