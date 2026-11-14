@@ -3070,3 +3070,18 @@ h3 {
 .ui-callout-body { font-size: 0.86rem; color: var(--neutral-300); }
 .ui-callout-body .bullets { margin: 0; }
 
+/* Generic card grid */
+.ui-card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin: 8px 0 16px; }
+.ui-card {
+  border: 1px solid var(--surface-border);
+  border-radius: 14px;
+  background: var(--surface-card);
+  padding: 18px;
+  transition: border-color 0.25s ease, transform 0.25s ease, background-color 0.25s ease;
+}
+.ui-card:hover { border-color: rgba(255, 255, 255, 0.28); transform: translateY(-3px); background: var(--surface-card-hover); }
+.ui-card h4 { margin: 0 0 6px; font-size: 0.95rem; color: #ffffff; }
+.ui-card p { margin: 0; font-size: 0.82rem; color: var(--neutral-400); line-height: 1.55; }
+.ui-card-kicker { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent-amber); margin-bottom: 8px; }
+.ui-card-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+
