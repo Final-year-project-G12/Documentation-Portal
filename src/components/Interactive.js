@@ -24,3 +24,23 @@ export function StatTiles({ items, compact = false }) {
   );
 }
 
+/* Pill-style selector. options: [{ id, label, sub? }] */
+export function ChipTabs({ options, value, onChange, ariaLabel, size = "md" }) {
+  return (
+    <div className={`ui-chips ui-chips-${size}`} role="tablist" aria-label={ariaLabel}>
+      {options.map((o) => (
+        <button
+          key={o.id}
+          role="tab"
+          aria-selected={value === o.id}
+          className={`ui-chip ${value === o.id ? "active" : ""}`}
+          onClick={() => onChange(o.id)}
+        >
+          <span className="ui-chip-label">{o.label}</span>
+          {o.sub && <span className="ui-chip-sub">{o.sub}</span>}
+        </button>
+      ))}
+    </div>
+  );
+}
+
