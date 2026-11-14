@@ -1005,7 +1005,7 @@ const COMPARISON_ROWS = [
       rajasthan: "savE® OM55 / PureTemp 60 / palmitic-stearic acid with expanded graphite",
       tamilnadu: "RT57HC in all three clusters",
       uttarakhand: "PureTemp 58 (PureTemp 53 in Cluster 3, high Himalaya)",
-      assam: "Pending",
+      assam: "RT54HC in all three clusters (provisional)",
     },
   },
   {
@@ -1014,7 +1014,7 @@ const COMPARISON_ROWS = [
       rajasthan: "Cluster 0 pool has 4 candidates; Cluster 2 has the widest spread between methods (W 0.42)",
       tamilnadu: "Physics comparison is exploratory (n = 8–10); Cluster 1 has the widest spread between methods (W 0.48)",
       uttarakhand: "57 °C basis; K = 4 since 2026-11-13; simulated solar fractions (12–20%) sit below the 54–84% band",
-      assam: "Climate regimes complete; PCM screening and ranking for the K = 3 regimes are being updated",
+      assam: "Same ranking in every cluster; feasibility filter is being corrected, so the ranking is provisional",
     },
   },
 ];
