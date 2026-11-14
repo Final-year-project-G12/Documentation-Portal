@@ -367,6 +367,14 @@ const STATES_CONFIG = {
         ],
       },
       {
+        label: "Monte Carlo stability (5,000 draws)",
+        points: [
+          "RT57HC stays in the Top-3 in 86.5% / 75.2% / 84.2% of draws for C0 / C1 / C2.",
+          "It stays Rank 1 in 49.2% / 40.0% / 42.3% of draws.",
+          "Cluster 1, where the methods agree least, is also the least stable.",
+        ],
+      },
+      {
         label: "Preprocessing",
         points: [
           "ERA5 {{cite:Hersbach2020ERA5}} is cross-checked against NASA POWER {{cite:Stackhouse2021POWER}}.",
