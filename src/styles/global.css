@@ -3010,10 +3010,6 @@ h3 {
 .ui-acc-inner { overflow: hidden; padding: 0 18px; }
 .ui-acc-item.open .ui-acc-inner { padding-bottom: 14px; }
 
-/* Reveal toggle */
-.ui-reveal { margin: 8px 0 16px; }
-.ui-reveal-body { margin-top: 14px; }
-
 /* Podium */
 .ui-podium { display: grid; grid-template-columns: 1fr 1.15fr 1fr; align-items: end; gap: 8px; margin: 14px 0 12px; }
 .ui-podium-place { display: flex; flex-direction: column; align-items: stretch; text-align: center; min-width: 0; }
