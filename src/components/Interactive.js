@@ -154,3 +154,15 @@ export function Podium({ first, second, third }) {
   );
 }
 
+/* Horizontal completion bar. */
+export function ProgressBar({ value, label }) {
+  return (
+    <div className="ui-pbar" aria-label={`${label || "Progress"}: ${value}%`}>
+      <div className="ui-pbar-track">
+        <div className="ui-pbar-fill" style={{ width: `${value}%` }} />
+      </div>
+      <span className="ui-pbar-value">{value}%</span>
+    </div>
+  );
+}
+
