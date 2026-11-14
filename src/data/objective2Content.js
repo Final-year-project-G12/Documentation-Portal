@@ -230,3 +230,53 @@ export const CRITERIA_STUDY = [
   { id: "c2", label: "Everything at minimum", rin: "10 mm", n: "380", pcmKg: "1.4", flow: "0.010", arrangement: "single-layer", gWindow: 2.2, pct: 1, verdict: "Eliminated at Rule A: 380 tiny capsules hold only 1.4 kg of PCM.", water: "30.0 → 31.7 °C", lf: "1.00 → 0.00", heat: 2125 },
 ];
 
+export const CFD_CHECKS = [
+  {
+    id: "rj",
+    label: "Rajasthan · OpenFOAM",
+    status: "Unvalidated upper bound",
+    points: [
+      "One chosen capsule (savE® OM55, R = 39.5 mm) is melted at a 70 °C wall in a 2-D axisymmetric OpenFOAM case and compared with the simple capsule model used in the optimisation.",
+      "The CFD reaches 50% melt in about 1,000 s; the simple model needs 6,376 s. So the simple model is on the cautious side for charging.",
+      "The mesh study is not grid-independent (40 → 80 cells moves t50 by +14.3%), and neither Tan 2009 nor Dong 2022 is reproduced (the CFD melts about 1.6–2 times faster than both experiments).",
+      "Decision (2026-10-30): report the CFD as an unvalidated upper bound; keep the frozen capsule constants c = 5, F = 2. Never write \"CFD-validated\".",
+      "Follow-up (2026-11-14): against a tank-level experiment (Amanowicz and Turski 2025) the frozen constants match to 1.1–1.4 K once capsule geometry is mapped correctly; a fit gives c = 5.03, so the constants stay.",
+    ],
+    figures: [
+      { file: "rajasthan/fig40_of_melt_curves.png", title: "OpenFOAM melt curves", caption: "Capsule melt fraction in the OpenFOAM cases." },
+      { file: "rajasthan/fig41_of_lumped_vs_cfd.png", title: "Simple model vs CFD", caption: "Simple (lumped) capsule model against the CFD melt curve." },
+      { file: "rajasthan/fig42_of_mesh_and_freeze.png", title: "Mesh study and freezing case", caption: "Mesh refinement and a freezing case; the mesh study is not converged." },
+    ],
+  },
+  {
+    id: "tn",
+    label: "Tamil Nadu · ANSYS Fluent",
+    status: "Model-consistency cross-check",
+    points: [
+      "Four shortlisted PCMs tested identically (one capsule from 30 °C solid in 70 °C water for 6 h): melt fraction 0.60 (C25) / 0.50 (C26) / 0.47 (RT57HC) / 0.38 (PureTemp 58), with no solver failures.",
+      "The order is physically consistent: a lower melting point and higher conductivity melt more. First-order upwind makes the absolute values conservative; read the ordering.",
+      "Whole system drawn as one 2-D planar slice (Student licence): tank, 34-capsule bed, collector channel, absorber and riser. The daytime check shows heat flowing from the absorber into the tank water.",
+      "Evening discharge (melted capsules in 30 °C water, no sun, 2 h): the capsules slowly solidify and warm the water. Water movement is not simulated, so this is a check of the idea, not a reported result.",
+      "Fluent never chooses a design; OpenFOAM's standard solvers have no native melting model, which is why Tamil Nadu used Fluent.",
+    ],
+    figures: [
+      { file: "tamilnadu/fluent/03_pcm_melt_comparison.png", title: "PCM melting comparison", caption: "Four shortlisted PCMs under identical settings." },
+      { file: "tamilnadu/fluent/01_system_mesh_zones.png", title: "System model zones", caption: "Tank water, PCM, capsule shell, collector channel, absorber and riser." },
+      { file: "tamilnadu/fluent/02_system_temperature_field.png", title: "System temperature field", caption: "Daytime heat path from the absorber into the tank water." },
+    ],
+  },
+  {
+    id: "uk",
+    label: "Uttarakhand · OpenFOAM",
+    status: "1 of 10 cases run",
+    points: [
+      "Same solver set-up as Rajasthan; Rajasthan's findings were applied on 2026-11-13: CFD numbers are an unvalidated upper bound.",
+      "One of the 10 written capsule cases was run; in it the simple model's t90 is 2.05 times the CFD's, again on the cautious side.",
+      "No design value changed.",
+    ],
+    figures: [
+      { file: "uttarakhand/fig40_of_capsule.png", title: "OpenFOAM capsule case", caption: "The one Uttarakhand capsule case that was run." },
+    ],
+  },
+];
+
