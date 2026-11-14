@@ -3118,3 +3118,23 @@ h3 {
 .ui-obj-tab-num { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-amber); }
 .ui-obj-tab-title { font-size: 0.86rem; font-weight: 600; line-height: 1.3; color: #ffffff; }
 
+/* SDG tiles with hover description */
+.ui-sdg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 14px; }
+.ui-sdg { position: relative; border-radius: 12px; overflow: hidden; aspect-ratio: 1 / 1; max-width: 220px; }
+.ui-sdg img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease, filter 0.4s ease; }
+.ui-sdg-over {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  padding: 14px;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.88), rgba(0, 0, 0, 0.15));
+  color: #ffffff;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.ui-sdg:hover img, .ui-sdg:focus-within img { transform: scale(1.06); filter: saturate(1.1); }
+.ui-sdg:hover .ui-sdg-over, .ui-sdg:focus-within .ui-sdg-over { opacity: 1; }
+
