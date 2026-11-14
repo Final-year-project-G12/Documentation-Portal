@@ -969,7 +969,7 @@ const COMPARISON_ROWS = [
       rajasthan: "4 / 8 / 11",
       tamilnadu: "8 / 10 / 8",
       uttarakhand: "29 / 29 / 29 / 30",
-      assam: "Pending",
+      assam: "9 / 9 / 9 (provisional)",
     },
   },
   {
@@ -978,7 +978,7 @@ const COMPARISON_ROWS = [
       rajasthan: "1.00 / 0.77 / 0.42",
       tamilnadu: "0.85 / 0.48 / 0.78",
       uttarakhand: "0.80 / 0.80 / 0.78 / 0.84",
-      assam: "Pending",
+      assam: "0.95 / 0.95 / 0.95",
     },
   },
   {
