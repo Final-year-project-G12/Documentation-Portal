@@ -133,3 +133,24 @@ export function Reveal({ label, hideLabel, children }) {
   );
 }
 
+/* Rank 1 / 2 / 3 podium for one cluster. */
+export function Podium({ first, second, third }) {
+  const places = [
+    { rank: 2, name: second, cls: "second" },
+    { rank: 1, name: first, cls: "first" },
+    { rank: 3, name: third, cls: "third" },
+  ];
+  return (
+    <div className="ui-podium">
+      {places.map((p) => (
+        <div key={p.rank} className={`ui-podium-place ${p.cls} ${!p.name || p.name === "—" ? "empty" : ""}`}>
+          <div className="ui-podium-name">{p.name && p.name !== "—" ? p.name : "—"}</div>
+          <div className="ui-podium-block">
+            <span>{p.rank}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
