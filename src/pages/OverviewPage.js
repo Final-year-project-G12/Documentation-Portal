@@ -5,7 +5,7 @@ import Figure from "../components/Figure";
 import { METHODS } from "../data/methods";
 import { resetTerms } from "../data/terms";
 import useReveal from "../components/useReveal";
-import { StatTiles, ChipTabs, StepExplorer, ProgressBar, Callout, Reveal } from "../components/Interactive";
+import { StatTiles, ChipTabs, StepExplorer, ProgressBar, Callout } from "../components/Interactive";
 
 /* ─────────────────────────────────────────────────────────
    OverviewPage.js — Central Project Hub (Review 2 Presentation)
@@ -299,28 +299,26 @@ function OverviewPage({ onNavigate }) {
           }))}
         />
 
-        <Reveal label="View the architecture diagram" hideLabel="Hide the architecture diagram">
-          <div className="diagram">
-            <Figure
-              src={`${process.env.PUBLIC_URL}/diagrams/project-architecture.png`}
-              title="Project architecture: Objectives 1 to 4 with real-time feedback"
-              alt="Block diagram of the four project objectives. Objective 1 selects PCMs from climate data, Objective 2 optimises the PCM system design, Objective 3 is a deep reinforcement learning controller, and Objective 4 deploys the prototype, with a real-time feedback loop from temperature, flow rate, PCM state and hot-water output."
-              caption="Project architecture, Review 2 presentation, slide 3.2."
-            />
-            <p className="diagram-caption">
-              Project architecture, Objectives 1 to 4 with real-time feedback (Review 2 presentation, slide 3.2 <Rich text="{{cite:Group12Review2}}" />).
-            </p>
-          </div>
-          <Callout title="Note on the diagram" tone="warn">
-            <Bullets
-              items={[
-                "The Objective 1 box shows the plan at the time of Review 2.",
-                "It names \"GNN / K-means\" for clustering; the implemented pipeline uses a Gaussian Mixture Model.",
-                "It lists three ranking methods (TOPSIS, VIKOR, GRA); the pipeline uses four (TOPSIS, PROMETHEE II, GRA, VIKOR).",
-              ]}
-            />
-          </Callout>
-        </Reveal>
+        <div className="diagram">
+          <Figure
+            src={`${process.env.PUBLIC_URL}/diagrams/project-architecture.png`}
+            title="Project architecture: Objectives 1 to 4 with real-time feedback"
+            alt="Block diagram of the four project objectives. Objective 1 selects PCMs from climate data, Objective 2 optimises the PCM system design, Objective 3 is a deep reinforcement learning controller, and Objective 4 deploys the prototype, with a real-time feedback loop from temperature, flow rate, PCM state and hot-water output."
+            caption="Project architecture, Review 2 presentation, slide 3.2."
+          />
+          <p className="diagram-caption">
+            Project architecture, Objectives 1 to 4 with real-time feedback (Review 2 presentation, slide 3.2 <Rich text="{{cite:Group12Review2}}" />).
+          </p>
+        </div>
+        <Callout title="Note on the diagram" tone="warn">
+          <Bullets
+            items={[
+              "The Objective 1 box shows the plan at the time of Review 2.",
+              "It names \"GNN / K-means\" for clustering; the implemented pipeline uses a Gaussian Mixture Model.",
+              "It lists three ranking methods (TOPSIS, VIKOR, GRA); the pipeline uses four (TOPSIS, PROMETHEE II, GRA, VIKOR).",
+            ]}
+          />
+        </Callout>
       </div>
 
       {/* ── Algorithms ── */}
