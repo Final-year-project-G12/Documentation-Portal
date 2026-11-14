@@ -304,3 +304,19 @@ export const O2_PLOTS = [
   { num: "fig50", file: "fig50_weather_inputs.png", group: "inputs", title: "Weather inputs", caption: "Weather of each regime's medoid point by year role." },
 ];
 
+export const O2_VERIFICATION = [
+  { name: "Time-step convergence", area: "Verification", result: "300 s failed the gate, so the solver step is 150 s.", status: "Done", ok: true },
+  { name: "Multi-node tank", area: "Verification", result: "N from 10 to 20 moves the paired gain by 0.15–0.25 percentage points; part of the band.", status: "Done", ok: true },
+  { name: "Solar-fraction benchmark", area: "Verification", result: "The plain-tank solar fraction sits below the 54–84% literature band (about 0.30–0.36). Reported, not tuned.", status: "Below band", ok: false },
+  { name: "Screening and DOE", area: "Simulation bank", result: "Taguchi L9 then 128 Sobol points per pair; Rajasthan 1,152 designs, 1,089 valid.", status: "Done (3 states)", ok: true },
+  { name: "Surrogates", area: "Machine learning", result: "XGBoost best in Rajasthan and Uttarakhand, a stacked ensemble in Tamil Nadu; ranking only.", status: "Done (3 states)", ok: true },
+  { name: "NSGA-II and grid check", area: "Optimization", result: "All rank-1 pairs pass within the band (Uttarakhand 4 of 4). The grid contains the box vertices.", status: "Done (3 states)", ok: true },
+  { name: "Held-out test", area: "Held-out", result: "Run once per state under a lock: every current-method gain above the band except Uttarakhand regime 3; no limit broken.", status: "Run once", ok: true },
+  { name: "Ablations and negative controls", area: "Controls", result: "Latent heat = 0 drops the gain below zero; water-only invariance controls return zero difference.", status: "Done", ok: true },
+  { name: "Capsule model, tank-level check", area: "Cross-check", result: "Frozen c = 5, F = 2 match Amanowicz and Turski 2025 to 1.1–1.4 K; fitted c = 5.03.", status: "Done (2026-11-14)", ok: true },
+  { name: "OpenFOAM capsule check", area: "Cross-check", result: "Benchmarks not reproduced and mesh not converged: an unvalidated upper bound.", status: "Stopped at benchmark", ok: false },
+  { name: "ANSYS Fluent", area: "Cross-check", result: "Four-PCM ordering consistent; whole-tank discharge and criteria study as a model-consistency check.", status: "Cross-check only", ok: true },
+  { name: "Objective 3 contract", area: "Hand-off", result: "Environment contract v3 written for Rajasthan, Tamil Nadu and Uttarakhand.", status: "Written", ok: true },
+  { name: "Experimental validation", area: "Validation", result: "No hardware or field data exist.", status: "Not done", ok: false },
+];
+
