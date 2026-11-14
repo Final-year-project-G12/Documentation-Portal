@@ -5,6 +5,8 @@ import PipelineSection from "../components/PipelineSection";
 import { Terms } from "../components/Terms";
 import { resetTerms } from "../data/terms";
 import useReveal from "../components/useReveal";
+import { Rich } from "../components/Cite";
+import { StatTiles, ChipTabs, Accordion, Podium, Callout } from "../components/Interactive";
 
 /* ─────────────────────────────────────────────────────────
    Objective 1 — Climate-Region-Aware PCM Recommendation
@@ -1026,19 +1028,6 @@ function stateNotes(key) {
   return (STATES_CONFIG[key].notes || []).filter((n) => !DROPPED_NOTE_LABELS.includes(n.label));
 }
 
-/* A labelled group of bullets for one note. */
-function NoteGroups({ notes }) {
-  return (
-    <div className="note-groups">
-      {notes.map((n) => (
-        <div key={n.label} className="note-group">
-          <h4 className="note-label">{n.label}</h4>
-          <Bullets items={n.points} />
-        </div>
-      ))}
-    </div>
-  );
-}
 
 /* Plot types shown in the plot grid; a state shows only the types it has. */
 const PLOT_TYPES = [
@@ -1079,38 +1068,71 @@ function plotUrls(stateKey, plot) {
   };
 }
 
+/* Plot groups for the filter chips. */
+const PLOT_GROUPS = [
+  { id: "all", label: "All plots" },
+  { id: "data", label: "Data & preprocessing" },
+  { id: "clustering", label: "Clustering" },
+  { id: "mcdm", label: "MCDM ranking" },
+  { id: "physics", label: "Physics check" },
+];
+
+function plotGroup(num) {
+  if (num === "01") return "data";
+  if (num === "02") return "clustering";
+  if (num === "11" || num === "12") return "physics";
+  return "mcdm";
+}
+
+const QC_NOTES = [
+  "Shows record counts before and after cleaning (stage 2 of the pipeline).",
+  "Cleaning uses Hampel filtering {{cite:Hampel1974InfluenceCurve}}, chained-equation imputation {{cite:vanBuuren2011MICE}} and quantile mapping {{cite:Cannon2015QuantileMapping}} against NASA POWER.",
+  "The Rajasthan and Uttarakhand rows were re-checked against the 2026-10-25 quality-control reports (5 of 5 checks passed each).",
+  "The Assam row was re-derived on 2026-11-11 from its QC report and cleaned file: the earlier counts (1,413,420 → 1,402,101) matched the old 129-point grid, not the current 80 points.",
+  "The Tamil Nadu row was re-checked against its quality-control report (5 of 5 checks passed; 11,970 lag warm-up rows set aside).",
+];
+
 function Objective1Page() {
   resetTerms();
   const [tab, setTab] = useState("rajasthan");
   const [plotTab, setPlotTab] = useState("rajasthan");
+  const [plotGroupId, setPlotGroupId] = useState("all");
+  const [focusState, setFocusState] = useState(null);
   const current = STATES_CONFIG[tab];
-  const revealRef = useReveal([tab, plotTab]);
+  const revealRef = useReveal([tab, plotTab, plotGroupId]);
+
+  const stateOptions = STATE_ORDER.map((k) => ({ id: k, label: STATES_CONFIG[k].name }));
+  const visiblePlots = plotsForState(plotTab).filter((pt) => plotGroupId === "all" || plotGroup(pt.num) === plotGroupId);
 
   return (
     <section className="content animated-page" id="top" ref={revealRef}>
-      {/* ── Page Hero ────────────────────────────────────── */}
+      {/* ── Hero ── */}
       <div className="page-hero">
         <div className="eyebrow">
           <span className="eyebrow-badge">Research Module · Objective 1</span>
           <span>Results by state</span>
         </div>
-
         <h1>Climate-Adaptive PCM Thermal Storage Selection</h1>
+        <p className="section-desc" style={{ maxWidth: 760 }}>
+          <Rich text={STATES_CONFIG.all.overview.join(" ")} />
+        </p>
       </div>
 
-      {/* ── Pipeline (same as the Overview) ── */}
+      <StatTiles items={STATES_CONFIG.all.stats} />
+
+      {/* ── Pipeline ── */}
       <div className="content-section" id="pipeline">
         <PipelineSection onObjective1 />
       </div>
 
-      {/* ── State comparison ───────────────────────────────── */}
+      {/* ── State comparison ── */}
       <div className="content-section" id="comparison">
         <div className="plots-section-header">
           <h2>State Comparison</h2>
           <span className="plots-count-badge">4 States</span>
         </div>
         <p className="section-desc">
-          The same measures for each state; the design basis differs by state, so compare rows with care.
+          The same measures for each state. Click a state's column header to highlight it; the design basis differs by state, so compare rows with care.
         </p>
         <div className="section-divider" />
 
@@ -1120,7 +1142,14 @@ function Objective1Page() {
               <tr>
                 <th>Measure</th>
                 {STATE_ORDER.map((k) => (
-                  <th key={k}>{STATES_CONFIG[k].name}</th>
+                  <th
+                    key={k}
+                    className={`col-select ${focusState === k ? "col-active" : ""}`}
+                    onClick={() => setFocusState(focusState === k ? null : k)}
+                    aria-pressed={focusState === k}
+                  >
+                    {STATES_CONFIG[k].name}
+                  </th>
                 ))}
               </tr>
             </thead>
@@ -1129,7 +1158,7 @@ function Objective1Page() {
                 <tr key={row.label}>
                   <td><Terms text={row.label} /></td>
                   {STATE_ORDER.map((k) => (
-                    <td key={k}>{row.values[k]}</td>
+                    <td key={k} className={focusState === k ? "col-active" : ""}>{row.values[k]}</td>
                   ))}
                 </tr>
               ))}
@@ -1137,160 +1166,153 @@ function Objective1Page() {
           </table>
         </div>
 
-        <NoteGroups notes={STATES_CONFIG.all.notes || []} />
+        <Accordion
+          defaultOpen={null}
+          items={(STATES_CONFIG.all.notes || []).map((n) => ({ id: n.label, title: n.label, points: n.points }))}
+        />
       </div>
 
-      {/* ── Cross-State Preprocessing Verification Table ── */}
+      {/* ── Preprocessing ── */}
       <div className="content-section" id="preprocessing">
         <div className="plots-section-header">
           <h2>Preprocessing and Quality Control</h2>
           <span className="plots-count-badge">By State</span>
         </div>
-        <Bullets
-          items={[
-            "Shows record counts before and after cleaning (stage 2 of the pipeline).",
-            "Cleaning uses Hampel filtering {{cite:Hampel1974InfluenceCurve}}, chained-equation imputation {{cite:vanBuuren2011MICE}} and quantile mapping {{cite:Cannon2015QuantileMapping}} against NASA POWER.",
-            "The Rajasthan and Uttarakhand rows were re-checked against the 2026-10-25 quality-control reports (5 of 5 checks passed each).",
-            "The Assam row was re-derived on 2026-11-11 from its QC report and cleaned file: the earlier counts (1,413,420 → 1,402,101) matched the old 129-point grid, not the current 80 points.",
-            "The Tamil Nadu row was re-checked against its quality-control report (5 of 5 checks passed; 11,970 lag warm-up rows set aside).",
-          ]}
-        />
+        <p className="section-desc">Record counts before and after cleaning, and the quality-control result for each state.</p>
         <div className="section-divider" />
 
-        <div className="data-table-wrapper">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>State Pipeline</th>
-                <th>Grid Points</th>
-                <th>Input Records</th>
-                <th>Output Records</th>
-                <th>Data Retention</th>
-                <th>Dimensions</th>
-                <th>Engineered Features</th>
-                <th>Missing Rate</th>
-                <th>QC Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {PREPROCESSING_SUMMARY.map((row) => (
-                <tr key={row.state}>
-                  <td style={{ fontWeight: 600, color: "#ffffff" }}>{row.state}</td>
-                  <td>{row.gridPoints}</td>
-                  <td>{row.inputRecords}</td>
-                  <td>{row.outputRecords}</td>
-                  <td style={{ fontWeight: 600, color: "#ffffff" }}>{row.retention}</td>
-                  <td>
-                    {row.inputDims} → {row.outputDims}
-                  </td>
-                  <td>{row.engineeredFeatures}</td>
-                  <td>{row.missingRate}</td>
-                  <td>{row.status}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="ui-qc-grid">
+          {PREPROCESSING_SUMMARY.map((row) => (
+            <div key={row.state} className="ui-card">
+              <div className="ui-panel-head" style={{ marginBottom: 6 }}>
+                <h4 style={{ margin: 0 }}>{row.state}</h4>
+                <span className={`ui-badge ${String(row.status).startsWith("PASS (5") || row.status === "PASS" ? "" : "amber"}`}>
+                  {String(row.status).split(",")[0]}
+                </span>
+              </div>
+              <div className="ui-qc-row"><span>Grid points</span><span>{row.gridPoints}</span></div>
+              <div className="ui-qc-row"><span>Records in → out</span><span>{row.inputRecords} → {row.outputRecords}</span></div>
+              <div className="ui-qc-row"><span>Retention</span><span>{row.retention}</span></div>
+              <div className="ui-qc-row"><span>Missing after cleaning</span><span>{row.missingRate}</span></div>
+            </div>
+          ))}
         </div>
+
+        <Accordion
+          defaultOpen={null}
+          items={[
+            { id: "qc-notes", title: "How the table was checked", badge: `${QC_NOTES.length} notes`, points: QC_NOTES },
+            {
+              id: "qc-table",
+              title: "Full quality-control table",
+              children: (
+                <div className="data-table-wrapper" style={{ margin: 0 }}>
+                  <table className="data-table">
+                    <thead>
+                      <tr>
+                        <th>State Pipeline</th>
+                        <th>Grid Points</th>
+                        <th>Input Records</th>
+                        <th>Output Records</th>
+                        <th>Data Retention</th>
+                        <th>Dimensions</th>
+                        <th>Engineered Features</th>
+                        <th>Missing Rate</th>
+                        <th>QC Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {PREPROCESSING_SUMMARY.map((row) => (
+                        <tr key={row.state}>
+                          <td style={{ fontWeight: 600, color: "#ffffff" }}>{row.state}</td>
+                          <td>{row.gridPoints}</td>
+                          <td>{row.inputRecords}</td>
+                          <td>{row.outputRecords}</td>
+                          <td style={{ fontWeight: 600, color: "#ffffff" }}>{row.retention}</td>
+                          <td>{row.inputDims} → {row.outputDims}</td>
+                          <td>{row.engineeredFeatures}</td>
+                          <td>{row.missingRate}</td>
+                          <td>{row.status}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ),
+            },
+          ]}
+        />
       </div>
 
-      {/* ── Results by state (tabs) ────────────────────────── */}
+      {/* ── Results by state ── */}
       <div className="content-section" id="state-results">
         <div className="plots-section-header">
           <h2>Results by State</h2>
         </div>
-        <p className="section-desc">
-          Cluster results, design-basis details and notes that belong to one state only.
-        </p>
+        <p className="section-desc">Pick a state to see its headline numbers, the Top-3 PCMs for each climate regime and its notes.</p>
         <div className="section-divider" />
 
-        <div className="state-tabs" role="tablist" aria-label="State">
-          {STATE_ORDER.map((k) => (
-            <button
-              key={k}
-              role="tab"
-              aria-selected={tab === k}
-              className={`state-tab ${tab === k ? "active" : ""}`}
-              onClick={() => setTab(k)}
-            >
-              {STATES_CONFIG[k].name}
-            </button>
-          ))}
-        </div>
+        <ChipTabs size="lg" ariaLabel="State" options={stateOptions} value={tab} onChange={setTab} />
 
         <div key={tab} className="tab-panel">
-        <h3>{current.name}</h3>
-        <p className="section-desc" style={{ marginBottom: 8 }}>{current.climateType}</p>
-        <Bullets items={current.overview} />
+          <div className="ui-state-head">
+            <h3>{current.name}</h3>
+            <span className="ui-state-type">{current.climateType}</span>
+            <span className="tag tag-zinc">{current.tag}</span>
+          </div>
 
-        <div className="data-table-wrapper">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Cluster</th>
-                <th>Rank-1 PCM</th>
-                <th>Rank 2</th>
-                <th>Rank 3</th>
-                <th>Melting point</th>
-                <th>Latent heat</th>
-                <th>Method agreement (W) · Physics ρ</th>
-                <th>Coverage</th>
-              </tr>
-            </thead>
-            <tbody>
-              {current.recommendations.map((r) => (
-                <tr key={r.cluster}>
-                  <td style={{ fontWeight: 600, color: "#ffffff" }}>{r.cluster}</td>
-                  <td style={{ color: "#ffffff" }}>{r.pcm}</td>
-                  <td>{r.top2 || "—"}</td>
-                  <td>{r.top3 || "—"}</td>
-                  <td>{r.tm}</td>
-                  <td>{r.latentHeat}</td>
-                  <td>{r.mc}</td>
-                  <td>{r.region}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <StatTiles compact items={current.stats} />
+
+          <Callout title={`${current.name} at a glance`}>
+            <Bullets items={current.overview} />
+          </Callout>
+
+          <h3 style={{ marginTop: 24 }}>Top-3 PCMs per climate regime</h3>
+          <div className="ui-cluster-grid">
+            {current.recommendations.map((r) => (
+              <div key={r.cluster} className="ui-card ui-cluster-card">
+                <h4>{r.cluster}</h4>
+                <Podium first={r.pcm} second={r.top2} third={r.top3} />
+                <div className="ui-cluster-props">
+                  <div><span>Melting point</span><span>{r.tm}</span></div>
+                  <div><span>Latent heat</span><span>{r.latentHeat}</span></div>
+                  <div className="wide"><span>Method agreement · physics</span><span>{r.mc}</span></div>
+                  <div className="wide"><span>Coverage</span><span>{r.region}</span></div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <h3>Notes for {current.name}</h3>
+          <Accordion
+            defaultOpen={0}
+            items={stateNotes(tab).map((n) => ({ id: n.label, title: n.label, badge: `${n.points.length}`, points: n.points }))}
+          />
         </div>
-
-        <NoteGroups notes={stateNotes(tab)} />
-        </div>
-
       </div>
 
-      {/* ── Plots across states: choose a state ─────────────── */}
+      {/* ── Plots ── */}
       <div className="content-section" id="plots">
         <div className="plots-section-header">
           <h2>Plots Across States</h2>
-          <span className="plots-count-badge">{plotsForState(plotTab).length} Plots</span>
+          <span className="plots-count-badge">{visiblePlots.length} Plots</span>
         </div>
-        <Bullets
-          items={[
-            "Choose a state.",
-            "Rajasthan and Tamil Nadu have one bump chart per cluster; Uttarakhand has one bump chart covering its four clusters.",
-            "Assam's ranking plots come from its provisional run (identical in all three clusters).",
-            "Click a plot to enlarge it.",
-            "\"Interactive view\" opens the interactive version in the same viewer; \"New tab\" opens it in a separate tab.",
-          ]}
-        />
+        <p className="section-desc">
+          Pick a state and a stage. Click a plot to enlarge it; "Interactive view" opens the interactive version and "New tab" opens it separately.
+        </p>
         <div className="section-divider" />
 
-        <div className="state-tabs" role="tablist" aria-label="State for plots">
-          {STATE_ORDER.map((k) => (
-            <button
-              key={k}
-              role="tab"
-              aria-selected={plotTab === k}
-              className={`state-tab ${plotTab === k ? "active" : ""}`}
-              onClick={() => setPlotTab(k)}
-            >
-              {STATES_CONFIG[k].name}
-            </button>
-          ))}
-        </div>
+        <ChipTabs size="lg" ariaLabel="State for plots" options={stateOptions} value={plotTab} onChange={setPlotTab} />
+        <ChipTabs ariaLabel="Plot stage" options={PLOT_GROUPS} value={plotGroupId} onChange={setPlotGroupId} />
 
-        <div key={plotTab} className="plot-grid plot-grid-wide tab-panel">
-          {plotsForState(plotTab).map((pt) => {
+        {visiblePlots.length === 0 && (
+          <Callout title="No plots for this stage">
+            {STATES_CONFIG[plotTab].name} has no plots in this stage yet.
+          </Callout>
+        )}
+
+        <div key={`${plotTab}-${plotGroupId}`} className="plot-grid plot-grid-wide tab-panel">
+          {visiblePlots.map((pt) => {
             const p = plotFor(plotTab, pt.num);
             const u = plotUrls(plotTab, p);
             return (
