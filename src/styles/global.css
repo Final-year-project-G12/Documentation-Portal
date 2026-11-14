@@ -2772,3 +2772,41 @@ h3 {
   background-color: rgba(255, 255, 255, 0.03);
 }
 
+/* State tabs: animated underline and a fade when the panel changes */
+.animated-page .state-tab {
+  position: relative;
+  transition: color 0.2s ease;
+}
+.animated-page .state-tab::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 2px;
+  background: #ffffff;
+  transform: scaleX(0);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.animated-page .state-tab.active {
+  border-bottom-color: transparent;
+}
+.animated-page .state-tab.active::after,
+.animated-page .state-tab:hover::after {
+  transform: scaleX(1);
+}
+.animated-page .state-tab:hover:not(.active)::after {
+  background: rgba(255, 255, 255, 0.35);
+}
+.tab-panel {
+  animation: fadeIn 0.45s ease both;
+}
+
+/* Plot images zoom slightly on hover */
+.animated-page .plot-type img {
+  transition: transform 0.35s ease;
+}
+.animated-page .plot-type img:hover {
+  transform: scale(1.01);
+}
+
