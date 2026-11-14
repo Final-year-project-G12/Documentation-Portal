@@ -896,7 +896,7 @@ const STATES_CONFIG = {
         points: [
           "Rajasthan −0.200 / −0.168 / +0.569; Tamil Nadu −0.333 / +0.103 / +0.024.",
           "Uttarakhand +0.105 / −0.140 / −0.338 / −0.168 (none significant).",
-          "Assam: pending, while its PCM ranking for the K = 3 regimes is being updated.",
+          "Assam: not reported for its current, provisional ranking.",
           "Overall, agreement between the MCDM ranking and the physics model is weak and not statistically significant in every state where it was run, so predictive validity is not established.",
         ],
       },
@@ -905,7 +905,7 @@ const STATES_CONFIG = {
         points: [
           "Per state: points, regimes, candidates, Kendall's W, Spearman ρ and the Top-3.",
           "Plots: raw-vs-preprocessed radiation, the regime map, MCDM bump charts, the method-agreement heatmap, rank-reversal, the simulated-vs-MCDM agreement plot and the tank profile.",
-          "Assam shows only its data and clustering plots until its PCM ranking is updated.",
+          "Assam's ranking plots are from its provisional run; its physics-agreement plot is not shown.",
           "Omitted because only some states have them: seasonal re-ranking, the supercooling sweep, the Köppen check, survivors and recommendation summary charts.",
         ],
       },
@@ -930,7 +930,7 @@ const STATES_CONFIG = {
       "The pipeline covers population-weighted ERA5 and NASA POWER sampling, GMM regimes, eight-constraint PCM screening, four-method MCDM consensus and a lumped-enthalpy physics check.",
       "The states are at different stages, summarised below.",
     ],
-    spearmanSummary: "RJ mixed · TN, UK exploratory · AS pending",
+    spearmanSummary: "RJ mixed · TN, UK exploratory · AS not reported",
     recommendations: [],
     plots: [],
   },
