@@ -3187,3 +3187,14 @@ h3 {
 .ui-lit-meta dd { margin: 0; font-size: 0.8rem; color: var(--neutral-300); line-height: 1.5; }
 .ui-two-col { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; margin: 8px 0 14px; }
 .ui-two-col .ui-panel .ui-card-kicker { margin-bottom: 10px; }
+
+/* Objective 2 — design cards with gain bars */
+.ui-design-pcm { font-size: 1.05rem; font-weight: 700; color: #ffffff; margin: 6px 0 10px; }
+.ui-gain-bars { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+.ui-gain-row { display: grid; grid-template-columns: 84px 1fr 48px; align-items: center; gap: 8px; font-size: 0.74rem; color: var(--neutral-400); }
+.ui-gain-track { height: 8px; border-radius: 6px; background: var(--surface-border); overflow: hidden; }
+.ui-gain-fill { height: 100%; border-radius: 6px; background: linear-gradient(90deg, var(--accent-crimson), var(--accent-ruby)); transform-origin: left; animation: barGrow 0.8s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.ui-gain-fill.band { background: rgba(255, 255, 255, 0.28); }
+.ui-gain-fill.neg { background: var(--accent-amber); }
+.ui-gain-val { text-align: right; color: #ffffff; font-family: 'Space Grotesk', sans-serif; font-weight: 600; }
+@media (prefers-reduced-motion: reduce) { .ui-gain-fill { animation: none !important; } }
