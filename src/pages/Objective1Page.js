@@ -347,12 +347,12 @@ const STATES_CONFIG = {
         ],
       },
       {
-        label: "Results on disk (outputs regenerated 2026-10-25)",
+        label: "Results on disk (last pipeline run 2026-09-16)",
         points: [
           "Calibrated survivors are 8 / 10 / 8.",
           "L_required in the ranking files is 406 / 438 / 406 kJ/kg.",
           "Borda #1 is RT57HC in all clusters.",
-          "n-Hexacosane (C26) is second in C0 and C1; n-Pentacosane (C25) is second in C2.",
+          "n-Hexacosane (C26) is second in C0 and C1; in C2 n-Pentacosane (C25) and n-Hexacosane (C26) tie for second.",
           "Kendall's W is 0.848 / 0.477 / 0.780.",
           "So Cluster 1 has the widest spread between methods.",
         ],
