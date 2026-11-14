@@ -103,7 +103,7 @@ export const PIPELINE_STAGES = [
       "Uses a 200 kg water mass, chosen inside a published tank range {{cite:Eldokaishi2022ANN_PCM_SWH}}.",
       "Requires the energy-conservation self-tests to pass before any result is used.",
       "Compares the MCDM rank with each candidate's simulated rank, using Spearman's ρ.",
-      "Agreement is weak, not statistically significant or inconclusive in every state, so the check does not establish predictive validity.",
+      "Agreement is weak and not statistically significant in every state where it was run (Assam pending), so the check does not establish predictive validity.",
       "A later sweep of a supercooling heat-transfer penalty did not improve the agreement.",
     ],
     out: "Simulated performance per candidate, and ρ with its p-value per cluster",
