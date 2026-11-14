@@ -24,6 +24,19 @@ export default function PipelineSection({ onObjective1 = false }) {
       </p>
       <div className="section-divider" />
 
+      <div className="diagram">
+        <Figure
+          src={`${process.env.PUBLIC_URL}/diagrams/objective1-architecture.png`}
+          title="Objective 1 framework: from meteorological data to validated Top-3 PCM candidates"
+          alt="Six-stage flow diagram: data collection, preprocessing and harmonisation, climate feature engineering, climate region discovery with a Gaussian mixture model, PCM suitability evaluation with multi-criteria decision making, and physics validation with the final Top-3 output."
+          caption="Objective 1 framework, Review 2 presentation, slide 4.2."
+        />
+        <p className="diagram-caption">
+          Objective 1 framework, six stages (Review 2 presentation, slide 4.2 <Rich text="{{cite:Group12Review2}}" />).
+          It does not show three design-basis steps: the 60 °C delivery target, SHARE_PCM = 0.5 and the latent-heat calibration.
+        </p>
+      </div>
+
       <StepExplorer
         ariaLabel="Pipeline stages"
         steps={PIPELINE_STAGES.map((st) => ({
@@ -44,24 +57,6 @@ export default function PipelineSection({ onObjective1 = false }) {
         defaultOpen={null}
         items={[
           { id: "diffs", title: "Where the states differ", badge: `${diffs.length} notes`, points: diffs },
-          {
-            id: "diagram",
-            title: "Framework diagram (Review 2 presentation)",
-            children: (
-              <div className="diagram" style={{ marginTop: 4 }}>
-                <Figure
-                  src={`${process.env.PUBLIC_URL}/diagrams/objective1-architecture.png`}
-                  title="Objective 1 framework: from meteorological data to validated Top-3 PCM candidates"
-                  alt="Six-stage flow diagram: data collection, preprocessing and harmonisation, climate feature engineering, climate region discovery with a Gaussian mixture model, PCM suitability evaluation with multi-criteria decision making, and physics validation with the final Top-3 output."
-                  caption="Objective 1 framework, Review 2 presentation, slide 4.2."
-                />
-                <p className="diagram-caption">
-                  Objective 1 framework, six stages (Review 2 presentation, slide 4.2 <Rich text="{{cite:Group12Review2}}" />).
-                  It does not show three design-basis steps: the 60 °C delivery target, SHARE_PCM = 0.5 and the latent-heat calibration.
-                </p>
-              </div>
-            ),
-          },
         ]}
       />
     </>
