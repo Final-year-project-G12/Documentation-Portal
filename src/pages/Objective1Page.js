@@ -987,7 +987,7 @@ const COMPARISON_ROWS = [
       rajasthan: "−0.200 / −0.168 / +0.569",
       tamilnadu: "−0.333 / +0.103 / +0.024",
       uttarakhand: "+0.105 / −0.140 / −0.338 / −0.168",
-      assam: "Pending",
+      assam: "Not reported",
     },
   },
   {
@@ -996,7 +996,7 @@ const COMPARISON_ROWS = [
       rajasthan: "p = 0.80 / 0.69 / 0.067 vs. Borda; not established",
       tamilnadu: "p = 0.42 / 0.78 / 0.95; not significant",
       uttarakhand: "p = 0.66 / 0.56 / 0.14 / 0.48; not significant",
-      assam: "Pending",
+      assam: "Not reported",
     },
   },
   {
