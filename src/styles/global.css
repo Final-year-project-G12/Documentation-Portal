@@ -2721,3 +2721,54 @@ h3 {
   transform: scaleX(1);
 }
 
+/* Cards: gentle lift and a brighter top rule on hover */
+.animated-page .result-stat-card,
+.animated-page .objective-card,
+.animated-page .territory-card,
+.animated-page .method-card,
+.animated-page .sdg-card,
+.animated-page .arch-step,
+.animated-page .pipeline-stage {
+  transition: transform 0.25s ease, border-color 0.25s ease, background-color 0.25s ease;
+}
+.animated-page .result-stat-card:hover,
+.animated-page .objective-card:hover,
+.animated-page .territory-card:hover,
+.animated-page .method-card:hover,
+.animated-page .sdg-card:hover {
+  transform: translateY(-3px);
+  border-top-color: rgba(255, 255, 255, 0.45);
+}
+.animated-page .sdg-tile {
+  transition: transform 0.3s ease;
+}
+.animated-page .sdg-card:hover .sdg-tile {
+  transform: scale(1.04);
+}
+
+/* Pipeline stages: the stage number lights up on hover */
+.animated-page .pipeline-stage-num {
+  transition: color 0.25s ease, transform 0.25s ease;
+  display: inline-block;
+}
+.animated-page .pipeline-stage:hover .pipeline-stage-num {
+  color: #ffffff;
+  transform: translateX(3px);
+}
+
+/* Call-to-action arrows nudge forward */
+.animated-page .overview-cta-btn span:last-child {
+  transition: transform 0.25s ease;
+}
+.animated-page .overview-cta-btn:hover span:last-child {
+  transform: translateX(4px);
+}
+
+/* Tables: rows highlight smoothly */
+.animated-page .data-table tbody tr {
+  transition: background-color 0.2s ease;
+}
+.animated-page .data-table tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
