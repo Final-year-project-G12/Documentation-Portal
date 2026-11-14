@@ -1218,7 +1218,7 @@ function Objective1Page() {
           ))}
         </div>
 
-        <div className="plot-grid plot-grid-wide">
+        <div key={plotTab} className="plot-grid plot-grid-wide tab-panel">
           {plotsForState(plotTab).map((pt) => {
             const p = plotFor(plotTab, pt.num);
             const u = plotUrls(plotTab, p);
