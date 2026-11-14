@@ -280,3 +280,27 @@ export const CFD_CHECKS = [
   },
 ];
 
+/* Plot gallery: same core figures per state. */
+export const O2_PLOT_GROUPS = [
+  { id: "all", label: "All figures" },
+  { id: "result", label: "Chosen designs & held-out" },
+  { id: "search", label: "Search & surrogates" },
+  { id: "checks", label: "Checks & controls" },
+  { id: "inputs", label: "Inputs" },
+];
+
+export const O2_PLOTS = [
+  { num: "fig10", file: "fig10_chosen_designs.png", group: "result", title: "Chosen designs", caption: "Frozen design per regime with select-year and held-out gains and the band." },
+  { num: "fig4", file: "fig4_heldout_pcm_comparison.png", group: "result", title: "Held-out: chosen PCM vs other Objective 1 PCMs", caption: "Does the PCM chosen in Objective 1 matter? Red is the chosen PCM; the dashed line is the repeatability band." },
+  { num: "fig11", file: "fig11_heldout_by_year.png", group: "result", title: "Held-out gain by year", caption: "Gain of the chosen design in every held-out year." },
+  { num: "fig1", file: "fig1_front_vs_grid.png", group: "search", title: "Search front vs dense grid", caption: "Final NSGA-II front against the 720-run dense grid." },
+  { num: "fig2", file: "fig2_g9_grid_check.png", group: "search", title: "Grid check", caption: "Gap between the search result and the grid, against the band." },
+  { num: "fig7", file: "fig7_surrogate_comparison.png", group: "search", title: "Surrogate comparison", caption: "Rank agreement of the surrogate families for each regime-PCM pair." },
+  { num: "fig18", file: "fig18_screening_anova.png", group: "search", title: "Taguchi screening (ANOVA)", caption: "Which design variables matter: PCM amount most, flow least." },
+  { num: "fig8", file: "fig8_fraction_response.png", group: "checks", title: "Response to PCM fraction", caption: "The gain is still rising at the 30% cap." },
+  { num: "fig9", file: "fig9_boundary_share.png", group: "checks", title: "Fronts at a bound of the box", caption: "Share of the final fronts at the fraction cap or radius limit: the designs are boundary-limited." },
+  { num: "fig6", file: "fig6_ablations.png", group: "checks", title: "Ablations and controls", caption: "Latent heat = 0 drops the gain below zero, so the metric responds to the PCM." },
+  { num: "fig13", file: "fig13_timestep_convergence.png", group: "checks", title: "Time-step convergence", caption: "300 s fails the gate; the solver uses 150 s." },
+  { num: "fig50", file: "fig50_weather_inputs.png", group: "inputs", title: "Weather inputs", caption: "Weather of each regime's medoid point by year role." },
+];
+
