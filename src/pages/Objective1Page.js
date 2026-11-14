@@ -20,12 +20,12 @@ const PREPROCESSING_SUMMARY = [
     gridPoints: 133,
     inputRecords: "1,457,547",
     outputRecords: "1,445,577",
-    retention: "99.2%",
+    retention: "99.2% (11,970 lag warm-up rows set aside)",
     inputDims: 36,
     outputDims: 89,
     engineeredFeatures: 45,
-    missingRate: "0.00%",
-    status: "PASS",
+    missingRate: "0.00% (1.09% of cells imputed)",
+    status: "PASS (5 of 5 checks)",
   },
   {
     state: "Rajasthan",
@@ -1250,7 +1250,7 @@ function Objective1Page() {
             "Cleaning uses Hampel filtering {{cite:Hampel1974InfluenceCurve}}, chained-equation imputation {{cite:vanBuuren2011MICE}} and quantile mapping {{cite:Cannon2015QuantileMapping}} against NASA POWER.",
             "The Rajasthan and Uttarakhand rows were re-checked against the 2026-10-25 quality-control reports (5 of 5 checks passed each).",
             "The Assam row was re-derived on 2026-11-11 from its QC report and cleaned file: the earlier counts (1,413,420 → 1,402,101) matched the old 129-point grid, not the current 80 points.",
-            "The Tamil Nadu row is carried over from the earlier portal and is due for the same re-check.",
+            "The Tamil Nadu row was re-checked against its quality-control report (5 of 5 checks passed; 11,970 lag warm-up rows set aside).",
           ]}
         />
         <div className="section-divider" />
