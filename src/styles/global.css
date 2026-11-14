@@ -2890,3 +2890,24 @@ h3 {
 .ui-chip.active { background: #ffffff; color: #09090b; border-color: #ffffff; }
 .ui-chip-sub { font-size: 0.7rem; font-weight: 500; opacity: 0.7; }
 
+/* Buttons */
+.ui-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid #ffffff;
+  background: #ffffff;
+  color: #09090b;
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+}
+.ui-btn:hover:not(:disabled) { transform: translateY(-1px); }
+.ui-btn.ghost { background: transparent; color: #ffffff; border-color: var(--surface-border-strong); }
+.ui-btn.ghost:hover:not(:disabled) { background: var(--surface-card-hover); }
+.ui-btn:disabled { opacity: 0.35; cursor: default; }
+
