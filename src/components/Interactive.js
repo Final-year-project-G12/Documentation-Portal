@@ -166,3 +166,12 @@ export function ProgressBar({ value, label }) {
   );
 }
 
+/* Highlighted note box. */
+export function Callout({ title, children, tone = "info" }) {
+  return (
+    <div className={`ui-callout ${tone}`}>
+      {title && <div className="ui-callout-title">{title}</div>}
+      <div className="ui-callout-body">{children}</div>
+    </div>
+  );
+}
