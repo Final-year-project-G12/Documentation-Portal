@@ -103,7 +103,7 @@ const OBJECTIVES_ROADMAP = [
       "Trials on real hardware (Raspberry Pi / ESP32) are future work.",
     ],
     outputs: ["MATLAB digital twin for 3 states", "No hard limit broken in any test", "Finding: a dead sun sensor is not caught (Rajasthan 701 vs 430 guard hours); an irradiance plausibility rule is the next fix"],
-    linkPage: null,
+    linkPage: "objective4",
   },
 ];
 
@@ -238,6 +238,14 @@ function OverviewPage({ onNavigate }) {
           </button>
           <button className="overview-cta-btn secondary" onClick={() => onNavigate("objective2")}>
             <span>Explore Objective 2 (Storage Design & AI)</span>
+            <span>→</span>
+          </button>
+          <button className="overview-cta-btn secondary" onClick={() => onNavigate("objective3")}>
+            <span>Explore Objective 3 (DRL Control)</span>
+            <span>→</span>
+          </button>
+          <button className="overview-cta-btn secondary" onClick={() => onNavigate("objective4")}>
+            <span>Explore Objective 4 (Digital Twin)</span>
             <span>→</span>
           </button>
         </div>
