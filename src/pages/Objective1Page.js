@@ -1146,6 +1146,7 @@ function Objective1Page() {
           ))}
         </div>
 
+        <div key={tab} className="tab-panel">
         <h3>{current.name}</h3>
         <p className="section-desc" style={{ marginBottom: 8 }}>{current.climateType}</p>
         <Bullets items={current.overview} />
@@ -1182,6 +1183,7 @@ function Objective1Page() {
         </div>
 
         <NoteGroups notes={stateNotes(tab)} />
+        </div>
 
       </div>
 
