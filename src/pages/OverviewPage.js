@@ -71,9 +71,9 @@ const OBJECTIVES_ROADMAP = [
       "Takes the Objective 1 PCM shortlist of each regime as a fixed input.",
       "Searches capsule inner radius, PCM volume fraction, flow rate and arrangement on a multi-node tank simulation.",
       "Uses a surrogate-assisted, constrained multi-objective search: Taguchi screening, a Sobol design, surrogate comparison and NSGA-II {{cite:Deb2002NSGA2}} with active learning. The simulator evaluates every reported number.",
-      "Chosen designs are reported for all four states (Rajasthan and Uttarakhand 50 L, Tamil Nadu 100 L, Assam 500 L tank).",
+      "Rajasthan, Tamil Nadu and Uttarakhand have chosen designs tested once on held-out years; Assam is still on a legacy chain.",
     ],
-    outputs: ["Chosen Design per Regime", "One-Shot Held-out Test on Untouched Years", "Repeatability Band and Paired Water-Only Baseline", "Objective 3 Environment Contract v2 (Rajasthan)"],
+    outputs: ["Chosen Design per Regime", "One-Shot Held-out Test on Untouched Years", "Repeatability Band and Paired Water-Only Baseline", "Objective 3 Environment Contract v3 (3 States)"],
     linkPage: "objective2",
   },
   {
