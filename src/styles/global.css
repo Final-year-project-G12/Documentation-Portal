@@ -2810,3 +2810,23 @@ h3 {
   transform: scale(1.01);
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .animated-page .page-hero > *,
+  .animated-page .page-hero::before,
+  .tab-panel {
+    animation: none !important;
+  }
+  .reveal,
+  .section-divider.reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .animated-page *,
+  .animated-page *::after {
+    transition: none !important;
+  }
+  .animated-page *:hover {
+    transform: none !important;
+  }
+}
