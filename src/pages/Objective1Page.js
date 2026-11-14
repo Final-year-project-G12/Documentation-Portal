@@ -4,6 +4,7 @@ import Bullets from "../components/Bullets";
 import PipelineSection from "../components/PipelineSection";
 import { Terms } from "../components/Terms";
 import { resetTerms } from "../data/terms";
+import useReveal from "../components/useReveal";
 
 /* ─────────────────────────────────────────────────────────
    Objective 1 — Climate-Region-Aware PCM Recommendation
@@ -1012,9 +1013,10 @@ function Objective1Page() {
   const [tab, setTab] = useState("rajasthan");
   const [plotTab, setPlotTab] = useState("rajasthan");
   const current = STATES_CONFIG[tab];
+  const revealRef = useReveal([tab, plotTab]);
 
   return (
-    <section className="content" id="top">
+    <section className="content animated-page" id="top" ref={revealRef}>
       {/* ── Page Hero ────────────────────────────────────── */}
       <div className="page-hero">
         <div className="eyebrow">
