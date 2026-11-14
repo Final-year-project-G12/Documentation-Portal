@@ -1033,10 +1033,10 @@ function stateNotes(key) {
 const PLOT_TYPES = [
   { num: "01", title: "Raw vs. preprocessed radiation", caption: "Radiation and temperature before and after preprocessing at a sample point of each state." },
   { num: "02", title: "Climate regime map", caption: "Grid points coloured by the climate regime assigned by the Gaussian Mixture Model." },
-  { num: "07a", title: "MCDM rank trajectories, Cluster 0", caption: "Each candidate's rank under TOPSIS, GRA, PROMETHEE II and VIKOR and in the Borda consensus (bump chart)." },
+  { num: "07a", title: "MCDM rank trajectories, Cluster 0", caption: "Each candidate's rank under TOPSIS, GRA, PROMETHEE II and VIKOR and in the Borda consensus (bump chart). Flat lines mean the methods agree; crossing lines mean they disagree. The last column is the combined ranking." },
   { num: "07b", title: "MCDM rank trajectories, Cluster 1", caption: "Same chart for Cluster 1." },
   { num: "07c", title: "MCDM rank trajectories, Cluster 2", caption: "Same chart for Cluster 2." },
-  { num: "07", title: "MCDM rank trajectories, all clusters", caption: "Each top candidate's rank under TOPSIS, GRA, PROMETHEE II and VIKOR and in the Borda consensus; line style marks the cluster." },
+  { num: "07", title: "MCDM rank trajectories, all clusters", caption: "Each top candidate's rank under TOPSIS, GRA, PROMETHEE II and VIKOR and in the Borda consensus; line style marks the cluster. Flat lines mean the methods agree; crossing lines mean they disagree." },
   { num: "08", title: "Method rank-correlation heatmap", caption: "Pairwise rank correlation between the four MCDM methods." },
   { num: "10", title: "Rank-reversal frequency", caption: "How often candidates swap order under perturbed weights and properties." },
   {
@@ -1282,6 +1282,11 @@ function Objective1Page() {
               </div>
             ))}
           </div>
+
+          <Callout title="Name abbreviations">
+            EG = expanded graphite; RT = Rubitherm® RT series (paraffin-based organic PCM, Rubitherm Technologies GmbH);
+            HC = high capacity (higher latent-heat grade); OM = Organic Mixture (savE® series, PLUSS Advanced Technologies).
+          </Callout>
 
           <h3>Notes for {current.name}</h3>
           <Accordion
