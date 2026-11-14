@@ -307,7 +307,7 @@ function OverviewPage({ onNavigate }) {
               <div className="arch-step-header">
                 <h4>Climate Clustering (GMM)</h4>
               </div>
-              <p><Rich text="A Gaussian mixture model {{cite:Dempster1977EM}} groups each state's points into climate regimes (k=3 for three states, k=5 for Uttarakhand)." /></p>
+              <p><Rich text="A Gaussian mixture model {{cite:Dempster1977EM}} groups each state's points into climate regimes (k=3 for three states, k=4 for Uttarakhand)." /></p>
             </div>
           </div>
 
