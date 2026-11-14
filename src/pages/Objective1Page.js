@@ -257,7 +257,7 @@ const STATES_CONFIG = {
         id: "rj-07b",
         num: "07b",
         title: "Bump Chart — MCDM Ranks (Cluster 1)",
-        desc: "Rank trajectories for the 8 Cluster 1 candidates. PureTemp 60 is first in the consensus; GRA ranks RT57HC first, giving W = 0.77.",
+        desc: "Rank trajectories for the 8 Cluster 1 candidates. PureTemp 60 is first in the consensus and under GRA, PROMETHEE II and VIKOR; TOPSIS ranks CrodaTherm 60 first, giving W = 0.77.",
         interactive: "07_bump_chart_ranks_cluster_1.html",
         static: "07_bump_chart_ranks_cluster_1.png",
         phase: "Phase 6 MCDM",
