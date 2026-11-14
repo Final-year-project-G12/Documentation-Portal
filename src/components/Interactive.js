@@ -87,3 +87,36 @@ export function StepExplorer({ steps, ariaLabel }) {
   );
 }
 
+/* Collapsible groups. items: [{ id, title, badge?, points?: [], children? }] */
+export function Accordion({ items, defaultOpen = 0 }) {
+  const [open, setOpen] = useState(() => new Set(defaultOpen === null ? [] : [defaultOpen]));
+  const toggle = (i) =>
+    setOpen((prev) => {
+      const next = new Set(prev);
+      if (next.has(i)) next.delete(i);
+      else next.add(i);
+      return next;
+    });
+  return (
+    <div className="ui-accordion">
+      {items.map((it, i) => {
+        const isOpen = open.has(i);
+        return (
+          <div key={it.id || it.title} className={`ui-acc-item ${isOpen ? "open" : ""}`}>
+            <button className="ui-acc-head" aria-expanded={isOpen} onClick={() => toggle(i)}>
+              <span className="ui-acc-title">{it.title}</span>
+              {it.badge && <span className="ui-acc-badge">{it.badge}</span>}
+              <span className="ui-acc-icon" aria-hidden="true">+</span>
+            </button>
+            <div className="ui-acc-body">
+              <div className="ui-acc-inner">
+                {it.points ? <Bullets items={it.points} /> : it.children}
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
