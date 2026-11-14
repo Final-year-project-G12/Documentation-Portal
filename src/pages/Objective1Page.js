@@ -1268,7 +1268,7 @@ function Objective1Page() {
           items={[
             "Choose a state.",
             "Rajasthan and Tamil Nadu have one bump chart per cluster; Uttarakhand has one bump chart covering its four clusters.",
-            "Assam shows only its data and clustering plots while its PCM ranking is being updated.",
+            "Assam's ranking plots come from its provisional run (identical in all three clusters).",
             "Click a plot to enlarge it.",
             "\"Interactive view\" opens the interactive version in the same viewer; \"New tab\" opens it in a separate tab.",
           ]}
