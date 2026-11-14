@@ -128,13 +128,13 @@ const TERRITORIES = [
     name: "Assam",
     tag: "Subtropical · monsoon attenuated",
     gridPoints: 80,
-    survivors: "Pending",
+    survivors: "9 / 9 / 9 (provisional)",
     regimes: "k=3 GMM Regimes",
-    primaryPCM: "Pending (PCM ranking being updated)",
+    primaryPCM: "RT54HC (provisional, all clusters)",
     summary: [
       "Brahmaputra and Barak valleys; cluster-mean relative humidity is 76–79%.",
-      "80 points in three regimes (27 / 28 / 25); the climate part is complete.",
-      "PCM screening, ranking and the physics comparison for the three regimes are being updated, so no pick is shown yet.",
+      "80 points in three regimes (27 / 28 / 25).",
+      "Latest ranking: RT54HC first in every cluster (Kendall's W 0.95); provisional while the feasibility filter is corrected, and no physics comparison yet.",
     ],
   },
   {
