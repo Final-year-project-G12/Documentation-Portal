@@ -3091,3 +3091,9 @@ h3 {
 .ui-intro-card .ui-card-kicker { margin-bottom: 6px; }
 .ui-intro-card p { margin: 0; font-size: 0.9rem; color: var(--neutral-200); line-height: 1.55; }
 
+/* Detail panel shared by pickers */
+.ui-panel { padding: 22px 24px; border-radius: 14px; border: 1px solid var(--surface-border); background: var(--surface-card); }
+.ui-panel-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.ui-panel-head h3 { margin: 0; }
+.ui-panel-sub { font-size: 0.82rem; color: var(--neutral-400); }
+
