@@ -62,9 +62,24 @@ export const PAGES = [
     label: "Objective 3: DRL Control",
     topLabel: "Objective 3",
     sections: [
-      { id: "top", label: "Objective 3 Status" },
-      { id: "scope", label: "Planned Scope" },
-      { id: "inputs", label: "Inputs from Objective 2" },
+      { id: "top", label: "Objective 3 Overview" },
+      { id: "scope", label: "Research Question" },
+      { id: "method", label: "How the Controller Is Built" },
+      { id: "results", label: "Locked-Test Results" },
+      { id: "findings", label: "Key Findings" },
+      { id: "inputs", label: "Limitations & Hand-off" },
+    ],
+  },
+  {
+    id: "objective4",
+    label: "Objective 4: SIL Validation",
+    topLabel: "Objective 4",
+    sections: [
+      { id: "top", label: "Objective 4 Overview" },
+      { id: "chain", label: "Signal Chain" },
+      { id: "arms", label: "Three-Arm Comparison" },
+      { id: "results", label: "Results by State" },
+      { id: "limitations", label: "Limitations & Next Steps" },
     ],
   },
   {
