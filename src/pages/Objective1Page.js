@@ -197,6 +197,8 @@ const STATES_CONFIG = {
       {
         cluster: "Cluster 0 — Southern plateau (Udaipur medoid)",
         pcm: "savE® OM55 (PLUSS)",
+        top2: "Palmitic-stearic acid / expanded graphite",
+        top3: "Myristic acid / NBR-0.5",
         tm: "55.0°C",
         latentHeat: "188 kJ/kg",
         mc: "W = 1.00",
@@ -205,6 +207,8 @@ const STATES_CONFIG = {
       {
         cluster: "Cluster 1 — Hot, steady-solar (Nagaur medoid)",
         pcm: "PureTemp 60",
+        top2: "CrodaTherm 60",
+        top3: "n-Heptacosane (C27)",
         tm: "61.0°C",
         latentHeat: "220 kJ/kg",
         mc: "W = 0.77",
@@ -213,6 +217,8 @@ const STATES_CONFIG = {
       {
         cluster: "Cluster 2 — North-east (Jaipur medoid)",
         pcm: "Palmitic-stearic acid / expanded graphite",
+        top2: "n-Heptacosane (C27)",
+        top3: "PureTemp 58 / savE® OM55 (tied)",
         tm: "55.2°C",
         latentHeat: "176 kJ/kg",
         mc: "W = 0.42",
