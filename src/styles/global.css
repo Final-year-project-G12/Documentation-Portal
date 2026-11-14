@@ -2646,3 +2646,53 @@ h3 {
   font-weight: 700;
   color: #ffffff;
 }
+
+/* ─────────────────────────────────────────────────────────
+   Motion — Overview and Objective 1 pages
+   Entrance on load, scroll reveal (driven by useReveal.js),
+   hover feedback on cards and a fade when switching tabs.
+   Everything is switched off under prefers-reduced-motion.
+   ───────────────────────────────────────────────────────── */
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes drawLine {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+@keyframes heroGlow {
+  0%, 100% { opacity: 0.55; transform: translate3d(0, 0, 0) scale(1); }
+  50%      { opacity: 0.9;  transform: translate3d(40px, 18px, 0) scale(1.08); }
+}
+
+/* Hero: children slide in one after another on page load */
+.animated-page .page-hero > * {
+  animation: fadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.animated-page .page-hero > *:nth-child(1) { animation-delay: 0.05s; }
+.animated-page .page-hero > *:nth-child(2) { animation-delay: 0.15s; }
+.animated-page .page-hero > *:nth-child(3) { animation-delay: 0.25s; }
+.animated-page .page-hero > *:nth-child(4) { animation-delay: 0.35s; }
+
+/* Soft drifting glow behind the hero title */
+.animated-page .page-hero {
+  isolation: isolate;
+}
+.animated-page .page-hero::before {
+  display: block;
+  pointer-events: none;
+  z-index: -1;
+  background: radial-gradient(closest-side, rgba(136, 19, 55, 0.28), rgba(136, 19, 55, 0) 70%);
+  filter: blur(8px);
+  animation: heroGlow 14s ease-in-out infinite;
+}
+
