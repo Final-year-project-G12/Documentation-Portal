@@ -56,7 +56,7 @@ const OBJECTIVES_ROADMAP = [
       "Combines the four rankings by Borda consensus.",
       "Checks the ranking with a 2-node lumped-enthalpy physics model.",
     ],
-    outputs: ["14 Climate Regimes (3 + 3 + 5 + 3)", "4-Method MCDM Consensus Ranks", "Physics check against the 54–84% solar-fraction band {{cite:Singh2025PCMSWH}}", "Per-Regime PCM Recommendation Cards"],
+    outputs: ["13 Climate Regimes (3 + 3 + 4 + 3)", "4-Method MCDM Consensus Ranks", "Physics check against the 54–84% solar-fraction band {{cite:Singh2025PCMSWH}}", "Per-Regime PCM Recommendation Cards"],
     linkPage: "objective1",
   },
   {
