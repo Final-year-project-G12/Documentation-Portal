@@ -46,6 +46,13 @@ function PortalLayout({ currentPage, onNavigate, children }) {
               >
                 <span>Objective 3</span>
               </button>
+
+              <button
+                className={`top-nav-btn ${currentPage === "objective4" ? "active" : ""}`}
+                onClick={() => onNavigate("objective4")}
+              >
+                <span>Objective 4</span>
+              </button>
             </nav>
           </div>
 
