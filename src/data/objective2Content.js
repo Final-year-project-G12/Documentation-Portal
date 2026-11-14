@@ -219,3 +219,14 @@ export const RESEARCH_QUESTIONS = [
   },
 ];
 
+/* Tamil Nadu regime 0 criteria study (ansys/CRITERIA_STUDY_README.md). */
+export const CRITERIA_STUDY = [
+  { id: "c0", label: "Optimal (chosen)", rin: "40 mm", n: "104", pcmKg: "24.8", flow: "0.039", arrangement: "staggered", gWindow: 276.6, pct: 100, verdict: "Selected design: the S0/S1/S2 funnel winner.", water: "30.0 → 35.5 °C", lf: "1.00 → 0.38", heat: 6135 },
+  { id: "c1", label: "Everything at maximum", rin: "40 mm", n: "105", pcmKg: "25.1", flow: "0.050", arrangement: "staggered", gWindow: 283.3, pct: 102, verdict: "Statistically tied (+6.7 kWh, inside the 28.4 band); loses the final tie-break on PCM mass (25.05 vs 24.81 kg).", water: "30.0 → 35.5 °C", lf: "1.00 → 0.38", heat: 6135 },
+  { id: "c3", label: "Works, not optimal", rin: "40 mm", n: "80", pcmKg: "19.1", flow: "0.023", arrangement: "staggered", gWindow: 187.5, pct: 68, verdict: "Beats plain water, but eliminated at S0 (too far below the best g_window).", water: "30.0 → 34.1 °C", lf: "1.00 → 0.38", heat: 4785 },
+  { id: "c6", label: "50% of the capsules", rin: "40 mm", n: "52", pcmKg: "12.4", flow: "0.039", arrangement: "staggered", gWindow: 148.5, pct: 54, verdict: "Beats plain water, but eliminated at S0.", water: "30.0 → 32.7 °C", lf: "1.00 → 0.36", heat: 3245 },
+  { id: "c4", label: "Only 30 capsules", rin: "40 mm", n: "30", pcmKg: "7.2", flow: "0.039", arrangement: "staggered", gWindow: 83.6, pct: 30, verdict: "Beats plain water, but eliminated at S0.", water: "30.0 → 31.6 °C", lf: "1.00 → 0.32", heat: 2050 },
+  { id: "c5", label: "10% of the capsules", rin: "40 mm", n: "10", pcmKg: "2.4", flow: "0.039", arrangement: "staggered", gWindow: 26.9, pct: 10, verdict: "Eliminated at Rule A: the gain is inside the noise band, so no better than a plain tank.", water: "30.0 → 30.6 °C", lf: "1.00 → 0.21", heat: 709 },
+  { id: "c2", label: "Everything at minimum", rin: "10 mm", n: "380", pcmKg: "1.4", flow: "0.010", arrangement: "single-layer", gWindow: 2.2, pct: 1, verdict: "Eliminated at Rule A: 380 tiny capsules hold only 1.4 kg of PCM.", water: "30.0 → 31.7 °C", lf: "1.00 → 0.00", heat: 2125 },
+];
+
