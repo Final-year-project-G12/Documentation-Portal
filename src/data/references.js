@@ -227,6 +227,101 @@ export const REFERENCES = [
     bib: "PlussPCM",
     text: 'PLUSS Advanced Technologies Pvt. Ltd., "PLUSS phase change materials — technical data sheets," technical documentation, 2024. [Online]. Available: https://www.pluss.co.in/knowledge-center/data-sheets/',
   },
+  {
+    key: "Hamza2025PCMReview",
+    bib: "Hamza2025PCMReview",
+    text: 'A. K. Hamza, "Phase change materials in solar energy storage: Recent progress, environmental impact, challenges, and perspectives," J. Energy Storage, vol. 114, Art. no. 115762, Apr. 2025.',
+  },
+  {
+    key: "Rathore2024ThermalPCM",
+    bib: "Rathore2024ThermalPCM",
+    text: 'P. K. S. Rathore and B. S. Sikarwar, "Thermal energy storage using phase change material for solar thermal technologies: A sustainable and efficient approach," Sol. Energy Mater. Sol. Cells, vol. 277, Art. no. 113134, 2024.',
+  },
+  {
+    key: "Martinez2025PCMIndustrial",
+    bib: "Martinez2025PCMIndustrial",
+    text: 'F. R. Martínez et al., "Phase change materials for thermal energy storage in industrial applications," Heliyon, vol. 11, no. 1, Art. no. e41025, Jan. 2025.',
+  },
+  {
+    key: "Abdellatif2025PCMModeling",
+    bib: "Abdellatif2025PCMModeling",
+    text: 'H. E. Abdellatif et al., "Modeling and performance analysis of phase change materials in advanced thermal energy storage systems: A comprehensive review," J. Energy Storage, vol. 121, Art. no. 116517, Jun. 2025.',
+  },
+  {
+    key: "Mohammed2025AIthermal",
+    bib: "Mohammed2025AIthermal",
+    text: 'H. I. Mohammed et al., "The role of nanotechnology and artificial intelligence in optimizing thermal energy systems," Appl. Energy, vol. 400, Art. no. 126576, 2025.',
+  },
+  {
+    key: "Nems2025AIPCMReview",
+    bib: "Nems2025AIPCMReview",
+    text: 'A. Nemś et al., "A review of artificial intelligence to thermal energy storage and heat transfer improvement in phase change materials," Sustain. Mater. Technol., vol. 44, Art. no. e01348, Jul. 2025.',
+  },
+  {
+    key: "Liu2025AIPCMTES",
+    bib: "Liu2025AIPCMTES",
+    text: 'S. Liu et al., "The contribution of artificial intelligence to phase change materials in thermal energy storage: From prediction to optimization," Renew. Energy, vol. 238, Art. no. 121973, Jan. 2025.',
+  },
+  {
+    key: "Yan2025MLMeltingTime",
+    bib: "Yan2025MLMeltingTime",
+    text: 'P. Yan, C. Wen, H. Ding, X. Wang, and Y. Yang, "The potential of machine learning to predict melting response time of phase change materials in triplex-tube latent thermal energy storage systems," Appl. Energy, vol. 390, Art. no. 125863, Jul. 2025.',
+  },
+  {
+    key: "OdoiYorke2025AISWH",
+    bib: "OdoiYorke2025AISWH",
+    text: 'F. Odoi-Yorke, "Artificial intelligence for solar water heating systems: A review of global research trends, advances, and future perspectives," Energy Convers. Manag.: X, vol. 28, Art. no. 101378, Oct. 2025.',
+  },
+  {
+    key: "Assareh2023MLPCMSolarCollector",
+    bib: "Assareh2023MLPCMSolarCollector",
+    text: 'E. Assareh et al., "Enhancing solar thermal collector systems through machine learning-driven multi-objective optimization with PCM," J. Energy Storage, vol. 73, Art. no. 108990, Dec. 2023.',
+  },
+  {
+    key: "Barqawi2025MLPCMSWH",
+    bib: "Barqawi2025MLPCMSWH",
+    text: 'H. Barqawi et al., "ML-driven PCM-SWH optimization and dynamic simulation," Muthanna J. Eng. Technol., vol. 13, no. 3, Dec. 2025.',
+  },
+  {
+    key: "Kou2025BIHPPCM",
+    bib: "Kou2025BIHPPCM",
+    text: 'F. Kou et al., "A novel solar heating building integrated heat pipes and PCMs: Optimizing thermophysical properties and reducing energy consumption," Build. Environ., vol. 285, Art. no. 113674, Nov. 2025.',
+  },
+  {
+    key: "Emami2026DRLSolar",
+    bib: "Emami2026DRLSolar",
+    text: 'A. Emami et al., "Deep reinforcement learning-based smart control of solar-driven power cycle with thermal energy storage: A Los Angeles case study," Energy Convers. Manag.: X, vol. 29, Art. no. 101478, Jan. 2026.',
+  },
+  {
+    key: "Rajamurugu2025PCMML",
+    bib: "Rajamurugu2025PCMML",
+    text: 'N. Rajamurugu et al., "Performance evaluation and machine learning-based prediction of PCM-integrated solar chimney drying for black dates," Results Eng., vol. 28, Art. no. 108218, Dec. 2025.',
+  },
+  {
+    key: "Terfai2025SolarPondANNMPC",
+    bib: "Terfai2025SolarPondANNMPC",
+    text: 'A. Terfai et al., "Experimental validation and enhanced thermal prediction of a shallow solar pond using ANN-based model predictive control," Unconv. Resour., vol. 8, Art. no. 100240, Oct. 2025.',
+  },
+  {
+    key: "Barghi2026SolarDryingPCM",
+    bib: "Barghi2026SolarDryingPCM",
+    text: 'M. S. Barghi Jahromi et al., "Thermal energy storage-centric solar drying with phase change materials: Intelligent optimization via neural and evolutionary regression models," J. Energy Storage, vol. 141, Art. no. 119192, Jan. 2026.',
+  },
+  {
+    key: "Ghodusinejad2026SolarForecast",
+    bib: "Ghodusinejad2026SolarForecast",
+    text: 'M. H. Ghodusinejad et al., "A systematic review of solar irradiance forecasting across time horizons using physical, satellite, and AI-based methods," Solar Compass, vol. 17, Art. no. 100154, Mar. 2026.',
+  },
+  {
+    key: "Fan2026EnergyAISpecialIssue",
+    bib: "(call for papers; Review 4 presentation)",
+    text: 'L. Fan, G. Zhang, Z. Pan, X. Wu, and Q. Zheng, "Call for papers: Physics and data hybrid-driven methods for intelligent energy management," Special Issue, Energy and AI, Elsevier, 2026.',
+  },
+  {
+    key: "Kolokotsa2026SEASpecialIssue",
+    bib: "(call for papers; Review 4 presentation)",
+    text: 'D. Kolokotsa, A. L. Pisello, C. Fabiani, M. Manni, and M. Bavaresco, "Call for papers: Integrated solar energy systems: From materials to sustainable energy transitions," Special Issue, Solar Energy Advances, Elsevier, 2026.',
+  },
 ];
 
 export const REF_INDEX = Object.fromEntries(
