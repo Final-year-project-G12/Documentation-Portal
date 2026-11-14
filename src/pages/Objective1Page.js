@@ -393,6 +393,8 @@ const STATES_CONFIG = {
       {
         cluster: "Cluster 0 — Southern plains (TNP_0011 medoid)",
         pcm: "RT57HC (Rubitherm)",
+        top2: "n-Hexacosane (C26)",
+        top3: "PureTemp 58",
         tm: "56.5°C",
         latentHeat: "240 kJ/kg",
         mc: "W = 0.85",
@@ -401,18 +403,22 @@ const STATES_CONFIG = {
       {
         cluster: "Cluster 1 — Western interior (TNP_0007 medoid)",
         pcm: "RT57HC (Rubitherm)",
+        top2: "n-Hexacosane (C26)",
+        top3: "n-Pentacosane (C25)",
         tm: "56.5°C",
         latentHeat: "240 kJ/kg",
         mc: "W = 0.48",
-        region: "n = 10 pool (moderate agreement)",
+        region: "41 points · 20.4 M people · n = 10 pool",
       },
       {
         cluster: "Cluster 2 — North-east coast (TNP_0001 medoid)",
         pcm: "RT57HC (Rubitherm)",
+        top2: "n-Pentacosane (C25) / n-Hexacosane (C26) (tied)",
+        top3: "—",
         tm: "56.5°C",
         latentHeat: "240 kJ/kg",
         mc: "W = 0.78",
-        region: "n = 8 pool",
+        region: "46 points · 30.3 M people · n = 8 pool",
       },
     ],
     plots: [
