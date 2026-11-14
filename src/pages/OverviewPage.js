@@ -1,9 +1,11 @@
-import { Rich } from "../components/Cite";
+import { useState } from "react";
+import { Rich, richHtml } from "../components/Cite";
 import Bullets from "../components/Bullets";
 import Figure from "../components/Figure";
 import { METHODS } from "../data/methods";
 import { resetTerms } from "../data/terms";
 import useReveal from "../components/useReveal";
+import { StatTiles, ChipTabs, StepExplorer, ProgressBar, Callout, Reveal } from "../components/Interactive";
 
 /* ─────────────────────────────────────────────────────────
    OverviewPage.js — Central Project Hub (Review 2 Presentation)
@@ -152,27 +154,75 @@ const TERRITORIES = [
   },
 ];
 
+/* The six layers of the project, shown as clickable steps. */
+const ARCH_STEPS = [
+  { title: "Meteorological Data Layer", text: "10-year ECMWF ERA5 {{cite:Hersbach2020ERA5}} and NASA POWER {{cite:Stackhouse2021POWER}} reanalysis (578 population-weighted points across 4 states)." },
+  { title: "Climate Clustering (GMM)", text: "A Gaussian mixture model {{cite:Dempster1977EM}} groups each state's points into climate regimes (k=3 for three states, k=4 for Uttarakhand)." },
+  { title: "Multi-Criteria Decision Analysis", text: "Four methods rank candidates on 8 criteria (9 in Tamil Nadu) and a consensus is taken: TOPSIS {{cite:HwangYoon1981MADM}}, PROMETHEE II {{cite:BransVincke1985PROMETHEE}}, GRA {{cite:Deng1982GreySystems}}, VIKOR {{cite:OpricovicTzeng2004VIKOR}}." },
+  { title: "Surrogate Design Optimization", text: "A multi-node enthalpy simulation, Taguchi screening and a Sobol design train surrogate models; NSGA-II {{cite:Deb2002NSGA2}} with active learning then searches radius, PCM fraction and flow, and a one-shot held-out test checks the choice." },
+  { title: "Deep Reinforcement Learning", text: "A PPO agent controls the charging and discharging valves under stochastic weather." },
+  { title: "Embedded Hardware Prototype", text: "An ESP32 / Pi board closes the loop with temperature probes and relay-driven valves." },
+];
+
+/* Completion per objective (Review presentation, implementation overview slide). */
+const OBJECTIVE_PROGRESS = { obj1: 100, obj2: 100, obj3: 90, obj4: 80 };
+
+const INTRO_CARDS = [
+  { kicker: "Problem", text: "Solar water heaters work with a variable resource: no radiation at night and monsoon cloud cover by day." },
+  { kicker: "Approach", text: "Store spare heat in <strong>Phase Change Materials (PCMs)</strong> as latent heat, chosen and controlled with climate clustering, multi-criteria decision making, AI surrogate design optimization and deep reinforcement learning." },
+  { kicker: "Outcome", text: "An autonomous, end-to-end, climate-adaptive solar thermal energy solution." },
+];
+
+const HERO_STATS = [
+  { value: "4", label: "Contrasting Indian states" },
+  { value: "578", label: "Population-weighted climate points" },
+  { value: "13", label: "Climate regimes discovered" },
+  { value: "62", label: "PCM candidates screened" },
+];
+
+const MOTIVATION_STATS = [
+  { value: "133 GW", label: "Solar Share in India's 254 GW Renewables (1:1.9 Ratio) {{cite:PVMagIndia2025Solar}} {{cn}}" },
+  { value: "48–50%", label: "Global Final Energy Demand Consumed by Thermal Heat {{cite:IEA2023Heat}}" },
+  { value: "6–8%", label: "Household Energy Used for Water Heating Alone (Review 2 slide value) {{cite:AlMamun2023SWHReview}}" },
+  { value: "45–70%", label: "Conventional SWH Annual Efficiency (Review 2 slide value) {{cite:AlMamun2023SWHReview}}" },
+];
+
+const INDUSTRY_FILTERS = [
+  { id: "all", label: "All companies" },
+  { id: "Yes", label: "Uses PCM" },
+  { id: "No", label: "Water buffer only" },
+];
+
 function OverviewPage({ onNavigate }) {
   resetTerms();
-  const revealRef = useReveal();
+  const [industryFilter, setIndustryFilter] = useState("all");
+  const [methodIdx, setMethodIdx] = useState(0);
+  const [objId, setObjId] = useState(OBJECTIVES_ROADMAP[0].id);
+  const [stateIdx, setStateIdx] = useState(0);
+  const revealRef = useReveal([industryFilter, methodIdx, objId, stateIdx]);
+
+  const companies = INDUSTRY_COMPARISON.filter((c) => industryFilter === "all" || c.pcmUsed === industryFilter);
+  const method = METHODS[methodIdx];
+  const obj = OBJECTIVES_ROADMAP.find((o) => o.id === objId);
+  const territory = TERRITORIES[stateIdx];
+
   return (
     <section className="content animated-page" id="top" ref={revealRef}>
-
-
-      {/* ── Hero Section ── */}
+      {/* ── Hero ── */}
       <div className="page-hero">
+        <div className="eyebrow">
+          <span className="eyebrow-badge">Group 12 · Final Year Project</span>
+          <span>Project overview</span>
+        </div>
         <h1>Climate-Adaptive Intelligent Control and Optimization of PCM Thermal Storage for Solar Water Heating</h1>
-
-        <Bullets
-          className="intro-bullets"
-          items={[
-            "Solar water heaters work with a variable resource: no radiation at night and monsoon cloud cover by day.",
-            "The project stores spare heat in <strong>Phase Change Materials (PCMs)</strong> as latent heat.",
-            "It adds machine learning climate clustering, multi-criteria decision making, AI surrogate design optimization and deep reinforcement learning.",
-            "The result is an autonomous, end-to-end, climate-adaptive solar thermal energy solution.",
-          ]}
-        />
-
+        <div className="ui-intro-grid">
+          {INTRO_CARDS.map((c) => (
+            <div key={c.kicker} className="ui-intro-card">
+              <div className="ui-card-kicker">{c.kicker}</div>
+              <p dangerouslySetInnerHTML={{ __html: richHtml(c.text) }} />
+            </div>
+          ))}
+        </div>
         <div className="overview-cta-row">
           <button className="overview-cta-btn primary" onClick={() => onNavigate("objective1")}>
             <span>Explore Objective 1 (PCM Selection)</span>
@@ -185,9 +235,9 @@ function OverviewPage({ onNavigate }) {
         </div>
       </div>
 
+      <StatTiles items={HERO_STATS} />
 
-
-      {/* ── Real-World Motivation & Industry Gap ── */}
+      {/* ── Motivation ── */}
       <div className="content-section" id="motivation">
         <div className="plots-section-header">
           <h2>Motivation & Industrial State-of-the-Art</h2>
@@ -197,170 +247,80 @@ function OverviewPage({ onNavigate }) {
         </p>
         <div className="section-divider" />
 
-        <div className="results-grid" style={{ marginBottom: 32 }}>
-          <div className="result-stat-card">
-            <div className="result-stat-value">133 GW</div>
-            <div className="result-stat-label"><Rich text="Solar Share in India's 254 GW Renewables (1:1.9 Ratio) {{cite:PVMagIndia2025Solar}} {{cn}}" /></div>
-          </div>
-          <div className="result-stat-card">
-            <div className="result-stat-value">48–50%</div>
-            <div className="result-stat-label"><Rich text="Global Final Energy Demand Consumed by Thermal Heat {{cite:IEA2023Heat}}" /></div>
-          </div>
-          <div className="result-stat-card">
-            <div className="result-stat-value">6–8%</div>
-            <div className="result-stat-label"><Rich text="Household Energy Used for Water Heating Alone (Review 2 slide value) {{cite:AlMamun2023SWHReview}}" /></div>
-          </div>
-          <div className="result-stat-card">
-            <div className="result-stat-value">45–70%</div>
-            <div className="result-stat-label"><Rich text="Conventional SWH Annual Efficiency (Review 2 slide value) {{cite:AlMamun2023SWHReview}}" /></div>
-          </div>
-        </div>
+        <StatTiles items={MOTIVATION_STATS} />
 
-        <div className="data-table-wrapper" style={{ marginTop: 24 }}>
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Company</th>
-                <th>Country</th>
-                <th>PCM Integrated?</th>
-                <th>PCM Technology Used</th>
-                <th>System Application</th>
-              </tr>
-            </thead>
-            <tbody>
-              {INDUSTRY_COMPARISON.map((row) => (
-                <tr key={row.company}>
-                  <td style={{ fontWeight: 600, color: "#ffffff" }}>{row.company}</td>
-                  <td>{row.country}</td>
-                  <td>
-                    <span className={`tag ${row.pcmUsed === "Yes" ? "tag-brand" : "tag-zinc"}`}>
-                      {row.pcmUsed === "Yes" ? " Yes" : " No"}
-                    </span>
-                  </td>
-                  <td style={{ color: "#ffffff" }}>{row.pcmDetails}</td>
-                  <td>{row.application}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <h3>Who uses PCM storage today?</h3>
+        <ChipTabs options={INDUSTRY_FILTERS} value={industryFilter} onChange={setIndustryFilter} ariaLabel="Filter companies" />
+        <div key={industryFilter} className="ui-card-grid tab-panel">
+          {companies.map((c) => (
+            <div key={c.company} className="ui-card">
+              <div className="ui-card-kicker">{c.country}</div>
+              <h4>{c.company}</h4>
+              <p>{c.application}</p>
+              <div className="ui-card-meta">
+                <span className={`tag ${c.pcmUsed === "Yes" ? "tag-brand" : "tag-zinc"}`}>
+                  {c.pcmUsed === "Yes" ? "Uses PCM" : "No PCM"}
+                </span>
+                <span className="tag tag-zinc">{c.pcmDetails}</span>
+              </div>
+            </div>
+          ))}
         </div>
-
-        <p className="section-desc" style={{ marginTop: 16, marginBottom: 0 }}>
-          Company table and capacity figures come from the Review 2 presentation
-          <Rich text="{{cn}}" />.
+        <p className="section-desc" style={{ marginTop: 4 }}>
+          Company table and capacity figures come from the Review 2 presentation <Rich text="{{cn}}" />.
         </p>
 
-        <h3 style={{ marginTop: 28 }}>The PCM Deployment Opportunity in India</h3>
-        <Bullets
-          items={[
-            "The presentation contrasts latent heat batteries from Sunamp (UK) {{cite:SunampPlentigrade}} with Emmvee's Indian systems, which use a sensible water buffer only {{cn}}.",
-            "India has higher climatic heterogeneity.",
-            "So PCM selection must adapt to climate, not use one-size-fits-all hardware.",
-          ]}
-        />
+        <Callout title="The PCM deployment opportunity in India">
+          <Bullets
+            items={[
+              "The presentation contrasts latent heat batteries from Sunamp (UK) {{cite:SunampPlentigrade}} with Emmvee's Indian systems, which use a sensible water buffer only {{cn}}.",
+              "India has higher climatic heterogeneity, so PCM selection must adapt to climate, not use one-size-fits-all hardware.",
+            ]}
+          />
+        </Callout>
       </div>
 
-      {/* ── Overall System Architecture ── */}
+      {/* ── Architecture ── */}
       <div className="content-section" id="architecture">
         <div className="plots-section-header">
           <h2>Project Architecture</h2>
+          <span className="plots-count-badge">{ARCH_STEPS.length} Layers</span>
         </div>
         <p className="section-desc">
-          The project runs from climate data to material choice, design optimization, control and hardware.
+          The project runs from climate data to material choice, design optimization, control and hardware. Click a layer to see what it does.
         </p>
         <div className="section-divider" />
 
-        <div className="diagram">
-          <Figure
-            src={`${process.env.PUBLIC_URL}/diagrams/project-architecture.png`}
-            title="Project architecture: Objectives 1 to 4 with real-time feedback"
-            alt="Block diagram of the four project objectives. Objective 1 selects PCMs from climate data, Objective 2 optimises the PCM system design, Objective 3 is a deep reinforcement learning controller, and Objective 4 deploys the prototype, with a real-time feedback loop from temperature, flow rate, PCM state and hot-water output."
-            caption="Project architecture, Review 2 presentation, slide 3.2."
-          />
-          <p className="diagram-caption">
-            Project architecture, Objectives 1 to 4 with real-time feedback (Review 2 presentation, slide 3.2 <Rich text="{{cite:Group12Review2}}" />).
-          </p>
-          <Bullets
-            items={[
-              "<strong>Note:</strong> the Objective 1 box in this figure shows the plan at the time of Review 2.",
-              "It names \"GNN / K-means\" for clustering; the implemented pipeline uses a Gaussian Mixture Model.",
-              "It lists three ranking methods (TOPSIS, VIKOR, GRA); the pipeline extends this to four (TOPSIS, PROMETHEE II, GRA, VIKOR).",
-              "The Objective 1 diagram and the pipeline on the Objective 1 page are current.",
-            ]}
-          />
-        </div>
+        <StepExplorer
+          ariaLabel="Project architecture layers"
+          steps={ARCH_STEPS.map((s) => ({
+            title: s.title,
+            render: () => <p style={{ margin: 0 }}><Rich text={s.text} /></p>,
+          }))}
+        />
 
-        <div className="arch-flow-container">
-          <div className="arch-step">
-            <div className="arch-step-num">01</div>
-            <div className="arch-step-box">
-              <div className="arch-step-header">
-                <h4>Meteorological Data Layer</h4>
-              </div>
-              <p>10-year ECMWF ERA5 <Rich text="{{cite:Hersbach2020ERA5}}" /> and NASA POWER <Rich text="{{cite:Stackhouse2021POWER}}" /> reanalysis (578 population-weighted points across 4 states).</p>
-            </div>
+        <Reveal label="View the architecture diagram" hideLabel="Hide the architecture diagram">
+          <div className="diagram">
+            <Figure
+              src={`${process.env.PUBLIC_URL}/diagrams/project-architecture.png`}
+              title="Project architecture: Objectives 1 to 4 with real-time feedback"
+              alt="Block diagram of the four project objectives. Objective 1 selects PCMs from climate data, Objective 2 optimises the PCM system design, Objective 3 is a deep reinforcement learning controller, and Objective 4 deploys the prototype, with a real-time feedback loop from temperature, flow rate, PCM state and hot-water output."
+              caption="Project architecture, Review 2 presentation, slide 3.2."
+            />
+            <p className="diagram-caption">
+              Project architecture, Objectives 1 to 4 with real-time feedback (Review 2 presentation, slide 3.2 <Rich text="{{cite:Group12Review2}}" />).
+            </p>
           </div>
-
-          <div className="arch-step-arrow">→</div>
-
-          <div className="arch-step">
-            <div className="arch-step-num">02</div>
-            <div className="arch-step-box">
-              <div className="arch-step-header">
-                <h4>Climate Clustering (GMM)</h4>
-              </div>
-              <p><Rich text="A Gaussian mixture model {{cite:Dempster1977EM}} groups each state's points into climate regimes (k=3 for three states, k=4 for Uttarakhand)." /></p>
-            </div>
-          </div>
-
-          <div className="arch-step-arrow">→</div>
-
-          <div className="arch-step">
-            <div className="arch-step-num">03</div>
-            <div className="arch-step-box">
-              <div className="arch-step-header">
-                <h4>Multi-Criteria Decision Analysis</h4>
-              </div>
-              <p><Rich text="Four methods rank candidates on 8 criteria (9 in Tamil Nadu) and a consensus is taken: TOPSIS {{cite:HwangYoon1981MADM}}, PROMETHEE II {{cite:BransVincke1985PROMETHEE}}, GRA {{cite:Deng1982GreySystems}}, VIKOR {{cite:OpricovicTzeng2004VIKOR}}." /></p>
-            </div>
-          </div>
-
-          <div className="arch-step-arrow">→</div>
-
-          <div className="arch-step">
-            <div className="arch-step-num">04</div>
-            <div className="arch-step-box">
-              <div className="arch-step-header">
-                <h4>Surrogate Design Optimization</h4>
-              </div>
-              <p><Rich text="A multi-node enthalpy simulation, Taguchi screening and a Sobol design train surrogate models; NSGA-II {{cite:Deb2002NSGA2}} with active learning then searches radius, PCM fraction and flow, and a one-shot held-out test checks the choice." /></p>
-            </div>
-          </div>
-
-          <div className="arch-step-arrow">→</div>
-
-          <div className="arch-step">
-            <div className="arch-step-num">05</div>
-            <div className="arch-step-box">
-              <div className="arch-step-header">
-                <h4>Deep Reinforcement Learning</h4>
-              </div>
-              <p><Rich text="A PPO agent controls the charging and discharging valves under stochastic weather." /></p>
-            </div>
-          </div>
-
-          <div className="arch-step-arrow">→</div>
-
-          <div className="arch-step">
-            <div className="arch-step-num">06</div>
-            <div className="arch-step-box">
-              <div className="arch-step-header">
-                <h4>Embedded Hardware Prototype</h4>
-              </div>
-              <p>An ESP32 / Pi board closes the loop with temperature probes and relay-driven valves.</p>
-            </div>
-          </div>
-        </div>
+          <Callout title="Note on the diagram" tone="warn">
+            <Bullets
+              items={[
+                "The Objective 1 box shows the plan at the time of Review 2.",
+                "It names \"GNN / K-means\" for clustering; the implemented pipeline uses a Gaussian Mixture Model.",
+                "It lists three ranking methods (TOPSIS, VIKOR, GRA); the pipeline uses four (TOPSIS, PROMETHEE II, GRA, VIKOR).",
+              ]}
+            />
+          </Callout>
+        </Reveal>
       </div>
 
       {/* ── Algorithms ── */}
@@ -370,127 +330,131 @@ function OverviewPage({ onNavigate }) {
           <span className="plots-count-badge">{METHODS.length} Algorithms</span>
         </div>
         <p className="section-desc">
-          The statistical and decision methods behind stages 4, 7 and 8, with the reason each was chosen.
+          The statistical and decision methods behind the pipeline. Pick one to see how it works and why it was chosen.
         </p>
         <div className="section-divider" />
-        <div className="methods-grid">
-          {METHODS.map((m) => (
-            <div key={m.title} className="method-card">
-              <div className="method-card-tag">{m.tag}</div>
-              <h3>{m.title}</h3>
-              <Bullets items={m.points} />
-            </div>
-          ))}
+
+        <ChipTabs
+          size="lg"
+          ariaLabel="Algorithms"
+          options={METHODS.map((m, i) => ({ id: i, label: m.title.replace(/\s*\(.*\)$/, ""), sub: m.tag }))}
+          value={methodIdx}
+          onChange={setMethodIdx}
+        />
+        <div key={methodIdx} className="ui-panel tab-panel">
+          <div className="ui-panel-head">
+            <h3>{method.title}</h3>
+            <span className="tag tag-zinc">{method.tag}</span>
+          </div>
+          <Bullets items={method.points} />
         </div>
       </div>
 
-      {/* ── 4 Research Objectives Roadmap ── */}
+      {/* ── Objectives ── */}
       <div className="content-section" id="objectives">
         <div className="plots-section-header">
-          <h2>Core Research Objectives & Progress Matrix</h2>
+          <h2>Core Research Objectives & Progress</h2>
         </div>
         <p className="section-desc">
-          Where each of the four planned research objectives stands.
+          Where each of the four research objectives stands. Pick an objective for its scope and deliverables.
         </p>
         <div className="section-divider" />
 
-        <div className="objectives-list">
-          {OBJECTIVES_ROADMAP.map((obj) => (
-            <div key={obj.id} className="objective-card">
-              <div className="objective-card-top">
-                <div className="objective-card-title-group">
-                  <span className="objective-card-num">{obj.num}</span>
-                  <h3>{obj.title}</h3>
-                </div>
-              </div>
-
-              <Bullets className="objective-card-bullets" items={obj.desc} />
-
-              <div className="objective-card-outputs">
-                <span className="objective-outputs-label">Key Deliverables & Milestones:</span>
-                <div className="tag-list" style={{ marginTop: 6 }}>
-                  {obj.outputs.map((out) => (
-                    <span key={out} className="tag tag-zinc"><Rich text={out} /></span>
-                  ))}
-                </div>
-              </div>
-
-              {obj.linkPage && (
-                <div style={{ marginTop: 18 }}>
-                  <button className="plot-toggle-btn" onClick={() => onNavigate(obj.linkPage)}>
-                    Open {obj.title} Documentation →
-                  </button>
-                </div>
-              )}
-            </div>
+        <div className="ui-obj-tabs" role="tablist" aria-label="Objectives">
+          {OBJECTIVES_ROADMAP.map((o) => (
+            <button
+              key={o.id}
+              role="tab"
+              aria-selected={objId === o.id}
+              className={`ui-obj-tab ${objId === o.id ? "active" : ""}`}
+              onClick={() => setObjId(o.id)}
+            >
+              <span className="ui-obj-tab-num">{o.num}</span>
+              <span className="ui-obj-tab-title">{o.title}</span>
+              <ProgressBar value={OBJECTIVE_PROGRESS[o.id] || 0} label={`${o.num} completion`} />
+            </button>
           ))}
+        </div>
+
+        <div key={objId} className="ui-panel tab-panel">
+          <div className="ui-panel-head">
+            <h3>{obj.num}: {obj.title}</h3>
+            <span className="ui-panel-sub">{OBJECTIVE_PROGRESS[obj.id] || 0}% complete</span>
+          </div>
+          <Bullets items={obj.desc} />
+          <div className="objective-card-outputs" style={{ marginTop: 14 }}>
+            <span className="objective-outputs-label">Key deliverables</span>
+            <div className="tag-list" style={{ marginTop: 6 }}>
+              {obj.outputs.map((out) => (
+                <span key={out} className="tag tag-zinc"><Rich text={out} /></span>
+              ))}
+            </div>
+          </div>
+          {obj.linkPage && (
+            <div style={{ marginTop: 18 }}>
+              <button className="ui-btn" onClick={() => onNavigate(obj.linkPage)}>
+                Open {obj.num} documentation →
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* ── 4-State Geographic Scope ── */}
+      {/* ── States ── */}
       <div className="content-section" id="territories">
         <div className="plots-section-header">
           <h2>4-State Contrasting Climate Scope</h2>
         </div>
         <p className="section-desc">
-          Four states were picked to cover contrasting sunlight, humidity, elevation and monsoon patterns.
+          Four states were picked to cover contrasting sunlight, humidity, elevation and monsoon patterns. Pick a state.
         </p>
         <div className="section-divider" />
 
-        <div className="territories-grid">
-          {TERRITORIES.map((t) => (
-            <div key={t.name} className="territory-card">
-              <div className="territory-card-header">
-                <div>
-                  <h3 style={{ margin: 0 }}>{t.name}</h3>
-                  <span className="tag tag-zinc" style={{ marginTop: 4, display: "inline-block" }}>{t.tag}</span>
-                </div>
-              </div>
-
-              <Bullets items={t.summary} />
-
-              <div className="territory-props">
-                <div className="rec-prop">
-                  <span className="rec-prop-label">Grid Points</span>
-                  <span className="rec-prop-value">{t.gridPoints} Points</span>
-                </div>
-                <div className="rec-prop">
-                  <span className="rec-prop-label">Calibrated Survivors</span>
-                  <span className="rec-prop-value">{t.survivors}</span>
-                </div>
-                <div className="rec-prop">
-                  <span className="rec-prop-label">GMM Clusters</span>
-                  <span className="rec-prop-value">{t.regimes}</span>
-                </div>
-                <div className="rec-prop">
-                  <span className="rec-prop-label">Consensus Winner</span>
-                  <span className="rec-prop-value" style={{ color: "#ffffff" }}>{t.primaryPCM}</span>
-                </div>
-              </div>
-            </div>
-          ))}
+        <ChipTabs
+          size="lg"
+          ariaLabel="States"
+          options={TERRITORIES.map((t, i) => ({ id: i, label: t.name, sub: t.tag }))}
+          value={stateIdx}
+          onChange={setStateIdx}
+        />
+        <div key={stateIdx} className="ui-panel tab-panel">
+          <div className="ui-panel-head">
+            <h3>{territory.name}</h3>
+            <span className="tag tag-zinc">{territory.tag}</span>
+          </div>
+          <StatTiles
+            compact
+            items={[
+              { value: String(territory.gridPoints), label: "Grid points" },
+              { value: territory.regimes.replace(" GMM Regimes", ""), label: "GMM climate regimes" },
+              { value: territory.survivors, label: "Candidates ranked per cluster" },
+              { value: territory.primaryPCM, label: "Consensus Rank-1 PCM" },
+            ]}
+          />
+          <Bullets items={territory.summary} />
+          <div style={{ marginTop: 16 }}>
+            <button className="ui-btn ghost" onClick={() => onNavigate("objective1", "state-results")}>
+              See {territory.name} results in Objective 1 →
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* ── UN Sustainable Development Goals ── */}
+      {/* ── SDGs ── */}
       <div className="content-section" id="sdgs">
         <div className="plots-section-header">
           <h2>United Nations Sustainable Development Goals (SDGs)</h2>
         </div>
         <p className="section-desc">
-          The project contributes directly to four UN goals on clean, affordable, low-carbon energy.
+          The project contributes directly to four UN goals on clean, affordable, low-carbon energy. Hover a goal to see how.
         </p>
         <div className="section-divider" />
 
-        <div className="sdg-grid">
+        <div className="ui-sdg-grid">
           {PROJECT_META.sdgs.map((sdg) => (
-            <div key={sdg.num} className="sdg-card">
-              <img
-                className="sdg-tile"
-                src={`${process.env.PUBLIC_URL}/sdg/sdg-${sdg.num}.png`}
-                alt={`SDG ${sdg.num}: ${sdg.title}`}
-              />
-              <p>{sdg.desc}</p>
+            <div key={sdg.num} className="ui-sdg" tabIndex={0}>
+              <img src={`${process.env.PUBLIC_URL}/sdg/sdg-${sdg.num}.png`} alt={`SDG ${sdg.num}: ${sdg.title}`} />
+              <div className="ui-sdg-over">{sdg.desc}</div>
             </div>
           ))}
         </div>
