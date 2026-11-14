@@ -968,13 +968,14 @@ function NoteGroups({ notes }) {
   );
 }
 
-/* Plot types present and valid for all four states (one grid per type). */
+/* Plot types shown in the plot grid; a state shows only the types it has. */
 const PLOT_TYPES = [
   { num: "01", title: "Raw vs. preprocessed radiation", caption: "Radiation and temperature before and after preprocessing at a sample point of each state." },
   { num: "02", title: "Climate regime map", caption: "Grid points coloured by the climate regime assigned by the Gaussian Mixture Model." },
   { num: "07a", title: "MCDM rank trajectories, Cluster 0", caption: "Each candidate's rank under TOPSIS, GRA, PROMETHEE II and VIKOR and in the Borda consensus (bump chart)." },
   { num: "07b", title: "MCDM rank trajectories, Cluster 1", caption: "Same chart for Cluster 1." },
   { num: "07c", title: "MCDM rank trajectories, Cluster 2", caption: "Same chart for Cluster 2." },
+  { num: "07", title: "MCDM rank trajectories, all clusters", caption: "Each top candidate's rank under TOPSIS, GRA, PROMETHEE II and VIKOR and in the Borda consensus; line style marks the cluster." },
   { num: "08", title: "Method rank-correlation heatmap", caption: "Pairwise rank correlation between the four MCDM methods." },
   { num: "10", title: "Rank-reversal frequency", caption: "How often candidates swap order under perturbed weights and properties." },
   {
@@ -985,22 +986,13 @@ const PLOT_TYPES = [
       rajasthan: "All ranked candidates, simulated solar fraction",
       tamilnadu: "Top-3 candidates only",
       uttarakhand: "Top-3 candidates only; legend ρ uses 3 points",
-      assam: "All ranked candidates, simulated hours at or above 50 °C",
     },
   },
   { num: "12", title: "Tank temperature and melt-fraction profile", caption: "Simulated tank temperature and PCM melt fraction from the lumped-enthalpy model." },
 ];
 
-/* Common plot types, plus the state's own extra plots (Uttarakhand clusters 3 and 4). */
-const EXTRA_PLOT_TYPES = {
-  uttarakhand: [
-    { num: "07d", title: "MCDM rank trajectories, Cluster 3", caption: "Uttarakhand only: the fourth of its five regimes." },
-    { num: "07e", title: "MCDM rank trajectories, Cluster 4", caption: "Uttarakhand only: the fifth of its five regimes." },
-  ],
-};
-
 function plotsForState(stateKey) {
-  return [...PLOT_TYPES, ...(EXTRA_PLOT_TYPES[stateKey] || [])].filter((pt) => plotFor(stateKey, pt.num));
+  return PLOT_TYPES.filter((pt) => plotFor(stateKey, pt.num));
 }
 
 function plotFor(stateKey, num) {
