@@ -397,3 +397,8 @@ export const ASSAM_PREVIEW_FIGS = [
   { n: 50, status: "real", title: "Weather inputs of the three Assam clusters (2016–2025)" },
 ];
 
+export const ASSAM_PREVIEW_STATUS_TEXT = {
+  real: "Real project data",
+  illustrative: "Illustrative — placeholder values, not simulated",
+  pending: "Pending — frame only, no numbers yet",
+};
