@@ -32,7 +32,7 @@ function ReferencesPage() {
           items={[
             "Works cited in this portal, numbered in order of first use.",
             "Records come from the project bibliography (<code>docs/references.bib</code>).",
-            "Entries that the bibliography marks as incomplete are labelled as such, not completed from memory.",
+            "Entries are checked against the bibliography; where a record was missing, its details were completed from the publisher or DOI record.",
           ]}
         />
       </div>

@@ -51,7 +51,7 @@ export const O3_METHOD_STEPS = [
     title: "Baselines and agents",
     points: [
       "B0: always charge (Objective 2's operating point). B1: reactive rules. B2: forecast-aware rules. Water-only tank as the floor. No MPC baseline was built.",
-      "Agents (Stable-Baselines3): PPO, DQN, RecurrentPPO, QRDQN, MaskablePPO and SAC were tried in Tamil Nadu; DQN and SAC in Rajasthan after PPO; PPO, DQN and SAC in Uttarakhand. See the table below.",
+      "Agents (Stable-Baselines3 {{cite:Raffin2021SB3}}): PPO {{cite:Schulman2017PPO}}, DQN {{cite:Mnih2015DQN}}, RecurrentPPO, QRDQN {{cite:Dabney2018QRDQN}}, MaskablePPO and SAC {{cite:Haarnoja2018SAC}} were tried in Tamil Nadu; DQN and SAC in Rajasthan after PPO; PPO, DQN and SAC in Uttarakhand. See the table below.",
       "Training-time domain randomisation per episode: sunlight ±10%, ambient ±2 °C, demand ±15%.",
     ],
   },

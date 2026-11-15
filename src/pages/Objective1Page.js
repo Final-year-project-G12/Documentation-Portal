@@ -175,7 +175,7 @@ const STATES_CONFIG = {
           "The criterion weights are entropy weights blended with stated priors; no AHP elicitation was done.",
           "The GMM is not population-weighted: population selects the points and weights the cluster profiles, but is not passed into the fit.",
           "BIC picks a density model, not necessarily a meaningful number of regimes. The Köppen–Geiger cross-check gives ARI = 0.279 and NMI = 0.382, read as finer structure than Köppen's broad classes; no NBC/ECBC comparison exists.",
-          "The mains-water temperature is a placeholder and σ = 4 K in the melting-point score is not from a paper {{cn}}.",
+          "The mains-water temperature is a placeholder and σ = 4 K in the melting-point score is a project choice, not taken from a paper.",
           "Raising the supercooling penalty worsened agreement in every cluster (ρ falls from −0.200 to −1.000 in C0, and from +0.569 to +0.387 in C2), so a larger penalty does not improve the match with the physics model.",
         ],
       },

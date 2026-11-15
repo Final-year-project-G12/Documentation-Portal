@@ -150,7 +150,7 @@ export const O2_WORKFLOW_STEPS = [
     title: "Screening and DOE",
     points: [
       "A Taguchi L9 screening with ANOVA shows which variables matter: PCM amount most, flow least {{cite:Chen2025TaguchiGRAPCM}}.",
-      "A 128-point Sobol DOE then covers the box for every pair (Rajasthan: 1,152 designs, 1,089 valid). Years: explore 2016–2020, select 2021–2023, held-out 2011–2015 (Uttarakhand 2024–2025).",
+      "A 128-point Sobol DOE {{cite:Sobol1967}} then covers the box for every pair (Rajasthan: 1,152 designs, 1,089 valid). Years: explore 2016–2020, select 2021–2023, held-out 2011–2015 (Uttarakhand 2024–2025).",
     ],
   },
   {
@@ -234,7 +234,7 @@ export const CFD_CHECKS = [
     points: [
       "One chosen capsule (savE® OM55, R = 39.5 mm) is melted at a 70 °C wall in a 2-D axisymmetric OpenFOAM case and compared with the simple capsule model used in the optimisation.",
       "The CFD reaches 50% melt in about 1,000 s; the simple model needs 6,376 s. The mesh study is not grid-independent (40 → 80 cells moves t50 by +14.3%).",
-      "Neither Tan 2009 nor Dong 2022 is reproduced (the CFD melts about 1.6–2 times faster), so the CFD is reported as an unvalidated upper bound and the frozen capsule constants c = 5, F = 2 stay.",
+      "Neither Tan 2009 {{cite:Tan2009}} nor Dong 2022 {{cite:Dong2022}} is reproduced (the CFD melts about 1.6–2 times faster), so the CFD is reported as an unvalidated upper bound and the frozen capsule constants c = 5, F = 2 stay.",
     ],
     figures: [
       { file: "rajasthan/fig40_of_melt_curves.png", title: "OpenFOAM melt curves", caption: "Capsule melt fraction in the OpenFOAM cases." },
@@ -316,8 +316,8 @@ export const O2_ASSAM_PLOTS = [
 
 export const O2_LIMITATIONS = [
   "Chosen designs sit at the edge of the search box (radius 39.5–40 mm, fraction 28–30%), so they are the best within the declared box, not a proven optimum.",
-  "Sizing is 50 L with 1.5 m² (33.3 L/m²), below IS 12976:2023; the compact tank is a fixed condition of this work.",
-  "The CFD cross-checks are not validation: OpenFOAM reproduces neither Tan 2009 nor Dong 2022, and Fluent is a 2-D planar proxy.",
+  "Sizing is 50 L with 1.5 m² (33.3 L/m²), below IS 12976:2023 {{cite:BIS2023IS12976}}; the compact tank is a fixed condition of this work.",
+  "The CFD cross-checks are not validation: OpenFOAM reproduces neither Tan 2009 {{cite:Tan2009}} nor Dong 2022 {{cite:Dong2022}}, and Fluent is a 2-D planar proxy.",
   "Hold times come from frozen capsule constants and depend on where the capsule stack sits in the tank.",
   "Not modelled: monthly mains-temperature series, PCM volume change and supercooling delay.",
   "No hardware or field measurements exist, and the full end-to-end run (--stage all) has not been executed.",

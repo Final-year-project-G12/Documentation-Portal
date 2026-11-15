@@ -11,7 +11,7 @@ export const PIPELINE_STAGES = [
   {
     title: "Data acquisition",
     steps: [
-      "Picks the fewest highest-population cells on the ERA5 0.25° grid that cover at least 87.5% of a state's population {{cn}}.",
+      "Picks the fewest highest-population cells on the ERA5 0.25° grid that cover at least 87.5% of a state's population (a coverage target chosen for this project, not taken from a paper).",
       "Why: the recommendation should reflect where hot water is actually used.",
       "Computes sunrise, solar noon and sunset for every point and day, using the NREL solar position algorithm {{cite:RedaAndreas2004SPA}} through pvlib {{cite:Holmgren2018pvlib}}.",
       "Samples the data at those sun-event times.",

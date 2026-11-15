@@ -136,26 +136,22 @@ export const REFERENCES = [
   {
     key: "Zhao2022PCMShare",
     bib: "Zhao2022PCMShare",
-    incomplete: true,
-    text: 'Zhao et al., 2022. [Bibliographic record incomplete in docs/references.bib: title and venue not recorded.]',
+    text: 'J. Zhao, J. Gao, J. Liao, B. Zhou, Y. Bai, and T. Qiang, "An experimental study of the heat storage and the discharge performance and an economic performance analysis of a flat plate phase change material (PCM) storage tank," Energies, vol. 15, no. 11, Art. no. 4023, 2022, doi: 10.3390/en15114023.',
   },
   {
     key: "Huang2020PCMVolumeRatio",
     bib: "Huang2020PCMVolumeRatio",
-    incomplete: true,
-    text: 'Huang et al., 2020. [Bibliographic record incomplete in docs/references.bib: title and venue not recorded.]',
+    text: 'H. Huang, Y. Xiao, J. Lin, T. Zhou, Y. Liu, and Q. Zhao, "Improvement of the efficiency of solar thermal energy storage systems by cascading a PCM unit with a water tank," J. Clean. Prod., vol. 245, Art. no. 118864, 2020, doi: 10.1016/j.jclepro.2019.118864.',
   },
   {
     key: "Abdelsalam2020PCMStorageVolume",
     bib: "Abdelsalam2020PCMStorageVolume",
-    incomplete: true,
-    text: 'Abdelsalam et al., 2020. [Bibliographic record incomplete in docs/references.bib: title and venue not recorded.]',
+    text: 'M. Y. Abdelsalam, H. M. Teamah, M. F. Lightstone, and J. S. Cotton, "Hybrid thermal energy storage with phase change materials for solar domestic hot water applications: Direct versus indirect heat exchange systems," Renew. Energy, vol. 147, pp. 77–88, 2020, doi: 10.1016/j.renene.2019.08.121.',
   },
   {
     key: "Kozelj2021PCMFraction",
     bib: "Kozelj2021PCMFraction",
-    incomplete: true,
-    text: 'Koželj et al., 2021. [Bibliographic record incomplete in docs/references.bib: title and venue not recorded.]',
+    text: 'R. Koželj, U. Mlakar, E. Zavrl, U. Stritih, and R. Stropnik, "An experimental and numerical analysis of an improved thermal storage tank with encapsulated PCM for use in retrofitted buildings for heating," Energy Build., vol. 248, Art. no. 111196, 2021, doi: 10.1016/j.enbuild.2021.111196.',
   },
   {
     key: "Kusuda1965EarthTemperature",
@@ -321,6 +317,56 @@ export const REFERENCES = [
     key: "Kolokotsa2026SEASpecialIssue",
     bib: "(call for papers; Review 4 presentation)",
     text: 'D. Kolokotsa, A. L. Pisello, C. Fabiani, M. Manni, and M. Bavaresco, "Call for papers: Integrated solar energy systems: From materials to sustainable energy transitions," Special Issue, Solar Energy Advances, Elsevier, 2026.',
+  },
+  {
+    key: "Tan2009",
+    bib: "Tan2009",
+    text: 'F. L. Tan, S. F. Hosseinizadeh, J. M. Khodadadi, and L. Fan, "Experimental and computational study of constrained melting of phase change materials (PCM) inside a spherical capsule," Int. J. Heat Mass Transf., vol. 52, pp. 3464–3472, 2009, doi: 10.1016/j.ijheatmasstransfer.2009.02.043.',
+  },
+  {
+    key: "Dong2022",
+    bib: "Dong2022",
+    text: 'Y. Dong, F. Wang, Y. Zhang, X. Shi, A. Zhang, and Y. Shuai, "Experimental and numerical study on flow characteristic and thermal performance of macro-capsules phase change material with biomimetic oval structure," Energy, vol. 238, Art. no. 121830, 2022, doi: 10.1016/j.energy.2021.121830.',
+  },
+  {
+    key: "Amanowicz2025",
+    bib: "Amanowicz2025",
+    text: 'Ł. Amanowicz and M. Turski, "PCM-filled capsules (RT44HC) for heat storage: Laboratory scale pilot study," Energies, vol. 18, no. 2, Art. no. 345, 2025, doi: 10.3390/en18020345.',
+  },
+  {
+    key: "BIS2023IS12976",
+    bib: "BIS2023",
+    text: 'Bureau of Indian Standards, "IS 12976:2023 — Solar water heating systems — Code of practice," BIS, New Delhi, India, 2023.',
+  },
+  {
+    key: "Sobol1967",
+    bib: "Sobol1967SobolSequence",
+    text: 'I. M. Sobol’, "On the distribution of points in a cube and the approximate evaluation of integrals," USSR Comput. Math. Math. Phys., vol. 7, no. 4, pp. 86–112, 1967, doi: 10.1016/0041-5553(67)90144-9.',
+  },
+  {
+    key: "Schulman2017PPO",
+    bib: "Schulman2017PPO",
+    text: 'J. Schulman, F. Wolski, P. Dhariwal, A. Radford, and O. Klimov, "Proximal policy optimization algorithms," arXiv:1707.06347, 2017, doi: 10.48550/arXiv.1707.06347.',
+  },
+  {
+    key: "Haarnoja2018SAC",
+    bib: "Haarnoja2018SAC",
+    text: 'T. Haarnoja, A. Zhou, P. Abbeel, and S. Levine, "Soft actor-critic: Off-policy maximum entropy deep reinforcement learning with a stochastic actor," arXiv:1801.01290, 2018, doi: 10.48550/arXiv.1801.01290.',
+  },
+  {
+    key: "Mnih2015DQN",
+    bib: "(web source)",
+    text: 'V. Mnih et al., "Human-level control through deep reinforcement learning," Nature, vol. 518, pp. 529–533, 2015, doi: 10.1038/nature14236. [Not in the project bibliography.]',
+  },
+  {
+    key: "Dabney2018QRDQN",
+    bib: "Dabney2018QRDQN",
+    text: 'W. Dabney, M. Rowland, M. G. Bellemare, and R. Munos, "Distributional reinforcement learning with quantile regression," in Proc. AAAI Conf. Artif. Intell., vol. 32, no. 1, 2018, doi: 10.1609/aaai.v32i1.11791.',
+  },
+  {
+    key: "Raffin2021SB3",
+    bib: "(web source)",
+    text: 'A. Raffin, A. Hill, A. Gleave, A. Kanervisto, M. Ernestus, and N. Dormann, "Stable-Baselines3: Reliable reinforcement learning implementations," J. Mach. Learn. Res., vol. 22, no. 268, pp. 1–8, 2021. [Not in the project bibliography.]',
   },
 ];
 

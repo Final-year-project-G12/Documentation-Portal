@@ -187,7 +187,7 @@ const HERO_STATS = [
 ];
 
 const MOTIVATION_STATS = [
-  { value: "133 GW", label: "Solar Share in India's 254 GW Renewables (1:1.9 Ratio) {{cite:PVMagIndia2025Solar}} {{cn}}" },
+  { value: "132 GW", label: "Installed Solar Capacity in India, Dec 2025 {{cite:PVMagIndia2025Solar}}" },
   { value: "48–50%", label: "Global Final Energy Demand Consumed by Thermal Heat {{cite:IEA2023Heat}}" },
   { value: "6–8%", label: "Household Energy Used for Water Heating Alone (Review 2 slide value) {{cite:AlMamun2023SWHReview}}" },
   { value: "45–70%", label: "Conventional SWH Annual Efficiency (Review 2 slide value) {{cite:AlMamun2023SWHReview}}" },
@@ -317,13 +317,13 @@ function OverviewPage({ onNavigate }) {
           ))}
         </div>
         <p className="section-desc" style={{ marginTop: 4 }}>
-          Company table and capacity figures come from the Review 2 presentation <Rich text="{{cn}}" />.
+          Company table and capacity figures come from the Review 2 presentation <Rich text="{{cite:Group12Review2}}" />.
         </p>
 
         <Callout title="The PCM deployment opportunity in India">
           <Bullets
             items={[
-              "The presentation contrasts latent heat batteries from Sunamp (UK) {{cite:SunampPlentigrade}} with Emmvee's Indian systems, which use a sensible water buffer only {{cn}}.",
+              "The presentation contrasts latent heat batteries from Sunamp (UK) {{cite:SunampPlentigrade}} with Emmvee's Indian systems, which use a sensible water buffer only {{cite:Group12Review2}}.",
               "India has higher climatic heterogeneity, so PCM selection must adapt to climate, not use one-size-fits-all hardware.",
             ]}
           />
