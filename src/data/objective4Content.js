@@ -368,6 +368,377 @@ export const O4_STATES = [
       { file: "uttarakhand/video/o4_story_edge_no_sunlight_2023.mp4", title: "Story video: no sunlight", caption: "The same story format with no sunlight." },
     ],
   },
+  {
+    id: "assam",
+    name: "Assam",
+    tag: "PPO + SAC · single-node 50 L tank",
+    setup: [
+      {
+        value: "50 L",
+        label: "Single-node tank, 1.5 m² collector, 292–380 capsules, 45 °C delivery target"
+      },
+      {
+        value: "PPO + SAC",
+        label: "Frozen Objective 3 controllers (13 inputs); DQN replayed as a third arm"
+      },
+      {
+        value: "2023",
+        label: "Replay year (an O3 validation year: a fidelity check)"
+      },
+      {
+        value: "1e-11 °C",
+        label: "Twin vs Python, all regimes and arms; 100% identical actions"
+      }
+    ],
+    params: {
+      columns: [
+        "Regime",
+        "Site (medoid)",
+        "PCM",
+        "Tank · collector",
+        "Capsules · share of tank",
+        "Flow · layout",
+        "Mains",
+        "Target"
+      ],
+      rows: [
+        [
+          "0",
+          "ASP_0003: central / lower Brahmaputra valley",
+          "savE OM46 (melts at 47 °C)",
+          "50 L · 1.5 m²",
+          "292 · 29.9%",
+          "0.0262 kg/s · single-layer",
+          "17.2 °C",
+          "45 °C"
+        ],
+        [
+          "1",
+          "ASP_0036: upper Assam, humid foothills",
+          "savE OM46 (melts at 47 °C)",
+          "50 L · 1.5 m²",
+          "303 · 30.0%",
+          "0.0211 kg/s · single-layer",
+          "18.7 °C",
+          "45 °C"
+        ],
+        [
+          "2",
+          "ASP_0080: southern / Barak Valley",
+          "savE OM46 (melts at 47 °C)",
+          "50 L · 1.5 m²",
+          "380 · 29.7%",
+          "0.0219 kg/s · radial",
+          "18.3 °C",
+          "45 °C"
+        ]
+      ]
+    },
+    hold: {
+      title: "How long the water stays hot (≥ 45 °C after 18:00)",
+      columns: [
+        "Regime",
+        "Plain tank",
+        "PCM + always charge",
+        "PCM + PPO",
+        "Replay year"
+      ],
+      rows: [
+        [
+          "0",
+          "7.6 h",
+          "27.2 h",
+          "25.0 h",
+          "2023"
+        ],
+        [
+          "1",
+          "9.5 h",
+          "29.2 h",
+          "27.7 h",
+          "2023"
+        ],
+        [
+          "2",
+          "8.8 h",
+          "30.2 h",
+          "28.2 h",
+          "2023"
+        ]
+      ],
+      note: "The PCM adds 19.6–21.4 h of hot water over a plain tank. PPO gives up 1.5–2.2 h of it, because Objective 3's reward has no retention term. The 50 °C hold is not reported: Assam's target is 45 °C."
+    },
+    tables: [
+      {
+        title: "Arms over the year",
+        caption: "Year 2023, ideal sensors, kWh delivered; shield activations in solver sub-steps; percentages against PCM + always charge",
+        firstCol: "Regime · arm",
+        columns: [
+          "Delivered",
+          "Window 18–09 h",
+          "Shield activations",
+          "Violations (sub-steps)"
+        ],
+        rows: [
+          {
+            arm: "0 · water-only tank",
+            v: [
+              "1,335.7",
+              "782.3",
+              "4,545",
+              "0"
+            ]
+          },
+          {
+            arm: "0 · PCM + always charge",
+            v: [
+              "1,368.8",
+              "837.6",
+              "7,445",
+              "0"
+            ]
+          },
+          {
+            arm: "0 · PCM + PPO",
+            v: [
+              "1,383.6 (101.1%)",
+              "846.8",
+              "5,750",
+              "0"
+            ],
+            best: true
+          },
+          {
+            arm: "0 · PCM + SAC",
+            v: [
+              "1,381.8 (101.0%)",
+              "844.1",
+              "4,333",
+              "0"
+            ]
+          },
+          {
+            arm: "0 · PCM + DQN",
+            v: [
+              "1,380.8 (100.9%)",
+              "857.3",
+              "3,832",
+              "0"
+            ]
+          },
+          {
+            arm: "1 · water-only tank",
+            v: [
+              "1,246.8",
+              "738.9",
+              "4,470",
+              "0"
+            ]
+          },
+          {
+            arm: "1 · PCM + always charge",
+            v: [
+              "1,275.9",
+              "789.0",
+              "7,307",
+              "0"
+            ]
+          },
+          {
+            arm: "1 · PCM + PPO",
+            v: [
+              "1,289.4 (101.1%)",
+              "800.3",
+              "6,130",
+              "0"
+            ],
+            best: true
+          },
+          {
+            arm: "1 · PCM + SAC",
+            v: [
+              "1,283.2 (100.6%)",
+              "798.0",
+              "3,270",
+              "0"
+            ]
+          },
+          {
+            arm: "1 · PCM + DQN",
+            v: [
+              "1,283.1 (100.6%)",
+              "797.2",
+              "2,920",
+              "0"
+            ]
+          },
+          {
+            arm: "2 · water-only tank",
+            v: [
+              "1,272.6",
+              "745.6",
+              "4,457",
+              "0"
+            ]
+          },
+          {
+            arm: "2 · PCM + always charge",
+            v: [
+              "1,304.6",
+              "797.9",
+              "7,379",
+              "0"
+            ]
+          },
+          {
+            arm: "2 · PCM + PPO",
+            v: [
+              "1,318.3 (101.1%)",
+              "808.2",
+              "6,012",
+              "0"
+            ],
+            best: true
+          },
+          {
+            arm: "2 · PCM + SAC",
+            v: [
+              "1,314.8 (100.8%)",
+              "806.2",
+              "2,969",
+              "0"
+            ]
+          },
+          {
+            arm: "2 · PCM + DQN",
+            v: [
+              "1,310.5 (100.4%)",
+              "805.9",
+              "4,204",
+              "0"
+            ]
+          }
+        ]
+      },
+      {
+        title: "Twin against the Python simulator",
+        caption: "Full year 2023, three arms each (water-only, PCM + always charge, PCM + PPO), ideal sensors",
+        firstCol: "Regime",
+        columns: [
+          "Max temperature difference",
+          "Delivered kWh (twin = Python)",
+          "Identical actions"
+        ],
+        rows: [
+          {
+            arm: "0",
+            v: [
+              "9.0e-13 °C",
+              "1,383.6 (PPO arm)",
+              "100%"
+            ]
+          },
+          {
+            arm: "1",
+            v: [
+              "1.1e-11 °C",
+              "1,289.4 (PPO arm)",
+              "100%"
+            ]
+          },
+          {
+            arm: "2",
+            v: [
+              "6.7e-13 °C",
+              "1,318.3 (PPO arm)",
+              "100%"
+            ]
+          }
+        ]
+      },
+      {
+        title: "Sensor faults, 20 seeds",
+        caption: "PPO, regime 0, 10-day window (mean ± standard error)",
+        firstCol: "Case",
+        columns: [
+          "Delivered kWh",
+          "Shield activations (sub-steps)",
+          "Hard violations"
+        ],
+        rows: [
+          {
+            arm: "Healthy",
+            v: [
+              "49.58 ± 0.00",
+              "636",
+              "0"
+            ]
+          },
+          {
+            arm: "Dead pyranometer",
+            v: [
+              "49.59 ± 0.00",
+              "635",
+              "0"
+            ]
+          },
+          {
+            arm: "Stuck pyranometer",
+            v: [
+              "49.59 ± 0.00",
+              "635",
+              "0"
+            ]
+          },
+          {
+            arm: "12 h sensor blackout",
+            v: [
+              "49.58 ± 0.00",
+              "636",
+              "0"
+            ]
+          }
+        ]
+      }
+    ],
+    points: [
+      "PPO delivers 101.1% of always-charge delivery and cuts shield activations by 16–23% (SAC: 100.6–101.0% of delivery, 41.8–59.8% fewer shield activations); zero hard violations in every arm and edge case (0 violating sub-steps across all 96 edge-case runs).",
+      "Twin against Python: the largest temperature difference over 9 full-year runs is 1.1e-11 °C and every action is identical (100%); the MATLAB port is a faithful copy of the frozen Objective 2 physics.",
+      "Checks: restart difference 1.8e-12 kWh, energy-balance residual 0.0059% of collector energy, zero-input drift 0.0e+00 °C.",
+      "Sensor faults (20 seeds, PPO, 10-day window): a dead or stuck pyranometer or a 12 h blackout changes delivery by at most 0.17 kWh with 0 hard violations over all fault runs. The Assam PPO hardly relies on the irradiance reading (its actions change in only a few hours), unlike Tamil Nadu's SAC; the interlock still falls back to a safe action on stale readings.",
+      "PCM swap with the capsule geometry fixed (flow ×1.0, mean of the three regimes, PPO trained for savE OM46 only): n-Tricosane 1,343 kWh/yr; savE OM49 1,337 kWh/yr; savE OM46 1,330 kWh/yr; RT50 1,307 kWh/yr. Flow ×0.7–1.3 changes delivery by at most 0.05%.",
+      "Hold time: PPO and SAC do not extend the hold, they only change how full the tank is at 18:00; the PCM benefit comes from the tank, not the controller.",
+      "Not produced for Assam: the Simulink model, generated C code, the published-experiment benchmark (Amanowicz and Turski 2025) and the simulation videos; the twin is a single-node MATLAB port of Objective 2's plant, driven by networks exported from Objective 3."
+    ],
+    figures: [
+      {
+        file: "assam/o4_01_arms_2023.png",
+        title: "Arms compared (Assam)",
+        caption: "Delivered energy, shield activations and night-window delivery for the water-only tank, PCM + always charge, PCM + PPO, SAC and DQN."
+      },
+      {
+        file: "assam/o4_05_three_day_trace.png",
+        title: "Three-day trace (Assam, regime 0)",
+        caption: "Water and PCM temperature, PCM-loop mode and pump over three days: PPO against always charge and the plain tank."
+      },
+      {
+        file: "assam/o4_02_hold_time.png",
+        title: "Hold time after 18:00 (Assam)",
+        caption: "Hours the tank stays above 45 °C and 40 °C with no sun and no draw, from each arm's own 18:00 state."
+      },
+      {
+        file: "assam/o4_03_edge_cases.png",
+        title: "Edge cases (Assam)",
+        caption: "Clear, no sunlight, rain and cloud, low temperature, heat wave, sensor blackout, dead and stuck pyranometer: delivery per arm."
+      },
+      {
+        file: "assam/o4_04_sensor_faults.png",
+        title: "Sensor faults, 20 seeds (Assam)",
+        caption: "PPO delivery under dead and stuck pyranometer and a 12 h blackout."
+      }
+    ],
+    videos: []
+  },
 ];
 
 export const O4_LIMITATIONS = [
@@ -378,5 +749,6 @@ export const O4_LIMITATIONS = [
   "Controllers depend on working sensors: delivery falls by 14–22% in Tamil Nadu if the pyranometer fails, Rajasthan's SAC loses most of its shield benefit, and Uttarakhand's PPO misbehaves when mains temperature drifts or the pyranometer fails. Safety holds in every case.",
   "Hold times are model values: the lumped capsule model runs slow against published capsules (a 38.5% error in the Tamil Nadu tank benchmark), so read them as upper bounds. They are compared within a regime only.",
   "Tamil Nadu regimes 1–2 hold times were computed for this page, and Simulink and generated C exist for Rajasthan and Uttarakhand only, not Tamil Nadu's retrained SAC.",
+  "Assam: the twin is a single-node MATLAB port of Objective 2's plant driven by networks exported from Objective 3; it was validated against the Python simulator and checked for restart and energy balance, but it has no Simulink model, generated C code, published-experiment benchmark or videos, and its capsule melt rate was not tuned (the ANSYS check in Objective 2 shows the lumped capsule charges faster than CFD), so hold times are upper bounds.",
   "Next: real hardware (Raspberry Pi / ESP32), bench interlock, shadow mode, hardware-in-the-loop, then a long field trial.",
 ];

@@ -72,7 +72,7 @@ function Objective4Page() {
       <div className="content-section" id="results">
         <div className="plots-section-header">
           <h2>Results by State</h2>
-          <span className="plots-count-badge">3 Twins</span>
+          <span className="plots-count-badge">4 Twins</span>
         </div>
         <p className="section-desc">Pick a state to see its twin, the three-arm comparison, the checks and the figures.</p>
         <div className="section-divider" />
