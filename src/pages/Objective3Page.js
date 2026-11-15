@@ -83,7 +83,7 @@ function Objective3Page({ onNavigate }) {
       <div className="content-section" id="results">
         <div className="plots-section-header">
           <h2>Locked-Test Results by State</h2>
-          <span className="plots-count-badge">3 States</span>
+          <span className="plots-count-badge">4 States</span>
         </div>
         <p className="section-desc">
           Pick a state. Each was tested once on years it never trained on; percentages are against always-charge (B0).

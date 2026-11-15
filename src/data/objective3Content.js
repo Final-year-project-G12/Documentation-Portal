@@ -197,9 +197,52 @@ export const O3_STATES = [
       "The Objective 4 twin now runs the smart-forecast PPO, exported directly from this repository's models (2023 replay, all three regimes); the o4_handoff package here still holds the frozen PPO.",
     ],
   },
+  {
+    id: "assam",
+    name: "Assam",
+    selected: "PPO",
+    tag: "PPO selected (all 3 regimes) · test years 2024–2025",
+    stats: [
+      { value: "+1.0%", label: "More delivered energy than the passive PCM tank (+12.6 to +14.0 kWh/yr, both seeds)" },
+      { value: "−16 to −26%", label: "Water-shield sub-steps vs B0 (regime 0: 4,877 vs 6,572)" },
+      { value: "0", label: "Safety-limit violations (max water 72.4 °C, PCM 62.3 °C)" },
+      { value: "2.5×", label: "The gain of the best hand-written rule (water-first, +4 to +6 kWh/yr)" },
+    ],
+    columns: ["Delivered kWh/yr (useful energy)", "Water-shield sub-steps/yr"],
+    rows: [
+      { regime: "R0", policy: "Water-only tank", a: "1283.5", b: "4,182" },
+      { regime: "R0", policy: "B0 passive PCM (always on)", a: "1313.6", b: "6,572" },
+      { regime: "R0", policy: "Rule-based (water-first)", a: "1319.5 (+0.4%)", b: "5,054 (−23%)" },
+      { regime: "R0", policy: "PPO (selected)", a: "1327.6 (+1.1%)", b: "4,877 (−26%)", best: true },
+      { regime: "R1", policy: "Water-only tank", a: "1232.3", b: "4,132" },
+      { regime: "R1", policy: "B0 passive PCM (always on)", a: "1259.7", b: "6,745" },
+      { regime: "R1", policy: "Rule-based (water-first)", a: "1263.8 (+0.3%)", b: "5,622 (−17%)" },
+      { regime: "R1", policy: "PPO (selected)", a: "1272.2 (+1.0%)", b: "5,684 (−16%)", best: true },
+      { regime: "R2", policy: "Water-only tank", a: "1240.0", b: "4,396" },
+      { regime: "R2", policy: "B0 passive PCM (always on)", a: "1270.9", b: "7,081" },
+      { regime: "R2", policy: "Rule-based (water-first)", a: "1276.5 (+0.4%)", b: "5,645 (−20%)" },
+      { regime: "R2", policy: "PPO (selected)", a: "1284.6 (+1.1%)", b: "5,528 (−22%)", best: true },
+    ],
+    figures: [
+      { file: "assam/o3_as_tradeoff.png", title: "Delivery vs shield trade-off (Assam)", caption: "Unseen test years 2024–2025: PPO sits above and to the left of the passive PCM tank in every regime, i.e. more delivery and less shield activity." },
+      { file: "assam/fig61_o3_as_controller_comparison.png", title: "Controller comparison (Assam)", caption: "Gain over the passive PCM tank for the water-only tank, two rule-based controllers and two PPO seeds, on validation and test years." },
+      { file: "assam/fig63_o3_as_policy_behaviour.png", title: "What the Assam policy does", caption: "PPO bypasses the PCM bed in the morning, connects it from late morning and changes flow in the evening." },
+      { file: "assam/fig60_o3_as_training_curves.png", title: "Training curves (Assam)", caption: "Validation improvement over the passive PCM tank during PPO training (2 seeds per regime)." },
+    ],
+    notes: [
+      "Setup differs from the other states: the controlled design is Objective 2's selected savE OM46 PCM tank (single-layer in regimes 0 and 1, radial in regime 2) and the agent chooses, every hour, whether the collector pump may run and the PCM-loop flow (bypass, 0.010, nominal or 0.050 kg/s), 8 discrete actions. The shield (72 °C water, 62 °C PCM charge block) stays inside the physics and cannot be overridden.",
+      "Reward: the hourly improvement in unmet delivery energy against a shadow passive-PCM tank run in lock-step (a paired reward), minus 0.02 per shield hour and 5 per violation. The weights were chosen by us and are not tuned per state.",
+      "Training: PPO (Stable-Baselines3, 128×128), 1.2 M steps, 2 seeds per regime, on 2016–2020; best checkpoint chosen on 2021–2023; final test on 2024–2025, which were never used to train or select. Objective 2's held-out years 2011–2015 were not used. The Assam test years differ from the other states' (2011–2015 / 2006–2010).",
+      "Unlike the other states, delivery goes up and shield activity goes down together: the agent keeps the PCM bed bypassed in the morning so the water reaches temperature first, then connects the bed from about 11:00–14:00 to absorb surplus before the shield threshold. The best hand-written rule gets a fifth of the delivery gain.",
+      "Both seeds agree within 1 kWh/yr in every regime; zero violations in all 12 validation and test rollouts.",
+      "Pump-off actions at night change nothing (the collector has no gain then); they are not learned behaviour.",
+      "Caveats: the effect is small (about 1%) because the 50 L / 1.5 m² system against 300 L/day is collector-limited (solar fraction about 0.36); training and test use the same simulator; the controller sees a perfect 3-hour irradiance forecast; shield activity is counted in solver sub-steps (as in Tamil Nadu), not hours. No shield-weight sweep or forecast ablation was run for Assam.",
+    ],
+  },
 ];
 
 export const O3_FINDINGS = [
+  { title: "Assam: a controller can help on both axes", text: "Because Assam's Objective 2 tank has some PCM headroom, PPO delivers about 1% more energy than the passive PCM tank and also cuts water-shield activity by 16–26%, on years it never saw. The gain is small, repeatable across two seeds, and about 2.5 times the best rule-based controller." },
   { title: "Reward design decides the outcome", text: "With a delivery-only reward every agent learns always-charge, identical to B0. Only a shield penalty makes anticipation pay, and its weight sets where a policy lands on the delivery-versus-shield trade-off." },
   { title: "No controller beats always-on on delivery", text: "With Objective 2's shield inside the plant, no rule or learned policy delivers more energy than B0 in any state. Every policy that reduces shield activity pays some delivery." },
   { title: "Same delivery, far fewer shield activations", text: "Tamil Nadu SAC keeps 97–99% of B0 with 33–54% fewer activations; Rajasthan's locked-test DQN keeps 98% with 61% fewer shield hours; Rajasthan's SAC runs keep 95–96% with 71–96% fewer (validation only). Uttarakhand's PPO cuts about 99% but gives up 8–11% of delivery. All with zero violations." },
@@ -209,6 +252,7 @@ export const O3_FINDINGS = [
 ];
 
 export const O3_LIMITATIONS = [
+  "Assam: delivery and shield activity both improve, but only by about 1% and 16–26%, on a collector-limited system; trained and tested on the same simulator with a perfect 3-hour irradiance forecast, and no shield-weight or forecast ablation was run.",
   "Simulation only; PCM temperature, melt fraction and stored energy are simulator states that a real tank would need an estimator for.",
   "Train and validation years were used by Objective 2 to choose the design, so gains against B0 there are optimistic. The test is a hold-out by year at the same sites, not by location, and Tamil Nadu's test years 2011–2015 were also Objective 2's held-out years.",
   "Shield hours have no physical cost in the simulator; if shield operation causes real wear or pump cycling, that cost must be modelled. Rajasthan's SAC switches the loop about 3,000 times a year.",
