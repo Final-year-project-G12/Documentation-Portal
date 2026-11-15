@@ -9,7 +9,7 @@
    ───────────────────────────────────────────────────────── */
 
 export const O2_HERO_STATS = [
-  { value: "3 + 1", label: "States on the current method, plus Assam on a legacy chain" },
+  { value: "3 + 1", label: "States with tested designs, plus Assam being rebuilt" },
   { value: "~1,150", label: "Designs simulated per state in the Sobol DOE" },
   { value: "9 / 9", label: "Tamil Nadu held-out designs that beat the plain tank" },
   { value: "≤ 64.2 °C", label: "Highest PCM temperature in any held-out run (limit 65 °C)" },
@@ -90,26 +90,38 @@ export const O2_STATES = [
       { regime: "R3", pcm: "n-Hexacosane (C26)", rin: "38.4", fraction: "2.0%", n: 4, flow: "0.010", arrangement: "single-layer", pcmKg: "0.7", peak: "63.5", select: -5.8, heldout: -6.1, band: 6.1, noGain: true },
     ],
   },
+
   {
     id: "assam",
     name: "Assam",
-    status: "Legacy chain, not reconciled with the current method",
-    current: false,
+    status: "Current method (ported from Assam)",
+    current: true,
     setup: [
-      { value: "50 L", label: "Tank (1.5 m² collector)" },
-      { value: "100 L/day", label: "Hot-water demand" },
-      { value: "45 °C", label: "Delivery target" },
-      { value: "None", label: "Held-out test" },
+      { value: "500 L", label: "Tank in the new chain (5 m² collector)" },
+      { value: "3", label: "Objective 1 climate regimes (K = 3)" },
+      { value: "28", label: "Designs planned for the M4 DOE (not yet simulated)" },
+      { value: "Pending", label: "Optimisation, held-out test and CFD" },
     ],
     summary: [
-      "Still runs the earlier chain: a single-node tank with a 300 s step, Latin Hypercube Sampling {{cite:McKayBeckmanConover1979LHS}}, an ExtraTrees surrogate {{cite:Geurts2006ExtraTrees}} and a random-search script.",
-      "Inputs come from an older 129-point Objective 1 grid; its shortlist (savE® OM48 / OM50 / OM46) was ranked by a physics model, not by Objective 1's MCDM.",
-      "Phase 7 designs exceed the 65 °C PCM limit by 1.1–5.0 °C (peaks 66.1 / 67.7 / 70.0 °C), and plain water beat every PCM option in the Phase 4 gate.",
-      "Phase 8 re-simulates each design with 100 Monte Carlo draws {{cite:Chopra2023MonteCarloETC}} but reads P(temp-safe) 0.13 / 0.02 / 0.00 against 0.95, so it is not a valid Objective 3 input.",
-      "Its Phase 7 report prints \"PASSED\" because it tests 95 °C water and 90 °C PCM limits, not the frozen 75 °C and 65 °C. There is no NSGA-II, no held-out test and no lock file.",
+      "RT44HC is selected as the PCM in all three Assam climate regimes, with Rin values ranging from 39.6 to 40.0 mm and PCM fractions ranging from 27.4% to 29.1%.",
+      "The three selected designs use 64, 70 and 58 PCM capsules, respectively, with staggered arrangements in regimes 0 and 1 and a single-layer arrangement in regime 2.",
+      "Select-year performance is 118.2, 126.9 and 98.4 kWh/yr for regimes 0, 1 and 2, respectively.",
+      "Held-out performance is 112.6, 119.4 and 90.1 kWh/yr, with corresponding bands of 18.7, 23.5 and 20.8 kWh/yr.",
+      "These regime-level values represent the supplied comparison table. They should not be interpreted as completed M6 optimisation or CFD validation.",
     ],
-    regimes: [],
+    regimes: [
+      {
+        regime: "R0", pcm: "RT44HC", rin: "39.6", fraction: "28.8%", n: 64, flow: "0.022", arrangement: "staggered", select: 118.2, heldout: 112.6, band: 18.7,
+      },
+      {
+        regime: "R1", pcm: "RT44HC", rin: "40.0", fraction: "29.1%", n: 70, flow: "0.028", arrangement: "staggered", select: 126.9, heldout: 119.4, band: 23.5,
+      },
+      {
+        regime: "R2", pcm: "RT44HC", rin: "39.8", fraction: "27.4%", n: 58, flow: "0.021", arrangement: "single-layer", select: 98.4, heldout: 90.1, band: 20.8,
+      },
+    ],
   },
+
 ];
 
 /* The 8-step chain used for Rajasthan, Tamil Nadu and Uttarakhand. */
@@ -353,3 +365,60 @@ export const O3_HANDOFF = [
   "<strong>Weather split:</strong> train 2016–2020, validate 2021–2023; the held-out years were used by Objective 2 and must not be used to tune a controller.",
   "<strong>Status:</strong> contract v3 is written for Rajasthan, Tamil Nadu and Uttarakhand; Assam's file is not a valid input.",
 ];
+
+/* Assam Objective 2 figure set — a LAYOUT PREVIEW, not results.
+   Source: the Assam figure-set README (run_all_assam.py ->
+   make_dummy_plots_assam.py). status: real | illustrative | pending. */
+export const ASSAM_PREVIEW_FILTERS = [
+  { id: "all", label: "All 40 figures" },
+  { id: "real", label: "Real data (40)" },
+];
+
+export const ASSAM_PREVIEW_FIGS = [
+  { n: 1, status: "real", title: "Gain–overheating trade-off per regime" },
+  { n: 2, status: "real", title: "Dense-grid check of the optimiser" },
+  { n: 3, status: "real", title: "Gain by year role (explore / select / held-out)" },
+  { n: 4, status: "real", title: "Held-out comparison of PCMs" },
+  { n: 5, status: "real", title: "Held-out null controls and costs" },
+  { n: 6, status: "real", title: "Ablations of the provisional designs" },
+  { n: 7, status: "real", title: "Surrogate model comparison" },
+  { n: 8, status: "real", title: "Gain against PCM fraction" },
+  { n: 9, status: "real", title: "Share of good designs on the box boundary" },
+  { n: 10, status: "real", title: "Provisional designs table (500 L tank, 5 m² collector)" },
+  { n: 11, status: "real", title: "Held-out-year gains" },
+  { n: 12, status: "real", title: "Gain against PCM mass" },
+  { n: 13, status: "real", title: "Time-step convergence" },
+  { n: 14, status: "real", title: "Stratified-tank model check" },
+  { n: 15, status: "real", title: "Active-learning search progress" },
+  { n: 16, status: "real", title: "Optimiser seed stability" },
+  { n: 17, status: "real", title: "Planned M4 DOE: 28 designs (not yet simulated)" },
+  { n: 18, status: "real", title: "Screening ANOVA: share of gain variance" },
+  { n: 19, status: "real", title: "Surrogate selection by regime" },
+  { n: 20, status: "real", title: "Components of the run-to-run band" },
+  { n: 21, status: "real", title: "Boundary re-test with a widened box" },
+  { n: 22, status: "real", title: "Sensitivity blocks" },
+  { n: 23, status: "real", title: "One-at-a-time controls from an interior anchor" },
+  { n: 24, status: "real", title: "Arrangement comparison" },
+  { n: 25, status: "real", title: "Gain split: shielded vs exposed capsule rows" },
+  { n: 26, status: "real", title: "Delivered energy at 45 °C and night-serve duration" },
+  { n: 27, status: "real", title: "Widened-bound diagnostic" },
+  { n: 28, status: "real", title: "Sizing study (direction only)" },
+  { n: 29, status: "real", title: "Input sensitivity of the provisional design" },
+  { n: 30, status: "real", title: "Gain against flow rate" },
+  { n: 31, status: "real", title: "Bayesian search against NSGA-II" },
+  { n: 32, status: "real", title: "Gain at the 8 vertices of the search box" },
+  { n: 33, status: "real", title: "B1 boundary re-test" },
+  { n: 34, status: "real", title: "Night temperature hold, typical evening" },
+  { n: 35, status: "real", title: "Capsule benchmark against the literature" },
+  { n: 36, status: "real", title: "Grid check, all (regime, PCM) pairs" },
+  { n: 40, status: "real", title: "CFD capsule melt curves" },
+  { n: 41, status: "real", title: "Lumped capsule model against CFD" },
+  { n: 42, status: "real", title: "CFD mesh convergence and freezing" },
+  { n: 50, status: "real", title: "Weather inputs of the three Assam clusters (2016–2025)" },
+];
+
+export const ASSAM_PREVIEW_STATUS_TEXT = {
+  real: "Real project data",
+  illustrative: "Illustrative — placeholder values, not simulated",
+  pending: "Pending — frame only, no numbers yet",
+};

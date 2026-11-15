@@ -1,0 +1,29 @@
+figure,status,data_source,remaining_work
+fig1,ILLUSTRATIVE,placeholder table anchors,needs M4 production + M5 + M6
+fig2,REAL-LEGACY,"results/phase5_design_cases.csv, phase7_optimized_designs.csv",legacy chain only; current-method version needs M6 + dense grid
+fig3,ILLUSTRATIVE,placeholder table anchors,"needs production data, M6, annual selection/held-out years"
+fig4,REAL-LEGACY,phase7_optimized_designs.csv,"legacy chain, one medoid year; current version needs M6"
+fig5,REAL-LEGACY,phase7_deployable_design_per_regime.csv,legacy chain; current version needs M6 + null-control runs
+fig6,ILLUSTRATIVE,placeholder,needs ablation runs on the chosen designs
+fig7,REAL-LEGACY,phase6_surrogate_metrics.csv,legacy Phase 6 only; M5 not trained
+fig8-12,ILLUSTRATIVE,placeholder anchors,need production data / M6
+fig13,REAL (partial),m2_thermal/verification_convergence.json; m3_stageD/comparison.json; m4_pilot P0 plain-tank runs,bed-loop dt 15/7.5 s unresolved (spin-up 2-state oscillation)
+fig14,ANALYTICAL (illustrative),"engineering energy balance: real 200 L/day demand profile + cluster-0 mean GHI/ambient; ASSUMED collector efficiency 0.55, U 0.8, 25 C mains",not an M3 result (M3 uses one mixed node); a real multinode comparison needs a multinode M3 tank
+fig15,REAL-LEGACY (preliminary),phase5_design_cases.csv order trace + phase7 optimiser results,"DOE trace, not active learning; needs M6"
+fig16,REAL-LEGACY (preliminary),phase5_design_cases.csv by sampling seed,"sampling-seed spread, not optimiser-seed repeats; needs M6"
+fig17,REAL,M4_PROPOSED_RUN_PLAN.csv,planned DOE only (not yet simulated)
+fig18,ILLUSTRATIVE,placeholder,needs production DOE (ANOVA)
+fig19,REAL-LEGACY,phase6_surrogate_error_by_group.csv,legacy Phase 6 only; M5 not trained
+fig20,REAL (partial),"m4_pilot P0-N runs, D1 rep window",temporal component unavailable; one design only
+fig21,REAL-LEGACY (preliminary),phase5_design_cases.csv boundary vs LHS cases,not a widened-box optimisation retest; needs M6
+fig22-30,ILLUSTRATIVE,placeholder,need production data/M6/sensitivity runs
+fig31,REAL-LEGACY (preliminary),phase5 DOE best-so-far per PCM vs phase7 optimiser,not GP-BO vs NSGA-II; needs M6 + an independent search
+fig32,ILLUSTRATIVE,placeholder,needs M6 box-vertex runs
+fig33,REAL-LEGACY (preliminary),phase5_design_cases.csv feasible/infeasible map,not a B1 boundary retest; needs M6
+fig34,ILLUSTRATIVE,placeholder,needs production run time series
+fig35,REAL (analytical references),m2_thermal/verification_convergence.json,M2 analytical benchmarks; literature (Chen) benchmark not run for Assam
+fig36,REAL-LEGACY,"phase5_design_cases.csv, phase7_optimized_designs.csv",legacy chain only
+fig40,REAL (M2 model output),m2_thermal/radial_curves,not CFD; ANSYS/OpenFOAM Assam run pending (Milestone 7)
+fig41,REAL (M2 model output),m2_thermal/radial_curves (N_r 5 vs 40),"model-to-model radial resolution, not CFD"
+fig42,REAL (M2 model output),"m2_thermal/radial_resolution_summary.csv, radial_curves","radial-resolution convergence, not a CFD mesh study"
+fig50,REAL,weather_regime_assam_cluster*_hourly.csv,-

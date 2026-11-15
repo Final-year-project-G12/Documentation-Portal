@@ -49,6 +49,7 @@ export const PAGES = [
       { id: "criteria", label: "Comparison with Different Parameters" },
       { id: "cfd", label: "CFD Cross-Checks" },
       { id: "o2-plots", label: "Result Figures" },
+      { id: "assam-preview", label: "Assam Figure Preview" },
       { id: "interactive-explorer", label: "Geometry Checker" },
       { id: "parameters", label: "System Bounds & Limits" },
       { id: "deliverables", label: "Verification & Status" },
