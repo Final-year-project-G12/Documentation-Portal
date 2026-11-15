@@ -2400,8 +2400,7 @@ h3 {
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 24px 16px;
 }
-@media (max-width: 1300px) { .plot-grid-wide.plot-grid-four { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-@media (max-width: 1000px) { .plot-grid-wide.plot-grid-four { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 800px) { .plot-grid-wide.plot-grid-four { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 640px) { .plot-grid-wide.plot-grid-four { grid-template-columns: 1fr; } }
 
 .plot-grid-wide .plot-type {
@@ -3118,7 +3117,7 @@ a.ui-btn { text-decoration: none; }
 .o4-video { width: 100%; display: block; border-radius: 10px; border: 1px solid var(--surface-border); background: #000; }
 
 .plot-grid-wide.plot-grid-three { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px 16px; }
-@media (max-width: 1000px) { .plot-grid-wide.plot-grid-three { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 800px) { .plot-grid-wide.plot-grid-three { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 640px) { .plot-grid-wide.plot-grid-three { grid-template-columns: 1fr; } }
 
 /* Enlarged video in the lightbox: about 70% of the screen height */

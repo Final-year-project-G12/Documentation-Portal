@@ -302,7 +302,7 @@ function Objective2Page() {
               <div className="ui-panel" style={{ marginBottom: 16 }}>
                 <Bullets items={cfd.points} />
               </div>
-              <div className={`plot-grid plot-grid-wide ${cfdId === "openfoam" ? "plot-grid-four" : ""}`}>
+              <div className="plot-grid plot-grid-wide plot-grid-four">
                 {cfd.figures.map((f) => (
                   <div key={f.file} className="plot-type">
                     <h3>{f.title}</h3>

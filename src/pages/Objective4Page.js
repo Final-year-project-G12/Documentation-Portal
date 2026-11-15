@@ -169,7 +169,7 @@ function Objective4Page() {
           )}
 
           {st.figures.length > 0 && (
-            <div className="plot-grid plot-grid-wide">
+            <div className="plot-grid plot-grid-wide plot-grid-four">
               {st.figures.map((f) => (
                 <div key={f.file} className="plot-type">
                   <h3>{f.title}</h3>

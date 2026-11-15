@@ -130,7 +130,7 @@ function Objective3Page({ onNavigate }) {
           <Accordion defaultOpen={0} items={[{ id: "notes", title: `${st.name}: what the results say`, badge: `${st.notes.length}`, points: st.notes }]} />
 
           {st.figures && st.figures.length > 0 && (
-            <div className="ui-two-col">
+            <div className="plot-grid plot-grid-wide plot-grid-four">
               {st.figures.map((f) => (
                 <Figure key={f.file} src={img(f.file)} title={f.title} alt={f.caption} caption={f.caption} />
               ))}
