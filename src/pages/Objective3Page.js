@@ -4,6 +4,7 @@ import Figure from "../components/Figure";
 import { resetTerms } from "../data/terms";
 import useReveal from "../components/useReveal";
 import { StatTiles, ChipTabs, StepExplorer, Accordion } from "../components/Interactive";
+import { O3_DASHBOARD_URL, REPO_LINKS } from "../data/links";
 import { O3_METHOD_STEPS, O3_AGENT_TABLE, O3_STATES, O3_FINDINGS, O3_LIMITATIONS, O3_HANDOFF } from "../data/objective3Content";
 
 /* ─────────────────────────────────────────────────────────
@@ -32,6 +33,10 @@ function Objective3Page({ onNavigate }) {
           cannot switch off. It changes how the system is run, never the hardware or physics. All results are simulation;
           real-hardware testing is future work.
         </p>
+        <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 14 }}>
+          <a className="ui-btn" href={O3_DASHBOARD_URL} target="_blank" rel="noopener noreferrer">Open live Streamlit dashboard ↗</a>
+          <a className="ui-btn ghost" href={REPO_LINKS[2].url} target="_blank" rel="noopener noreferrer">Objective 3 repository ↗</a>
+        </div>
       </div>
 
       {/* ── Method ── */}

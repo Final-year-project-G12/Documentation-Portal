@@ -2797,6 +2797,7 @@ h3 {
   cursor: pointer;
   transition: background-color 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
+a.ui-btn { text-decoration: none; }
 .ui-btn:hover:not(:disabled) { transform: translateY(-1px); }
 .ui-btn.ghost { background: transparent; color: #ffffff; border-color: var(--surface-border-strong); }
 .ui-btn.ghost:hover:not(:disabled) { background: var(--surface-card-hover); }

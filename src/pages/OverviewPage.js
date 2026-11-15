@@ -5,6 +5,7 @@ import Figure from "../components/Figure";
 import { resetTerms } from "../data/terms";
 import useReveal from "../components/useReveal";
 import { StatTiles, ChipTabs, StepExplorer, ProgressBar, Callout } from "../components/Interactive";
+import { REPO_LINKS, O3_DASHBOARD_URL } from "../data/links";
 import { MOTIVATION_FLOW, RESEARCH_GAPS, PROBLEM_STATEMENT, RESEARCH_THEMES, INDUSTRY_EXPERT, LITERATURE, TRADEOFFS, FUTURE_SCOPE } from "../data/overviewContent";
 
 /* ─────────────────────────────────────────────────────────
@@ -249,6 +250,32 @@ function OverviewPage({ onNavigate }) {
       </div>
 
       <StatTiles items={HERO_STATS} />
+
+      {/* ── Code & live demo ── */}
+      <div className="content-section" id="repositories">
+        <div className="plots-section-header">
+          <h2>Code Repositories & Live Dashboard</h2>
+          <span className="plots-count-badge">{REPO_LINKS.length} Repos</span>
+        </div>
+        <p className="section-desc">Every objective lives in its own GitHub repository. The Objective 3 controller also has a live dashboard.</p>
+        <div className="section-divider" />
+        <div className="ui-card-grid">
+          {REPO_LINKS.map((r) => (
+            <div key={r.repo} className="ui-card">
+              <div className="ui-card-kicker">GitHub</div>
+              <h4>{r.label}</h4>
+              <p>{r.note}</p>
+              <a className="ui-btn ghost" href={r.url} target="_blank" rel="noopener noreferrer">{r.repo} ↗</a>
+            </div>
+          ))}
+          <div className="ui-card">
+            <div className="ui-card-kicker">Live app</div>
+            <h4>Objective 3 Streamlit dashboard</h4>
+            <p>Interactive results and live controller comparison for the DRL agents.</p>
+            <a className="ui-btn" href={O3_DASHBOARD_URL} target="_blank" rel="noopener noreferrer">Open dashboard ↗</a>
+          </div>
+        </div>
+      </div>
 
       {/* ── Motivation ── */}
       <div className="content-section" id="motivation">
