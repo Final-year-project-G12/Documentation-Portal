@@ -2035,145 +2035,6 @@ h3 {
   margin: 0;
 }
 
-/* ─── Objective 2 Design Space Estimator ─── */
-.design-estimator-wrapper {
-  display: grid;
-  grid-template-columns: 1fr 1.2fr;
-  gap: 28px;
-  background: #09090b;
-  border: 1px solid var(--surface-border);
-  border-radius: 16px;
-  padding: 28px;
-}
-
-@media (max-width: 900px) {
-  .design-estimator-wrapper {
-    grid-template-columns: 1fr;
-  }
-}
-
-.estimator-controls {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.estimator-control-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.estimator-control-group label {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--neutral-300);
-}
-
-.estimator-val {
-  font-family: monospace;
-  font-size: 0.88rem;
-  font-weight: 700;
-  color: var(--accent-amber);
-}
-
-.estimator-select {
-  background: #18181b;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 8px;
-  color: #ffffff;
-  padding: 10px 14px;
-  font-size: 0.84rem;
-  font-family: inherit;
-  outline: none;
-  cursor: pointer;
-}
-
-.estimator-select:focus {
-  border-color: #ffffff;
-}
-
-.range-hint {
-  font-size: 0.7rem;
-  color: var(--neutral-500);
-  margin-top: 2px;
-}
-
-.estimator-controls input[type="range"] {
-  width: 100%;
-  accent-color: #f59e0b;
-  cursor: pointer;
-}
-
-.estimator-display {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 22px;
-}
-
-.estimator-display-title {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--neutral-400);
-}
-
-.estimator-metrics-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-}
-
-.estimator-metric-box {
-  background: rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
-  padding: 14px;
-  display: flex;
-  flex-direction: column;
-}
-
-.metric-box-label {
-  font-size: 0.68rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  color: var(--neutral-400);
-  letter-spacing: 0.05em;
-}
-
-.metric-box-val {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #ffffff;
-  margin: 4px 0 2px;
-}
-
-.metric-box-sub {
-  font-size: 0.7rem;
-  color: var(--neutral-500);
-}
-
-.estimator-status-note {
-  font-size: 0.78rem;
-  color: var(--neutral-300);
-  line-height: 1.5;
-  padding: 10px 14px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--surface-border);
-  border-radius: 8px;
-  margin-top: auto;
-}
-
 /* ─── Citations & References ─── */
 .cite a {
   color: var(--neutral-300);
@@ -3268,3 +3129,14 @@ h3 {
   width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
   background: rgba(0, 0, 0, 0.55); color: #fff; font-size: 1.1rem; pointer-events: none;
 }
+
+/* Objective 2: parameter lanes */
+.o2-lanes { margin-top: 16px; overflow-x: auto; }
+.o2-lane-row { display: grid; grid-template-columns: 110px repeat(7, minmax(72px, 1fr)) minmax(170px, 1.6fr); gap: 6px; align-items: stretch; margin-bottom: 6px; min-width: 900px; }
+.o2-lane-head span { font-size: 0.64rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--neutral-500); padding: 0 4px 4px; }
+.o2-lane-name { display: flex; align-items: center; font-weight: 600; color: #fff; font-size: 0.88rem; }
+.o2-lane-cell { position: relative; display: flex; align-items: center; padding: 8px 10px; border: 1px solid var(--surface-border); border-radius: 8px; background: var(--surface-card); font-size: 0.78rem; line-height: 1.35; color: var(--neutral-300); }
+.o2-lane-cell + .o2-lane-cell::before { content: "→"; position: absolute; left: -10px; top: 50%; transform: translateY(-50%); color: var(--neutral-500); font-size: 0.7rem; background: var(--surface-bg, #09090b); }
+.o2-lane-cell.start { color: #fff; font-weight: 600; }
+.o2-lane-cell.final { color: #fff; font-weight: 600; border-color: var(--accent-ruby); background: rgba(136, 19, 55, 0.18); }
+.o2-lane-caption { font-size: 0.8rem; color: var(--neutral-400); margin: 8px 0 0; }

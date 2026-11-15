@@ -1,13 +1,13 @@
 import { useState } from "react";
 import Bullets from "../components/Bullets";
-import Figure from "../components/Figure";
-import { Rich } from "../components/Cite";
+import Figure, { VideoFigure } from "../components/Figure";
 import { resetTerms } from "../data/terms";
 import useReveal from "../components/useReveal";
 import { StatTiles, ChipTabs, StepExplorer, Accordion, ProgressBar, Callout } from "../components/Interactive";
 import {
   O2_HERO_STATS, O2_STATES, O2_WORKFLOW_STEPS, RESEARCH_QUESTIONS, CRITERIA_STUDY, CFD_CHECKS, CFD_GROUPS,
-  O2_PLOT_GROUPS, O2_PLOTS, O2_STATUS_POINTS, O2_LIMITATIONS, O3_HANDOFF,
+  O2_PLOTS, O2_ASSAM_PLOTS, O2_LIMITATIONS, O3_HANDOFF,
+  O2_FLOW_STATES, O2_FLOW_STAGES, O2_FLOW_LANES,
 } from "../data/objective2Content";
 
 /* ─────────────────────────────────────────────────────────
@@ -26,23 +26,17 @@ import {
    ───────────────────────────────────────────────────────── */
 
 const PARAMETER_BOUNDS = [
-  { param: "Capsule inner radius (PCM thickness)", symbol: "inner_radius_m", bounds: "10 – 40 mm", unit: "mm", rationale: "Chosen designs sit at 39.5–40 mm; 45 and 50 mm were worse. No capsule-size source above 40 mm. {{cn}}" },
-  { param: "PCM volume fraction", symbol: "pcm_volume_fraction", bounds: "2 – 30 %", unit: "% of tank", rationale: "Capsule count is derived from it. Still limiting: 40 % gives more gain. Literature range read: 10–20 % {{cite:Chen2025TaguchiGRAPCM}}." },
-  { param: "Water mass flow rate", symbol: "flow_rate_kg_s", bounds: "0.010 – 0.050 kg/s", unit: "kg/s", rationale: "Legacy bounds. An optimum at the 0.010 floor is a model artefact." },
-  { param: "Arrangement", symbol: "arrangement", bounds: "Single-layer, staggered, radial", unit: "Category", rationale: "No effect on g_window; matters only for overheating hours." },
-  { param: "Capsule shell", symbol: "capsule_wall_thickness_m", bounds: "0.8 mm aluminium", unit: "mm", rationale: "Fixed in the shared config." },
-  { param: "Target delivery temperature", symbol: "delivery.target_temp_C", bounds: "45 °C (Uttarakhand 50 °C)", unit: "°C", rationale: "All metrics use it; Objective 1 sizes PCMs for 60 °C, so the two differ." },
-  { param: "Maximum water temperature", symbol: "water_peak_limit_C", bounds: "≤ 75 °C", unit: "°C", rationale: "Scald prevention." },
-  { param: "Maximum PCM temperature", symbol: "pcm_peak_limit_C", bounds: "≤ 65 °C", unit: "°C", rationale: "Material limit from datasheets {{cite:RubithermPCM,PlussPCM}}." },
-  { param: "Tank model and step", symbol: "n_nodes, timestep_s", bounds: "10 nodes, 150 s", unit: "—", rationale: "300 s failed the time-step gate; 10 vs 20 nodes changes the gain by under 0.3 points." },
-  { param: "Fixed, not optimised", symbol: "fixed_not_optimised", bounds: "Tank, collector, demand, shortlist", unit: "—", rationale: "50 L / 1.5 m² (Tamil Nadu 100 L / 2.5 m²); demand 300 L/day." },
+  { param: "Capsule inner radius (PCM thickness)", symbol: "inner_radius_m", bounds: "10 – 40 mm", unit: "mm" },
+  { param: "PCM volume fraction", symbol: "pcm_volume_fraction", bounds: "2 – 30 %", unit: "% of tank" },
+  { param: "Water mass flow rate", symbol: "flow_rate_kg_s", bounds: "0.010 – 0.050 kg/s", unit: "kg/s" },
+  { param: "Arrangement", symbol: "arrangement", bounds: "Single-layer, staggered, radial", unit: "Category" },
+  { param: "Capsule shell", symbol: "capsule_wall_thickness_m", bounds: "0.8 mm aluminium", unit: "mm" },
+  { param: "Target delivery temperature", symbol: "delivery.target_temp_C", bounds: "45 °C (Uttarakhand 50 °C)", unit: "°C" },
+  { param: "Maximum water temperature", symbol: "water_peak_limit_C", bounds: "≤ 75 °C", unit: "°C" },
+  { param: "Maximum PCM temperature", symbol: "pcm_peak_limit_C", bounds: "≤ 65 °C", unit: "°C" },
+  { param: "Tank model and step", symbol: "n_nodes, timestep_s", bounds: "10 nodes, 150 s", unit: "—" },
+  { param: "Fixed, not optimised", symbol: "fixed_not_optimised", bounds: "Tank, collector, demand, shortlist", unit: "—" },
 ];
-
-const TANK_OPTIONS = [
-  { label: "50 L (Rajasthan, Uttarakhand, Assam legacy)", litres: 50 },
-  { label: "100 L (Tamil Nadu)", litres: 100 },
-];
-const WALL_MM = 0.8;
 
 function regimeOk(r) {
   return !r.noGain && r.heldout > r.band;
@@ -54,26 +48,14 @@ function Objective2Page() {
   const [criteriaId, setCriteriaId] = useState(CRITERIA_STUDY[0].id);
   const [cfdId, setCfdId] = useState(CFD_GROUPS[0].id);
   const [plotState, setPlotState] = useState("rajasthan");
-  const [plotGroup, setPlotGroup] = useState("all");
-  // Geometry checker state: inner radius and count against the v3 box and the packing-free volume share
-  const [radiusMm, setRadiusMm] = useState(30);
-  const [capsuleCount, setCapsuleCount] = useState(40);
-  const [tankIdx, setTankIdx] = useState(0);
-  const revealRef = useReveal([stateId, criteriaId, cfdId, plotState, plotGroup]);
+  const [flowId, setFlowId] = useState("rajasthan");
+  const revealRef = useReveal([stateId, criteriaId, cfdId, plotState, flowId]);
 
   const st = O2_STATES.find((s) => s.id === stateId);
   const crit = CRITERIA_STUDY.find((c) => c.id === criteriaId);
   const cfdCases = CFD_CHECKS.filter((c) => c.group === cfdId);
   const plotStates = O2_STATES.filter((s) => s.current);
-  const plots = O2_PLOTS.filter((p) => plotGroup === "all" || p.group === plotGroup);
-
-  const tankL = TANK_OPTIONS[tankIdx].litres;
-  const outerMm = radiusMm + WALL_MM;
-  const capsuleLiters = (4 / 3) * Math.PI * Math.pow(outerMm / 1000, 3) * 1000;
-  const totalLiters = capsuleCount * capsuleLiters;
-  const volumeShare = (totalLiters / tankL) * 100;
-  const radiusOk = radiusMm >= 10 && radiusMm <= 40;
-  const shareOk = volumeShare >= 2 && volumeShare <= 30;
+  const plots = plotState === "assam" ? O2_ASSAM_PLOTS : O2_PLOTS;
 
   const img = (path) => `${process.env.PUBLIC_URL}/plots/objective2/${path}`;
 
@@ -178,9 +160,7 @@ function Objective2Page() {
           <h2>Optimization Pipeline</h2>
           <span className="plots-count-badge">{O2_WORKFLOW_STEPS.length} Steps</span>
         </div>
-        <p className="section-desc">
-          The chain used for Rajasthan, Tamil Nadu and Uttarakhand, from the frozen inputs to the one-shot held-out test. Click a step.
-        </p>
+        <p className="section-desc">Used for Rajasthan, Tamil Nadu and Uttarakhand. Click a step.</p>
         <div className="section-divider" />
         <StepExplorer
           ariaLabel="Objective 2 pipeline steps"
@@ -194,7 +174,7 @@ function Objective2Page() {
           <h2>What the Results Answer</h2>
           <span className="plots-count-badge">{RESEARCH_QUESTIONS.length} Questions</span>
         </div>
-        <p className="section-desc">The questions the pipeline was built to answer, and what the saved results say. Open a question.</p>
+        <p className="section-desc">Open a question.</p>
         <div className="section-divider" />
         <Accordion
           defaultOpen={0}
@@ -202,13 +182,46 @@ function Objective2Page() {
             id: r.q,
             title: r.q,
             children: (
-              <>
-                <p className="section-desc" style={{ margin: "0 0 8px" }}>{r.detail}</p>
-                <p style={{ margin: 0 }}><strong>Finding:</strong> {r.finding}</p>
-              </>
+              <p style={{ margin: 0 }}>{r.finding}</p>
             ),
           }))}
         />
+      </div>
+
+      {/* ── Parameter flow ── */}
+      <div className="content-section" id="flow">
+        <div className="plots-section-header">
+          <h2>How the Design Parameters Narrow</h2>
+        </div>
+        <p className="section-desc">Each lane runs from the starting range to the final value of the chosen state; values are listed regime by regime.</p>
+        <div className="section-divider" />
+
+        <ChipTabs
+          size="lg"
+          ariaLabel="State for the parameter flow"
+          options={O2_FLOW_STATES.map((x) => ({ id: x.id, label: x.label, sub: x.sub }))}
+          value={flowId}
+          onChange={setFlowId}
+        />
+
+        <div className="o2-lanes" role="table" aria-label="Design parameter flow">
+          <div className="o2-lane-row o2-lane-head" role="row">
+            <span />
+            {O2_FLOW_STAGES.map((h) => <span key={h} role="columnheader">{h}</span>)}
+          </div>
+          {O2_FLOW_LANES.map((l) => (
+            <div key={l.name} className="o2-lane-row" role="row">
+              <span className="o2-lane-name">{l.name}</span>
+              {l.cells.map((c, i) => (
+                <span key={i} className={`o2-lane-cell ${i === 0 ? "start" : ""}`}>{flowId === "assam" && i > 0 ? "—" : c}</span>
+              ))}
+              <span key={flowId} className="o2-lane-cell final">{l.final[flowId]}</span>
+            </div>
+          ))}
+        </div>
+        {flowId === "assam" && (
+          <p className="o2-lane-caption">Assam's legacy chain has no staged narrowing and uses its own bounds (diameter 20–80 mm, 8–24 capsules, 10–20 %); only its Phase 7 designs are shown.</p>
+        )}
       </div>
 
       {/* ── Criteria study ── */}
@@ -217,10 +230,7 @@ function Objective2Page() {
           <h2>Comparison with Different Parameters</h2>
           <span className="plots-count-badge">Tamil Nadu · Regime 0</span>
         </div>
-        <p className="section-desc">
-          Seven designs for Tamil Nadu regime 0 (PureTemp 58, 100 L tank), each a real run of the optimiser's simulator against the
-          plain tank, and the same designs as a Fluent whole-tank discharge (capsules melted at 70 °C, water at 30 °C, no sun). Pick one.
-        </p>
+        <p className="section-desc">Seven Tamil Nadu regime 0 designs (PureTemp 58, 100 L): simulator gain over the plain tank, and the Fluent 60-minute discharge. Pick one.</p>
         <div className="section-divider" />
 
         <ChipTabs
@@ -243,8 +253,8 @@ function Objective2Page() {
               { value: crit.n, label: "Capsules" },
               { value: `${crit.pcmKg} kg`, label: "PCM mass" },
               { value: `${crit.flow} kg/s`, label: `Flow · ${crit.arrangement}` },
-              { value: crit.water, label: "Fluent water temp." },
-              { value: crit.lf, label: "Fluent liquid fraction" },
+              { value: crit.water, label: "Fluent water, 60 min" },
+              { value: crit.lf, label: "Fluent liquid fraction, 60 min" },
             ]}
           />
         </div>
@@ -254,22 +264,16 @@ function Objective2Page() {
           <Figure
             src={img("tamilnadu/fluent/optimal_temp_video.gif")}
             title="Temperature during the discharge (chosen design)"
-            alt="Animated Fluent temperature field of the tank and capsules during a 2-hour evening discharge."
-            caption="Temperature field every 5 simulated minutes (2-D planar proxy: 34 capsules drawn for 104 real)."
+            alt="Animated Fluent temperature field of the tank and capsules during the 60-minute discharge."
+            caption="Temperature every 5 simulated minutes (34 capsules drawn for 104 real)."
           />
           <Figure
             src={img("tamilnadu/fluent/optimal_liqfrac_video.gif")}
             title="PCM liquid fraction during the discharge (chosen design)"
             alt="Animated Fluent liquid-fraction field showing the capsules solidifying during the discharge."
-            caption="Liquid fraction falls from 1.00 to 0.38 as the capsules release heat to the water."
+            caption="Liquid fraction falls from 1.00 to 0.38."
           />
         </div>
-        <Figure
-          src={img("tamilnadu/fluent/FLUENT_comparison_all_criteria.png")}
-          title="Fluent discharge, all seven designs"
-          alt="Water temperature, PCM temperature and liquid fraction over the discharge for the seven criteria designs."
-          caption="All seven designs overlaid: fewer or smaller capsules deliver less heat to the water."
-        />
       </div>
 
       {/* ── CFD ── */}
@@ -307,6 +311,20 @@ function Objective2Page() {
                   </div>
                 ))}
               </div>
+              {cfd.videos && (
+                <>
+                  <h3>Videos</h3>
+                  <div className="plot-grid plot-grid-wide plot-grid-three">
+                    {cfd.videos.map((v) => (
+                      <div key={v.file} className="plot-type">
+                        <h3>{v.title}</h3>
+                        <VideoFigure src={img(v.file)} title={v.title} caption={v.caption} />
+                        <p className="plot-type-caption">{v.caption}</p>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
           ))}
         </div>
@@ -318,10 +336,7 @@ function Objective2Page() {
           <h2>Result Figures</h2>
           <span className="plots-count-badge">{plots.length} Figures</span>
         </div>
-        <p className="section-desc">
-          The same core figures for each current-method state, from each state's <code>make_all_plots.py</code>. Pick a state and a
-          group; click a figure to enlarge it.
-        </p>
+        <p className="section-desc">The core figures of each state. Click a figure to enlarge it.</p>
         <div className="section-divider" />
         <ChipTabs
           size="lg"
@@ -330,8 +345,7 @@ function Objective2Page() {
           value={plotState}
           onChange={setPlotState}
         />
-        <ChipTabs ariaLabel="Figure group" options={O2_PLOT_GROUPS} value={plotGroup} onChange={setPlotGroup} />
-        <div key={`${plotState}-${plotGroup}`} className="plot-grid plot-grid-wide plot-grid-four tab-panel">
+        <div key={plotState} className="plot-grid plot-grid-wide plot-grid-four tab-panel">
           {plots.map((p) => (
             <div key={p.num} className="plot-type">
               <h3>{p.title}</h3>
@@ -339,83 +353,6 @@ function Objective2Page() {
               <p className="plot-type-caption">{p.caption}</p>
             </div>
           ))}
-        </div>
-      </div>
-
-      {/* ── Geometry checker ── */}
-      <div className="content-section" id="interactive-explorer">
-        <div className="plots-section-header">
-          <h2>Capsule Geometry Checker</h2>
-          <span className="plots-count-badge">v3 Design Box</span>
-        </div>
-        <p className="section-desc">
-          Move the sliders to test a capsule design against the inner-radius (10–40 mm) and PCM-fraction (2–30%) bounds. This is plain
-          sphere geometry, not a performance estimate; the real packing check also tests spacing (3 mm) and passage fraction (0.05).
-        </p>
-        <div className="section-divider" />
-
-        <div className="design-estimator-wrapper">
-          <div className="estimator-controls">
-            <div className="estimator-control-group">
-              <label>
-                Tank volume:
-                <span className="estimator-val">{tankL} L</span>
-              </label>
-              <select value={tankIdx} onChange={(e) => setTankIdx(Number(e.target.value))}>
-                {TANK_OPTIONS.map((t, i) => (
-                  <option key={t.label} value={i}>{t.label}</option>
-                ))}
-              </select>
-              <span className="range-hint">Fixed per state, not a design variable</span>
-            </div>
-
-            <div className="estimator-control-group">
-              <label>
-                Capsule inner radius:
-                <span className="estimator-val">{radiusMm} mm</span>
-              </label>
-              <input type="range" min="10" max="40" step="1" value={radiusMm} onChange={(e) => setRadiusMm(Number(e.target.value))} />
-              <span className="range-hint">Approved range 10–40 mm; the PCM thickness equals this radius</span>
-            </div>
-
-            <div className="estimator-control-group">
-              <label>
-                Capsule count:
-                <span className="estimator-val">{capsuleCount} capsules</span>
-              </label>
-              <input type="range" min="4" max="160" step="1" value={capsuleCount} onChange={(e) => setCapsuleCount(Number(e.target.value))} />
-              <span className="range-hint">The search derives the count from the fraction; here you set it directly</span>
-            </div>
-          </div>
-
-          <div className="estimator-display">
-            <div className="estimator-display-title">Geometry Results</div>
-            <div className="estimator-metrics-grid">
-              <div className="estimator-metric-box">
-                <span className="metric-box-label">Outer Radius</span>
-                <span className="metric-box-val">{outerMm.toFixed(1)} mm</span>
-                <span className="metric-box-sub">{radiusOk ? "Inner radius within 10–40 mm" : "Adjust toward 10–40 mm"}</span>
-              </div>
-              <div className="estimator-metric-box">
-                <span className="metric-box-label">Outer Volume per Capsule</span>
-                <span className="metric-box-val">{capsuleLiters.toFixed(3)} L</span>
-                <span className="metric-box-sub">Sphere, 4/3 · π · R³, with a 0.8 mm shell</span>
-              </div>
-              <div className="estimator-metric-box">
-                <span className="metric-box-label">Total Capsule Volume</span>
-                <span className="metric-box-val">{totalLiters.toFixed(2)} L</span>
-                <span className="metric-box-sub">{capsuleCount} capsules</span>
-              </div>
-              <div className="estimator-metric-box">
-                <span className="metric-box-label">Share of {tankL} L Tank</span>
-                <span className="metric-box-val">{volumeShare.toFixed(1)}%</span>
-                <span className="metric-box-sub">{shareOk ? "Within 2–30%" : "Adjust toward 2–30%"}</span>
-              </div>
-            </div>
-            <div className="estimator-status-note">
-              <strong>Bounds check:</strong> {radiusOk && shareOk ? "both bounds met." : "adjust a slider to bring both within range."}
-            </div>
-          </div>
         </div>
       </div>
 
@@ -435,7 +372,6 @@ function Objective2Page() {
                 <th>Config Key</th>
                 <th>Bounds</th>
                 <th>Unit</th>
-                <th>Rationale</th>
               </tr>
             </thead>
             <tbody>
@@ -445,24 +381,10 @@ function Objective2Page() {
                   <td><code>{p.symbol}</code></td>
                   <td style={{ color: "#fbbf24", fontWeight: 600 }}>{p.bounds}</td>
                   <td>{p.unit}</td>
-                  <td style={{ fontSize: "0.82rem" }}><Rich text={p.rationale} /></td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </div>
-      </div>
-
-      {/* ── Verification ── */}
-      <div className="content-section" id="deliverables">
-        <div className="plots-section-header">
-          <h2>Verification & Status</h2>
-          <span className="plots-count-badge">Summary</span>
-        </div>
-        <p className="section-desc">What was checked, how it came out, and what is not done.</p>
-        <div className="section-divider" />
-        <div className="ui-panel">
-          <Bullets items={O2_STATUS_POINTS} />
         </div>
       </div>
 

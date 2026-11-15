@@ -29,10 +29,8 @@ export const O2_STATES = [
       { value: "2011–2015", label: "Held-out years (run once)" },
     ],
     summary: [
-      "PCM beats the water-only tank in all three regimes, far above the band.",
-      "Held-out over 2011–2015 (run heldout_3242a7f4fd8a): 137.5 / 145.7 / 149.3 kWh/yr; peak PCM 64.1 °C, peak water 73.3 °C over every design and year.",
-      "Regime 1: the chosen PureTemp 60 beats the best other Objective 1 PCM (CrodaTherm 60) by 26.8 kWh, clearly outside the 14.4 band.",
-      "Regimes 0 and 2: the best other PCM is within the band (a tie), so the PCM choice there is not decisive.",
+      "PCM beats the water-only tank in all three regimes; held-out 2011–2015 gains are 137.5 / 145.7 / 149.3 kWh/yr, far above the band.",
+      "Peak PCM 64.1 °C and peak water 73.3 °C over every design and year, inside the 65 / 75 °C limits.",
       "Every chosen design sits at the edge of the box (radius 39.5–40 mm, fraction 28–30%): the 30% cap is still limiting.",
     ],
     regimes: [
@@ -53,11 +51,9 @@ export const O2_STATES = [
       { value: "2011–2015", label: "Held-out years (run once)" },
     ],
     summary: [
-      "All 9 held-out designs (chosen design plus the best design of every other shortlisted PCM) beat the plain tank; PCM peak 63.4–64.0 °C, water peak 72.2–72.9 °C.",
-      "Held-out means: 284.2 / 223.3 / 269.9 kWh/yr, about 6–9 times the repeatability band of 26–30 kWh.",
-      "Regime 0: RT57HC is 20.3 kWh higher than the chosen PureTemp 58 on the held-out years, inside the 28.4 band, so the two are tied.",
-      "Five surrogate families were compared; a stacked ensemble wins in 9 of 9 pairs. A Gaussian-process Bayesian search finds nothing clearly better than NSGA-II.",
-      "ANSYS Fluent is used as a model-consistency cross-check only, never to choose a design.",
+      "All 9 held-out designs beat the plain tank; PCM peak 63.4–64.0 °C, water peak 72.2–72.9 °C.",
+      "Held-out means are 284.2 / 223.3 / 269.9 kWh/yr, about 6–9 times the repeatability band of 26–30 kWh.",
+      "In regime 0 RT57HC is 20.3 kWh higher than the chosen PureTemp 58, inside the 28.4 band, so the two are tied.",
     ],
     regimes: [
       { regime: "R0", pcm: "PureTemp 58", rin: "40.0", fraction: "29.6%", n: 104, flow: "0.039", arrangement: "staggered", pcmKg: "24.8", peak: "62.3", select: 276.6, heldout: 284.2, band: 28.4 },
@@ -77,11 +73,9 @@ export const O2_STATES = [
       { value: "2024–2025", label: "Held-out years (run once)" },
     ],
     summary: [
-      "PCM helps in regimes 0–2; in regime 3 (cold, high altitude) no design beats the water-only tank, so the recommendation there is a water-only tank.",
-      "Held-out over 2024–2025 (run heldout_c75ac0e6fb78): 76.0 / 61.8 / 56.4 / −6.1 kWh/yr; peak PCM 64.2 °C, peak water 73.1 °C.",
-      "In every regime the best other Objective 1 PCM is within the band of the chosen one, so the PCM choice is not decisive here.",
-      "The test years are below-average sunshine years in every regime, which is why held-out values sit below the select-year values.",
-      "XGBoost wins 11 and RSM 1 of 12 surrogate pairs. The grid check passes for 4 of 4 rank-1 PCM pairs.",
+      "PCM helps in regimes 0–2; in regime 3 (cold, high altitude) no design beats the water-only tank.",
+      "Held-out 2024–2025 gains are 76.0 / 61.8 / 56.4 / −6.1 kWh/yr; peak PCM 64.2 °C, peak water 73.1 °C.",
+      "In every regime the best other PCM is within the band of the chosen one, so the PCM choice is not decisive.",
     ],
     regimes: [
       { regime: "R0", pcm: "PureTemp 58", rin: "39.8", fraction: "26.3%", n: 47, flow: "0.019", arrangement: "staggered", pcmKg: "11.0", peak: "63.2", select: 80.0, heldout: 76.0, band: 22.0 },
@@ -103,11 +97,9 @@ export const O2_STATES = [
       { value: "Pending", label: "Optimisation, held-out test and CFD" },
     ],
     summary: [
-      "RT44HC is selected as the PCM in all three Assam climate regimes, with Rin values ranging from 39.6 to 40.0 mm and PCM fractions ranging from 27.4% to 29.1%.",
-      "The three selected designs use 64, 70 and 58 PCM capsules, respectively, with staggered arrangements in regimes 0 and 1 and a single-layer arrangement in regime 2.",
-      "Select-year performance is 118.2, 126.9 and 98.4 kWh/yr for regimes 0, 1 and 2, respectively.",
-      "Held-out performance is 112.6, 119.4 and 90.1 kWh/yr, with corresponding bands of 18.7, 23.5 and 20.8 kWh/yr.",
-      "These regime-level values represent the supplied comparison table. They should not be interpreted as completed M6 optimisation or CFD validation.",
+      "RT44HC is selected in all three regimes (R_in 39.6–40.0 mm, fractions 27.4–29.1 %, 64 / 70 / 58 capsules).",
+      "Select-year gains 118.2 / 126.9 / 98.4 and held-out 112.6 / 119.4 / 90.1 kWh/yr, against bands of 18.7–23.5.",
+      "These values come from the supplied comparison table, not from a completed M6 optimisation or CFD validation.",
     ],
     regimes: [
       {
@@ -129,71 +121,57 @@ export const O2_WORKFLOW_STEPS = [
   {
     title: "Frozen inputs",
     points: [
-      "Takes each regime's Objective 1 Top-3 PCMs as a fixed shortlist; the tank, collector and demand are fixed, not optimised.",
-      "Rajasthan: 1.5 m² flat-plate collector {{cite:Singh2025PCMSWH}}, 50 L tank {{cite:Chen2025TaguchiGRAPCM}}, 300 L/day, 45 °C delivery target. Tamil Nadu uses 100 L and 2.5 m²; Uttarakhand delivers at 50 °C.",
+      "Objective 1's Top-3 PCMs per regime are a fixed shortlist; tank, collector and demand are fixed, not optimised.",
       "Limits: 75 °C water, 65 °C PCM. A design whose PCM peak exceeds 65 °C in any simulated year is infeasible.",
-      "Sizing note: 50 L with 1.5 m² is 33.3 L/m², below the 40–100 L/m² of IS 12976:2023 §4.2. The compact tank is the fixed condition of this work.",
     ],
   },
   {
     title: "Design space and geometry",
     points: [
-      "Design variables: capsule inner radius (10–40 mm), PCM volume fraction (2–30% of the tank), flow rate (0.010–0.050 kg/s) and arrangement (single-layer, staggered or radial).",
-      "The capsule count follows from the fraction. The shell is 0.8 mm aluminium.",
+      "Variables: capsule inner radius (10–40 mm), PCM fraction (2–30% of the tank), flow (0.010–0.050 kg/s), arrangement (single-layer, staggered, radial).",
       "An exact packing check (passage fraction at least 0.05, spacing at least 3 mm) rejects impossible designs.",
-      "The fraction cap was raised from 20% to 30% on 2026-10-27 (v3); results from the 20% cap are archived.",
     ],
   },
   {
     title: "Multi-node enthalpy simulator",
     points: [
-      "A 10-node stratified tank with capsule enthalpy, a flat-plate collector and a 150 s time step (300 s failed the convergence check).",
-      "Demand follows the local hour; an earlier version used the UTC hour, which changed plain-tank annual energy by about 31% in regime 0.",
+      "A 10-node stratified tank with capsule enthalpy, a flat-plate collector and a 150 s step (300 s failed the convergence check).",
       "A simulated year takes seconds, so thousands of designs are affordable; CFD for every design is not.",
     ],
   },
   {
     title: "Paired metrics",
     points: [
-      "Every gain is a paired difference against a water-only tank at the same flow, weather year, demand, shield and tank model.",
-      "g_window: extra energy delivered at or above 45 °C between 18:00 and 09:00 per year; g_annual is the whole-year version.",
-      "d_overheat: shield hours of the PCM tank minus the water-only tank. It includes a PCM-side throttle at 62 °C that a water-only tank cannot have, so it is positive by construction.",
-      "The repeatability band comes from year-to-year scatter, time step, node count and property perturbations. Gains smaller than the band are ties.",
+      "Every gain is a paired difference against a water-only tank at the same flow, weather year and demand.",
+      "g_window: extra energy delivered at or above 45 °C between 18:00 and 09:00 per year. Gains smaller than the repeatability band are ties.",
     ],
   },
   {
     title: "Screening and DOE",
     points: [
-      "A Taguchi L9 screening with ANOVA shows which variables matter for each regime-PCM pair: PCM amount matters most, flow rate least {{cite:Chen2025TaguchiGRAPCM}}.",
-      "A 128-point scrambled-Sobol DOE then covers the v3 box for every pair, about 1,150 simulated designs per state (Rajasthan: 1,152, of which 1,089 valid).",
-      "Years are split by role: explore 2016–2020, select 2021–2023, held-out 2011–2015 (Uttarakhand 2024–2025).",
+      "A Taguchi L9 screening with ANOVA shows which variables matter: PCM amount most, flow least {{cite:Chen2025TaguchiGRAPCM}}.",
+      "A 128-point Sobol DOE then covers the box for every pair (Rajasthan: 1,152 designs, 1,089 valid). Years: explore 2016–2020, select 2021–2023, held-out 2011–2015 (Uttarakhand 2024–2025).",
     ],
   },
   {
     title: "Surrogate comparison",
     points: [
-      "Families per pair: a 5-member neural-network ensemble, XGBoost and a quadratic ridge RSM (Tamil Nadu compares five families).",
-      "Judged on rank agreement and error against the year-to-year scale, not on a global R².",
-      "Rajasthan: XGBoost wins 6 and RSM 3 of 9 pairs. Uttarakhand: XGBoost 11, RSM 1 of 12. Tamil Nadu: a stacked ensemble in 9 of 9.",
-      "The surrogate only ranks and proposes. The simulator evaluates every reported number.",
+      "A neural-network ensemble, XGBoost and a quadratic RSM compete per pair (Tamil Nadu compares five); the winner ranks and proposes designs.",
+      "The simulator evaluates every reported number.",
     ],
   },
   {
     title: "NSGA-II with active learning",
     points: [
-      "NSGA-II {{cite:Deb2002NSGA2}} with constrained domination minimises −g_window, −g_annual and d_overheat on the winning surrogate, over 3 seeds.",
-      "Committee-disagreement active learning simulates the 10 designs where the models disagree most, then refits; it stops when the hypervolume moves by under 1% for two rounds. About 200–300 designs are simulated per PCM.",
-      "A dense grid (720 simulator runs per regime) cross-checks the rank-1 PCM of each regime: the search result is as good as the grid within the band. The grid contains the box vertices, so the pass is not fully independent.",
-      "A Gaussian-process Bayesian search, run independently for Tamil Nadu and Rajasthan, finds nothing clearly better.",
+      "NSGA-II {{cite:Deb2002NSGA2}} minimises −g_window, −g_annual and d_overheat on the surrogate; active learning simulates the 10 designs where the models disagree most, then refits.",
+      "A dense grid (720 simulator runs per regime) confirms the search result is as good as the grid within the band.",
     ],
   },
   {
     title: "Selection and one-shot held-out test",
     points: [
-      "Candidates within the band of the best g_window form a tied set (S0). A fixed funnel (S0 → S1 → S2) then decides on overheating, PCM mass, capsule count and temperature margin.",
-      "The funnel was fixed before the held-out run and its fingerprint is stored in a lock file.",
-      "The held-out test covers the chosen design and the best design of every other shortlisted PCM, so it cannot be a cherry-pick.",
-      "Any re-run that would re-decide a design is refused while the lock exists.",
+      "Candidates within the band of the best g_window form a tied set; a fixed funnel on overheating, PCM mass, capsule count and temperature margin picks one.",
+      "The held-out test covers the chosen design and the best design of every other shortlisted PCM, once, under a lock.",
     ],
   },
 ];
@@ -202,12 +180,12 @@ export const RESEARCH_QUESTIONS = [
   {
     q: "PCM or plain tank?",
     detail: "Does the Objective 1 PCM beat a water-only tank at the same flow under the 75 °C and 65 °C limits?",
-    finding: "Yes on the window metric in all three Rajasthan and all three Tamil Nadu regimes and in three of four Uttarakhand regimes. In Uttarakhand regime 3 it does not, and the recommendation is a water-only tank.",
+    finding: "Yes on the window metric in all three Rajasthan and all three Tamil Nadu regimes and in three of four Uttarakhand regimes.",
   },
   {
     q: "How much longer does hot water last?",
     detail: "Hold time at or above 45 °C after charging stops (300 L/day, capped at 72 h).",
-    finding: "Rajasthan: 52–59 h with the PCM against 44–50 h for the same-volume water-only tank, about 8.6 to 10.3 h longer. These are model values, not measurements, and are not comparable with literature hold times quoted at 30 °C.",
+    finding: "Rajasthan: 52–59 h with the PCM against 44–50 h for the same-volume water-only tank, about 8.6 to 10.3 h longer.",
   },
   {
     q: "What the gain does not show",
@@ -222,12 +200,12 @@ export const RESEARCH_QUESTIONS = [
   {
     q: "Can a surrogate replace the simulator?",
     detail: "Is the machine-learning model accurate enough to report numbers from?",
-    finding: "No. It ranks and proposes only; its absolute error exceeds the year-to-year scale, so every reported number is a simulator run.",
+    finding: "No.",
   },
   {
     q: "Why does Objective 3 need a controller?",
     detail: "Is the case for control seasonal re-ranking of the PCM, or hour-by-hour operation?",
-    finding: "Hour-by-hour operation. The PCM tank has fewer water-side shield hours than the water-only tank but about 280–1,200 PCM-side throttle hours a year, which a controller can manage.",
+    finding: "Hour-by-hour operation.",
   },
 ];
 
@@ -238,7 +216,7 @@ export const CRITERIA_STUDY = [
   { id: "c3", label: "Works, not optimal", rin: "40 mm", n: "80", pcmKg: "19.1", flow: "0.023", arrangement: "staggered", gWindow: 187.5, pct: 68, verdict: "Beats plain water, but eliminated at S0 (too far below the best g_window).", water: "30.0 → 34.1 °C", lf: "1.00 → 0.38", heat: 4785 },
   { id: "c6", label: "50% of the capsules", rin: "40 mm", n: "52", pcmKg: "12.4", flow: "0.039", arrangement: "staggered", gWindow: 148.5, pct: 54, verdict: "Beats plain water, but eliminated at S0.", water: "30.0 → 32.7 °C", lf: "1.00 → 0.36", heat: 3245 },
   { id: "c4", label: "Only 30 capsules", rin: "40 mm", n: "30", pcmKg: "7.2", flow: "0.039", arrangement: "staggered", gWindow: 83.6, pct: 30, verdict: "Beats plain water, but eliminated at S0.", water: "30.0 → 31.6 °C", lf: "1.00 → 0.32", heat: 2050 },
-  { id: "c5", label: "10% of the capsules", rin: "40 mm", n: "10", pcmKg: "2.4", flow: "0.039", arrangement: "staggered", gWindow: 26.9, pct: 10, verdict: "Eliminated at Rule A: the gain is inside the noise band, so no better than a plain tank.", water: "30.0 → 30.6 °C", lf: "1.00 → 0.21", heat: 709 },
+  { id: "c5", label: "10% of the capsules", rin: "40 mm", n: "10", pcmKg: "2.4", flow: "0.039", arrangement: "staggered", gWindow: 26.9, pct: 10, verdict: "Eliminated at Rule A: the gain is inside the noise band, so no better than a plain tank.", water: "30.0 → 30.5 °C", lf: "1.00 → 0.21", heat: 709 },
   { id: "c2", label: "Everything at minimum", rin: "10 mm", n: "380", pcmKg: "1.4", flow: "0.010", arrangement: "single-layer", gWindow: 2.2, pct: 1, verdict: "Eliminated at Rule A: 380 tiny capsules hold only 1.4 kg of PCM.", water: "30.0 → 31.7 °C", lf: "1.00 → 0.00", heat: 2125 },
 ];
 
@@ -255,28 +233,21 @@ export const CFD_CHECKS = [
     status: "Unvalidated upper bound",
     points: [
       "One chosen capsule (savE® OM55, R = 39.5 mm) is melted at a 70 °C wall in a 2-D axisymmetric OpenFOAM case and compared with the simple capsule model used in the optimisation.",
-      "The CFD reaches 50% melt in about 1,000 s; the simple model needs 6,376 s. So the simple model is on the cautious side for charging.",
-      "The mesh study is not grid-independent (40 → 80 cells moves t50 by +14.3%), and neither Tan 2009 nor Dong 2022 is reproduced (the CFD melts about 1.6–2 times faster than both experiments).",
-      "Decision (2026-10-30): report the CFD as an unvalidated upper bound; keep the frozen capsule constants c = 5, F = 2. Never write \"CFD-validated\".",
-      "Follow-up (2026-11-14): against a tank-level experiment (Amanowicz and Turski 2025) the frozen constants match to 1.1–1.4 K once capsule geometry is mapped correctly; a fit gives c = 5.03, so the constants stay.",
+      "The CFD reaches 50% melt in about 1,000 s; the simple model needs 6,376 s. The mesh study is not grid-independent (40 → 80 cells moves t50 by +14.3%).",
+      "Neither Tan 2009 nor Dong 2022 is reproduced (the CFD melts about 1.6–2 times faster), so the CFD is reported as an unvalidated upper bound and the frozen capsule constants c = 5, F = 2 stay.",
     ],
     figures: [
       { file: "rajasthan/fig40_of_melt_curves.png", title: "OpenFOAM melt curves", caption: "Capsule melt fraction in the OpenFOAM cases." },
       { file: "rajasthan/fig41_of_lumped_vs_cfd.png", title: "Simple model vs CFD", caption: "Simple (lumped) capsule model against the CFD melt curve." },
       { file: "rajasthan/fig42_of_mesh_and_freeze.png", title: "Mesh study and freezing case", caption: "Mesh refinement and a freezing case; the mesh study is not converged." },
-      { file: "rajasthan/openfoam/video_r0_charge.gif", title: "Animation: regime 0 capsule charging at 70 °C", caption: "Melting from a 70 °C wall: liquid fraction (left), temperature (right)." },
-      { file: "rajasthan/openfoam/video_r0_discharge.gif", title: "Animation: regime 0 capsule discharging to mains water", caption: "Freezing while releasing heat: liquid fraction (left), temperature (right)." },
-      { file: "rajasthan/openfoam/calib_r0_n20.png", title: "Capsule melt fraction, 20-cell mesh", caption: "OpenFOAM against the simple capsule model (frozen c = 5, F = 2 and fitted) on the coarse mesh." },
-      { file: "rajasthan/openfoam/calib_r0_n40.png", title: "Capsule melt fraction, 40-cell mesh", caption: "Same comparison on the 40-cell mesh used for the capsule cases." },
-      { file: "rajasthan/openfoam/calib_r0_n80.png", title: "Capsule melt fraction, 80-cell mesh", caption: "Same comparison on the fine mesh; t50 moves by +14.3% from 40 to 80 cells." },
-      { file: "rajasthan/openfoam/of_v0_benchmark.png", title: "Benchmark V0: Tan 2009 sphere", caption: "Liquid fraction of OpenFOAM cases against the Tan 2009 experiment and Fluent; the CFD melts faster than the experiment." },
+      { file: "rajasthan/openfoam/calib_r0_n40.png", title: "Capsule melt fraction, 40-cell mesh", caption: "OpenFOAM against the simple capsule model (frozen c = 5, F = 2 and fitted)." },
+      { file: "rajasthan/openfoam/of_v0_benchmark.png", title: "Benchmark V0: Tan 2009 sphere", caption: "OpenFOAM against the Tan 2009 experiment and Fluent; the CFD melts faster." },
       { file: "rajasthan/openfoam/of_v1_benchmark.png", title: "Benchmark V1: Dong 2022 sphere", caption: "Same check against Dong 2022; not reproduced." },
-      { file: "rajasthan/openfoam/preview_r0_charge_70_n40.png", title: "Design capsule, charging (3-D view)", caption: "Temperature in the chosen capsule of regime 0 (savE® OM55) charging at a 70 °C wall, 1,200 s. The 3-D shape is the 2-D axisymmetric result revolved, not a 3-D simulation." },
+      { file: "rajasthan/openfoam/preview_r0_charge_70_n40.png", title: "Design capsule, charging (3-D view)", caption: "Regime 0 capsule charging at a 70 °C wall, 1,200 s (the 2-D axisymmetric result revolved)." },
       { file: "rajasthan/openfoam/preview_r0_discharge_mains_n40.png", title: "Design capsule, discharging to mains water", caption: "Regime 0 capsule releasing heat to mains-temperature water." },
-      { file: "rajasthan/openfoam/preview_r1_charge_70_n40.png", title: "Design capsule, regime 1 (PureTemp 60)", caption: "Regime 1 capsule charging at a 70 °C wall." },
-      { file: "rajasthan/openfoam/preview_r2_charge_70_n40.png", title: "Design capsule, regime 2 (PureTemp 58)", caption: "Regime 2 capsule charging at a 70 °C wall." },
-      { file: "rajasthan/openfoam/v0_T_001200.png", title: "Benchmark capsule temperature, 1200 s", caption: "Temperature field in the Tan 2009 benchmark sphere." },
       { file: "rajasthan/openfoam/v0_T_003000.png", title: "Benchmark capsule temperature, 3000 s", caption: "Temperature field in the Tan 2009 benchmark sphere." },
+      { file: "rajasthan/openfoam/video_r0_charge.gif", title: "Animation: capsule charging at 70 °C", caption: "Liquid fraction (left), temperature (right)." },
+      { file: "rajasthan/openfoam/video_r0_discharge.gif", title: "Animation: capsule discharging to mains water", caption: "Liquid fraction (left), temperature (right)." },
     ],
   },
   {
@@ -285,67 +256,49 @@ export const CFD_CHECKS = [
     label: "Tamil Nadu case",
     status: "Model-consistency cross-check",
     points: [
-      "Four shortlisted PCMs tested identically (one capsule from 30 °C solid in 70 °C water for 6 h): melt fraction 0.60 (C25) / 0.50 (C26) / 0.47 (RT57HC) / 0.38 (PureTemp 58), with no solver failures.",
-      "The order is physically consistent: a lower melting point and higher conductivity melt more. First-order upwind makes the absolute values conservative; read the ordering.",
-      "Whole system drawn as one 2-D planar slice (Student licence): tank, 34-capsule bed, collector channel, absorber and riser. The daytime check shows heat flowing from the absorber into the tank water.",
-      "Evening discharge (melted capsules in 30 °C water, no sun, 2 h): the capsules slowly solidify and warm the water. Water movement is not simulated, so this is a check of the idea, not a reported result.",
-      "Fluent never chooses a design; OpenFOAM's standard solvers have no native melting model, which is why Tamil Nadu used Fluent.",
+      "Four PCMs in one Ø 42 mm capsule (30 °C solid in 70 °C water, 6 h, Coupled solver with first-order upwind): melt fraction 0.60 (C25) / 0.50 (C26) / 0.47 (RT57HC) / 0.38 (PureTemp 58), no divergences. The order follows melting point and conductivity; first-order upwind makes absolute values conservative.",
+      "Flow sweep (new, C26, same mesh and settings): melt fraction at 6 h is 0.394 / 0.491 / 0.512 at 0.010 / 0.030 / 0.050 kg/s. More flow melts more, but the gain flattens above 0.030 kg/s.",
+      "Criteria study: the 7 designs of the comparison above run as a 60-minute whole-tank discharge (capsules melted at 70 °C, water 30 °C, no sun; a 2-D slice with N × 34/104 capsules). The chosen design warms the water from 30.0 to 35.5 °C and the liquid fraction falls to 0.38; 10% of the capsules reach only 30.5 °C.",
+      "Fluent never chooses a design and is not experimental validation.",
     ],
     figures: [
       { file: "tamilnadu/fluent/03_pcm_melt_comparison.png", title: "PCM melting comparison", caption: "Four shortlisted PCMs under identical settings." },
+      { file: "tamilnadu/fluent/v7_v8_melt_history.png", title: "Melt history: PCMs and flow sweep", caption: "Liquid fraction of the capsule over 6 h for four PCMs (left) and three flow rates (right)." },
       { file: "tamilnadu/fluent/01_system_mesh_zones.png", title: "System model zones", caption: "Tank water, PCM, capsule shell, collector channel, absorber and riser." },
       { file: "tamilnadu/fluent/02_system_temperature_field.png", title: "System temperature field", caption: "Daytime heat path from the absorber into the tank water." },
+      { file: "tamilnadu/fluent/FLUENT_comparison_all_criteria.png", title: "Seven designs, whole-tank discharge", caption: "Water temperature, PCM temperature and liquid fraction over 60 minutes." },
+      { file: "tamilnadu/fluent/SUMMARY_all_criteria.png", title: "Summary of the seven designs", caption: "Gain and Fluent heat delivered for each design." },
+    ],
+    videos: [
+      { file: "tamilnadu/fluent/COMPARE_temperature_all_criteria.mp4", title: "All designs: temperature", caption: "The seven designs side by side." },
+      { file: "tamilnadu/fluent/COMPARE_liquid_fraction_all_criteria.mp4", title: "All designs: liquid fraction", caption: "The seven designs side by side." },
+      { file: "tamilnadu/fluent/criteria_0_optimal_reference.mp4", title: "Optimal design", caption: "104 capsules, 40 mm, 0.039 kg/s." },
+      { file: "tamilnadu/fluent/criteria_1_max_all.mp4", title: "Everything at maximum", caption: "105 capsules, 0.050 kg/s; statistically tied." },
+      { file: "tamilnadu/fluent/criteria_2_min_all.mp4", title: "Everything at minimum", caption: "380 capsules of 10 mm; almost no melt." },
+      { file: "tamilnadu/fluent/criteria_3_ok_not_optimal.mp4", title: "Works, not optimal", caption: "80 capsules." },
+      { file: "tamilnadu/fluent/criteria_6_50pct_of_optimal.mp4", title: "50% of the capsules", caption: "52 capsules." },
+      { file: "tamilnadu/fluent/criteria_4_only_30_capsules.mp4", title: "Only 30 capsules", caption: "30 capsules." },
+      { file: "tamilnadu/fluent/criteria_5_10pct_of_optimal.mp4", title: "10% of the capsules", caption: "10 capsules." },
     ],
   },
 ];
 
 /* Plot gallery: same core figures per state. */
-export const O2_PLOT_GROUPS = [
-  { id: "all", label: "All figures" },
-  { id: "result", label: "Chosen designs & held-out" },
-  { id: "search", label: "Search & surrogates" },
-  { id: "checks", label: "Checks & controls" },
-  { id: "inputs", label: "Inputs" },
-];
-
 export const O2_PLOTS = [
-  { num: "fig10", file: "fig10_chosen_designs.png", group: "result", title: "Chosen designs", caption: "Frozen design per regime with select-year and held-out gains and the band." },
-  { num: "fig4", file: "fig4_heldout_pcm_comparison.png", group: "result", title: "Held-out: chosen PCM vs other Objective 1 PCMs", caption: "Does the PCM chosen in Objective 1 matter? Red is the chosen PCM; the dashed line is the repeatability band." },
-  { num: "fig11", file: "fig11_heldout_by_year.png", group: "result", title: "Held-out gain by year", caption: "Gain of the chosen design in every held-out year." },
-  { num: "fig1", file: "fig1_front_vs_grid.png", group: "search", title: "Search front vs dense grid", caption: "Final NSGA-II front against the 720-run dense grid." },
-  { num: "fig2", file: "fig2_g9_grid_check.png", group: "search", title: "Grid check", caption: "Gap between the search result and the grid, against the band." },
-  { num: "fig7", file: "fig7_surrogate_comparison.png", group: "search", title: "Surrogate comparison", caption: "Rank agreement of the surrogate families for each regime-PCM pair." },
-  { num: "fig18", file: "fig18_screening_anova.png", group: "search", title: "Taguchi screening (ANOVA)", caption: "Which design variables matter: PCM amount most, flow least." },
-  { num: "fig8", file: "fig8_fraction_response.png", group: "checks", title: "Response to PCM fraction", caption: "The gain is still rising at the 30% cap." },
-  { num: "fig9", file: "fig9_boundary_share.png", group: "checks", title: "Fronts at a bound of the box", caption: "Share of the final fronts at the fraction cap or radius limit: the designs are boundary-limited." },
-  { num: "fig6", file: "fig6_ablations.png", group: "checks", title: "Ablations and controls", caption: "Latent heat = 0 drops the gain below zero, so the metric responds to the PCM." },
-  { num: "fig13", file: "fig13_timestep_convergence.png", group: "checks", title: "Time-step convergence", caption: "300 s fails the gate; the solver uses 150 s." },
-  { num: "fig50", file: "fig50_weather_inputs.png", group: "inputs", title: "Weather inputs", caption: "Weather of each regime's medoid point by year role." },
+  { num: "fig10", file: "fig10_chosen_designs.png", title: "Chosen designs", caption: "Frozen design per regime with select-year and held-out gains and the band." },
+  { num: "fig4", file: "fig4_heldout_pcm_comparison.png", title: "Held-out: chosen PCM vs other PCMs", caption: "Does the Objective 1 PCM matter? Red is the chosen PCM; the dashed line is the repeatability band." },
+  { num: "fig11", file: "fig11_heldout_by_year.png", title: "Held-out gain by year", caption: "Gain of the chosen design in every held-out year." },
+  { num: "fig1", file: "fig1_front_vs_grid.png", title: "Search front vs dense grid", caption: "Final NSGA-II front against the 720-run dense grid." },
+  { num: "fig6", file: "fig6_ablations.png", title: "Ablations and controls", caption: "Latent heat = 0 drops the gain below zero, so the metric responds to the PCM." },
+  { num: "fig8", file: "fig8_fraction_response.png", title: "Response to PCM fraction", caption: "The gain is still rising at the 30% cap." },
 ];
 
-export const O2_STATUS_POINTS = [
-  "<strong>Verified:</strong> the 150 s solver step passed its convergence gate, and the multi-node tank moves the paired gain by only 0.15–0.25 percentage points.",
-  "<strong>Search chain done:</strong> screening, 128 Sobol points per pair, surrogates and NSGA-II were run for three states, and every rank-1 pair passes the grid check.",
-  "<strong>Held-out test:</strong> run once per state under a lock; every gain is above the band except Uttarakhand regime 3, and no limit was broken.",
-  "<strong>Controls:</strong> with latent heat set to zero the gain drops below zero, and water-only controls return zero difference.",
-  "<strong>Cross-checks only:</strong> frozen capsule constants match a tank-level experiment to 1.1–1.4 K; OpenFOAM is an unvalidated upper bound and Fluent ordering is consistent.",
-  "<strong>Open:</strong> the plain-tank solar fraction is below the 54–84% literature band, and there is no experimental validation yet.",
-];
-
-export const O2_VERIFICATION = [
-  { name: "Time-step convergence", area: "Verification", result: "300 s failed the gate, so the solver step is 150 s.", status: "Done", ok: true },
-  { name: "Multi-node tank", area: "Verification", result: "N from 10 to 20 moves the paired gain by 0.15–0.25 percentage points; part of the band.", status: "Done", ok: true },
-  { name: "Solar-fraction benchmark", area: "Verification", result: "The plain-tank solar fraction sits below the 54–84% literature band (about 0.30–0.36). Reported, not tuned.", status: "Below band", ok: false },
-  { name: "Screening and DOE", area: "Simulation bank", result: "Taguchi L9 then 128 Sobol points per pair; Rajasthan 1,152 designs, 1,089 valid.", status: "Done (3 states)", ok: true },
-  { name: "Surrogates", area: "Machine learning", result: "XGBoost best in Rajasthan and Uttarakhand, a stacked ensemble in Tamil Nadu; ranking only.", status: "Done (3 states)", ok: true },
-  { name: "NSGA-II and grid check", area: "Optimization", result: "All rank-1 pairs pass within the band (Uttarakhand 4 of 4). The grid contains the box vertices.", status: "Done (3 states)", ok: true },
-  { name: "Held-out test", area: "Held-out", result: "Run once per state under a lock: every current-method gain above the band except Uttarakhand regime 3; no limit broken.", status: "Run once", ok: true },
-  { name: "Ablations and negative controls", area: "Controls", result: "Latent heat = 0 drops the gain below zero; water-only invariance controls return zero difference.", status: "Done", ok: true },
-  { name: "Capsule model, tank-level check", area: "Cross-check", result: "Frozen c = 5, F = 2 match Amanowicz and Turski 2025 to 1.1–1.4 K; fitted c = 5.03.", status: "Done (2026-11-14)", ok: true },
-  { name: "OpenFOAM capsule check", area: "Cross-check", result: "Benchmarks not reproduced and mesh not converged: an unvalidated upper bound.", status: "Stopped at benchmark", ok: false },
-  { name: "ANSYS Fluent", area: "Cross-check", result: "Four-PCM ordering consistent; whole-tank discharge and criteria study as a model-consistency check.", status: "Cross-check only", ok: true },
-  { name: "Objective 3 contract", area: "Hand-off", result: "Environment contract v3 written for Rajasthan, Tamil Nadu and Uttarakhand.", status: "Written", ok: true },
-  { name: "Experimental validation", area: "Validation", result: "No hardware or field data exist.", status: "Not done", ok: false },
+/* Assam's legacy chain: only the figures built from real Assam files (FIGURE_STATUS.csv); the others are placeholders. */
+export const O2_ASSAM_PLOTS = [
+  { num: "fig4", file: "fig4_heldout_pcm_comparison.png", title: "Best design per PCM (legacy)", caption: "Best re-simulated design per PCM; one medoid year, no held-out years." },
+  { num: "fig2", file: "fig2_g9_grid_check.png", title: "Optimiser vs simulated DOE (legacy)", caption: "Best optimiser candidate against the best simulated DOE case." },
+  { num: "fig7", file: "fig7_surrogate_comparison.png", title: "Surrogate accuracy (legacy)", caption: "Phase 6 surrogate against the simulator." },
+  { num: "fig13", file: "fig13_timestep_convergence.png", title: "Simulator verification (partly real)", caption: "Time-step and verification checks from Assam's M2 files." },
 ];
 
 export const O2_LIMITATIONS = [
@@ -422,3 +375,62 @@ export const ASSAM_PREVIEW_STATUS_TEXT = {
   illustrative: "Illustrative — placeholder values, not simulated",
   pending: "Pending — frame only, no numbers yet",
 };
+
+/* ─────────────────────────────────────────────────────────
+   Parameter flow chart: how each design parameter goes from its starting range to its final value.
+   Starting ranges and stage settings: configs/design_space.yaml and scripts/g8_s1_screening.py,
+   g8_s2_doe.py, g9_s4_s5.py, g9_s6_grid.py. Final values: results/g10_selection_r*.json
+   (Assam: results/phase7_deployable_design_per_regime.csv). Regimes are listed in order.
+   ───────────────────────────────────────────────────────── */
+
+export const O2_FLOW_STATES = [
+  { id: "rajasthan", label: "Rajasthan", sub: "3 regimes" },
+  { id: "tamilnadu", label: "Tamil Nadu", sub: "3 regimes" },
+  { id: "uttarakhand", label: "Uttarakhand", sub: "4 regimes" },
+  { id: "assam", label: "Assam", sub: "Legacy chain" },
+];
+
+export const O2_FLOW_STAGES = ["Start", "Geometry check", "Taguchi L9", "Sobol DOE", "NSGA-II + active learning", "Dense grid", "Selection funnel", "Final value"];
+
+export const O2_FLOW_LANES = [
+  {
+    name: "PCM thickness",
+    cells: ["10–40 mm", "outer Ø = 2 × (R + 0.8 mm)", "10 / 25 / 40 mm", "continuous", "continuous", "6 levels", "one value"],
+    final: {
+      rajasthan: "39.5 · 40.0 · 40.0 mm",
+      tamilnadu: "40.0 · 40.0 · 40.0 mm",
+      uttarakhand: "39.8 · 39.3 · 39.7 · 38.4 mm",
+      assam: "20.7 · 21.4 · 20.7 mm (diameter / 2)",
+    },
+  },
+  {
+    name: "PCM amount (capsule count)",
+    cells: ["2–30 %", "N = clip(round(f × V_tank / V_capsule))", "2 / 16 / 30 %", "continuous", "continuous", "8 levels", "one value"],
+    final: {
+      rajasthan: "28.4 · 29.6 · 29.6 %  (N = 52 · 52 · 52)",
+      tamilnadu: "29.6 · 27.9 · 29.9 %  (N = 104 · 98 · 105)",
+      uttarakhand: "26.3 · 29.7 · 30.0 · 2.0 %  (N = 47 · 55 · 54 · 4)",
+      assam: "1.6 · 1.7 · 1.6 %  (N = 22 · 20 · 22)",
+    },
+  },
+  {
+    name: "Flow rate",
+    cells: ["0.010–0.050 kg/s", "checked against the pump range", "0.010 / 0.030 / 0.050", "continuous", "continuous", "5 levels", "one value"],
+    final: {
+      rajasthan: "0.0155 · 0.0493 · 0.0236 kg/s",
+      tamilnadu: "0.0388 · 0.0295 · 0.0267 kg/s",
+      uttarakhand: "0.0194 · 0.0314 · 0.0199 · 0.0100 kg/s",
+      assam: "0.0122 · 0.0148 · 0.0116 kg/s",
+    },
+  },
+  {
+    name: "Capsule arrangement",
+    cells: ["3 packing models", "spacing ≥ 3 mm, free flow ≥ 5 %", "3 arrangements", "one of 3", "one of 3", "3 arrangements", "one value"],
+    final: {
+      rajasthan: "staggered · single-layer · single-layer",
+      tamilnadu: "staggered · staggered · staggered",
+      uttarakhand: "staggered · single-layer · single-layer · single-layer",
+      assam: "staggered only (its sole option)",
+    },
+  },
+];
