@@ -194,7 +194,7 @@ export const O3_STATES = [
       "Night service: every controller holds 50 °C for only minutes after 18:00 (B0 about 0.25 h in regime 0), and the PCM tank does not extend evening service at 50 °C compared with the same tank without PCM. A 50 L tank cannot carry 300 L/day into the evening: only 1–4% of window water leaves at or above 50 °C, an Objective 2 sizing limit.",
       "Deployment: thermal efficiency 40.7–44.5% for PPO against 43.0–46.2% for B0; PPO needs 33–42 kWh/yr more backup heat than B1 (heater efficiency assumed). Inference 0.24 ms and 42 kB. Sensor faults cause no violations, but PPO relies on the pyranometer and falls back to B0-like behaviour when it fails.",
       "Regime 3 (cold, high altitude) has no controller: the PCM tank delivers less than water alone.",
-      "The Objective 4 hand-off and twin still carry the frozen PPO; switching to the smart-forecast agent needs a re-export.",
+      "The Objective 4 twin now runs the smart-forecast PPO, exported directly from this repository's models (2023 replay, all three regimes); the o4_handoff package here still holds the frozen PPO.",
     ],
   },
 ];
@@ -220,7 +220,7 @@ export const O3_LIMITATIONS = [
 
 export const O3_HANDOFF = [
   "Each state exports its frozen controller (SHA-256 recorded), its sensor list and a hardware interface spec.",
-  "Tamil Nadu's deployment controller is SAC, regime 0, trained with the smart-persistence forecast. Rajasthan carries DQN in regime 1 plus a SAC arm; Uttarakhand carries the frozen PPO.",
+  "Tamil Nadu's deployment controller is SAC, regime 0, trained with the smart-persistence forecast. Rajasthan carries DQN in regime 1 plus a SAC arm; Uttarakhand's twin runs the smart-forecast PPO (the o4_handoff package still holds the frozen PPO).",
   "The shield is restated as an independent hardware interlock, with a fail-safe to always-charge or bypass.",
   "Objective 4 replays these exact controllers in a software-in-the-loop co-simulation.",
 ];
