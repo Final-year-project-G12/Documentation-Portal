@@ -12,6 +12,7 @@ export const O3_METHOD_STEPS = [
     points: [
       "Wraps Objective 2's frozen tank simulator in a Gymnasium environment; one step is one control hour.",
       "Rajasthan and Uttarakhand step O2's 10-node kernel unchanged and test that a stepped year equals an O2 year to 1e-9; Tamil Nadu re-implements a single-node hourly loop.",
+      "Assam re-implements O2's single-node hourly physics as a stepper and tests that a full stepped year reproduces O2's annual useful energy and unmet energy to better than 1e-6 (1334.5354 kWh and 2279.0581 kWh); a simulated year takes about 2 s.",
       "The policy never changes the PCM, tank, collector, capsule geometry, safety limits or physics.",
     ],
   },
@@ -28,6 +29,7 @@ export const O3_METHOD_STEPS = [
     points: [
       "Observation: sunlight, ambient temperature, top/bottom water and PCM temperatures, melt fraction, demand, time of day and stored energy (11 fields in Tamil Nadu, 13 contract fields in Rajasthan and Uttarakhand).",
       "Forecast versions add the irradiance forecast for the next 1–3 h and the next-hour draw (15–17 fields).",
+      "Assam: 13 observation fields (water and PCM temperature, melt fraction, sunlight, ambient and mains temperature, hour of day, next-hour draw, a perfect 1–3 h sunlight forecast and a near-shield flag). Action: collector pump allowed on or off and the PCM-loop flow (bypass, 0.010, nominal, 0.050 kg/s), 8 combinations.",
       "Action: charge, idle or bypass (Tamil Nadu); loop enabled or bypass in Rajasthan and Uttarakhand, where idle and bypass are the same in O2's kernel. Flow stays at the design value because the collector model does not depend on flow.",
     ],
   },
@@ -37,6 +39,7 @@ export const O3_METHOD_STEPS = [
       "Points for hot water delivered; penalties for unmet demand, broken limits, needless switching and every shield activation.",
       "Key finding: with a delivery-only reward every agent learns 'always charge', identical to B0, because nothing penalises the shield. The shield penalty is what makes anticipation pay.",
       "The shield weight is set per state: Tamil Nadu 10; Rajasthan 1.7–3.9, re-derived from its own baselines; Uttarakhand by a dominance rule (twice the largest one-hour delivery).",
+      "Assam uses a paired reward instead: the hourly reduction in unmet delivery energy against a shadow passive-PCM tank run in lock-step, minus 0.02 per shield hour and 5 per violation, with one set of weights for all regimes and agents.",
     ],
   },
   {
@@ -45,6 +48,7 @@ export const O3_METHOD_STEPS = [
       "The first forecast was a perfect look-ahead read from the stored year, which no real installation has.",
       "It was replaced by smart persistence on the clear-sky index (last daytime clear-sky ratio times the clear-sky curve). Measured error is 9.9 / 21.0 / 36.1% at +1 / +2 / +3 h on the Tamil Nadu and Rajasthan files and 8.4 / 12.7 / 16.6% in Uttarakhand, against 32–81% for plain persistence.",
       "A third mode zeroes the forecast fields, which isolates how much each agent actually relies on the forecast. Next-hour demand is still perfect in all states.",
+      "Assam: the forecast is the perfect look-ahead read from the stored year; smart persistence and the no-forecast mode were not run for Assam.",
     ],
   },
   {
@@ -53,6 +57,7 @@ export const O3_METHOD_STEPS = [
       "B0: always charge (Objective 2's operating point). B1: reactive rules. B2: forecast-aware rules. Water-only tank as the floor. No MPC baseline was built.",
       "Agents (Stable-Baselines3 {{cite:Raffin2021SB3}}): PPO {{cite:Schulman2017PPO}}, DQN {{cite:Mnih2015DQN}}, RecurrentPPO, QRDQN {{cite:Dabney2018QRDQN}}, MaskablePPO and SAC {{cite:Haarnoja2018SAC}} were tried in Tamil Nadu; DQN and SAC in Rajasthan after PPO; PPO, DQN and SAC in Uttarakhand. See the table below.",
       "Training-time domain randomisation per episode: sunlight ±10%, ambient ±2 °C, demand ±15%.",
+      "Assam trains PPO (1.2 M steps), DQN (600 k) and SAC (250 k), 2 seeds per regime, on random 14-day windows with random start temperatures; it has no domain randomisation and no B2 forecast-rule baseline, but adds a water-first and a discharge-only rule baseline.",
     ],
   },
   {
@@ -60,6 +65,7 @@ export const O3_METHOD_STEPS = [
     points: [
       "Train 2016–2020, validate 2021–2023, then one locked test on unseen years behind a lock file. Test years: Tamil Nadu 2011–2015; Rajasthan and Uttarakhand 2006–2010; Assam 2024–2025 (Assam's 2011–2015 were Objective 2's one-shot held-out years and were not used).",
       "Tamil Nadu and Rajasthan (since 2026-11-13) select by: zero violations, then at least 95% of B0's annual delivery, then the largest shield reduction.",
+      "Assam selects, per agent and regime, the best-validation checkpoint with zero violations (checkpoints that broke a limit are discarded), then the seed with the best validation score; its test is not behind a lock file, but no Assam test year was used for training or selection.",
       "Rajasthan first used a stricter rule (annual and night-window delivery both at least 95%) and relaxed it after its locked test, so both verdicts are reported. Uttarakhand puts delivery first, so B0 stays best there.",
     ],
   },
@@ -242,6 +248,8 @@ export const O3_STATES = [
       "Unlike the other states, delivery goes up and shield activity goes down together for every agent. PPO takes the most delivery (+1.0 to +1.1%); SAC and DQN give up 2–8 kWh/yr of that for much larger shield reductions (34–60% against 16–26%), the same delivery-versus-shield trade-off the other states report.",
       "Seed spread: PPO's two seeds agree within 1.4 kWh/yr in every regime. DQN regime 1: seed 1 +6.9 and seed 2 −0.2 kWh/yr. SAC regime 1: +9.6 and +6.0. Several late DQN checkpoints broke the hard limits (120–1,522 violating sub-steps) and were rejected; the selected ones did not. DQN lets the PCM reach 63.4–64.6 °C in regimes 0–1, above the 62 °C shield threshold but below the 65 °C limit.",
       "Choice of agent depends on how much shield wear matters, which the simulator does not price: PPO if delivery matters most, SAC if shield activity does.",
+      "Inference cost (CPU, one thread): PPO about 0.24 ms per decision (37.5 k parameters, 468 kB file), DQN about 0.09 ms (38.7 k, 325 kB), SAC about 0.25 ms (93.6 k, 848 kB); the files include value or critic networks that a deployed controller would not need.",
+      "Margins: no controller broke a limit (max water 72.3–72.6 °C, PCM 62.2–62.6 °C for PPO and SAC; DQN lets the PCM reach 63.4–64.6 °C). Not tested for Assam: sensor faults, sub-hourly control, an imperfect forecast.",
       "Caveats: the effect is small (about 1%) because the 50 L / 1.5 m² system against 300 L/day is collector-limited (solar fraction about 0.36); training and test use the same simulator; the controller sees a perfect 3-hour irradiance forecast; shield activity is counted in solver sub-steps (as in Tamil Nadu), not hours. No shield-weight sweep or forecast ablation was run for Assam.",
     ],
   },
@@ -271,6 +279,7 @@ export const O3_LIMITATIONS = [
 export const O3_HANDOFF = [
   "Each state exports its frozen controller (SHA-256 recorded), its sensor list and a hardware interface spec.",
   "Tamil Nadu's deployment controller is SAC, regime 0, trained with the smart-persistence forecast. Rajasthan carries DQN in regime 1 plus a SAC arm; Uttarakhand's twin runs the smart-forecast PPO (the o4_handoff package still holds the frozen PPO).",
+  "Assam carries a PPO controller per regime (the most delivery) and a SAC arm (the largest shield cuts), each with its saved model, the Objective 2 contract file for the regime and its validation and test results; no deployment forecast mode or sensor-fault study exists for Assam yet.",
   "The shield is restated as an independent hardware interlock, with a fail-safe to always-charge or bypass.",
   "Objective 4 replays these exact controllers in a software-in-the-loop co-simulation.",
 ];
