@@ -57,11 +57,12 @@ function Objective2Page() {
   const [cfdId, setCfdId] = useState(CFD_CHECKS[0].id);
   const [plotState, setPlotState] = useState("rajasthan");
   const [plotGroup, setPlotGroup] = useState("all");
+  const [assamFilter, setAssamFilter] = useState("all");
   // Geometry checker state: inner radius and count against the v3 box and the packing-free volume share
   const [radiusMm, setRadiusMm] = useState(30);
   const [capsuleCount, setCapsuleCount] = useState(40);
   const [tankIdx, setTankIdx] = useState(0);
-  const revealRef = useReveal([stateId, criteriaId, cfdId, plotState, plotGroup]);
+  const revealRef = useReveal([stateId, criteriaId, cfdId, plotState, plotGroup, assamFilter]);
 
   const st = O2_STATES.find((s) => s.id === stateId);
   const crit = CRITERIA_STUDY.find((c) => c.id === criteriaId);
@@ -333,6 +334,39 @@ function Objective2Page() {
               <h3>{p.title}</h3>
               <Figure src={img(`${plotState}/${p.file}`)} title={`${O2_STATES.find((s) => s.id === plotState).name}: ${p.title}`} alt={p.caption} />
               <p className="plot-type-caption">{p.caption}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Assam figure-set preview ── */}
+      <div className="content-section" id="assam-preview">
+        <div className="plots-section-header">
+          <h2>Assam: Figure-Set Preview</h2>
+          <span className="plots-count-badge">Not Results</span>
+        </div>
+        <p className="section-desc">
+          The 40 figures Assam's new chain will produce, generated ahead of the runs so the layout can be reviewed. Filter by status;
+          every figure is labelled.
+        </p>
+        <div className="section-divider" />
+        <Callout title="Read this first" tone="warn">
+          Only 2 figures show real project data (the planned DOE and the weather inputs). 20 are illustrative: their numbers are
+          placeholder values anchored to a provisional design table, not simulated, optimised or validated. 18 are empty frames that
+          name the milestone still needed. Do not quote any illustrative value as an Assam result.
+        </Callout>
+        <ChipTabs ariaLabel="Assam figure status" options={ASSAM_PREVIEW_FILTERS} value={assamFilter} onChange={setAssamFilter} />
+        <div key={assamFilter} className="plot-grid plot-grid-wide tab-panel">
+          {ASSAM_PREVIEW_FIGS.filter((f) => assamFilter === "all" || f.status === assamFilter).map((f) => (
+            <div key={f.n} className="plot-type">
+              <div className="ui-panel-head" style={{ marginBottom: 6 }}>
+                <h3 style={{ margin: 0 }}>Fig. {f.n} · {f.title}</h3>
+                <span className={`ui-badge ${f.status === "real" ? "" : f.status === "illustrative" ? "amber" : "muted"}`}>
+                  {f.status === "real" ? "Real data" : f.status === "illustrative" ? "Illustrative" : "Pending"}
+                </span>
+              </div>
+              <Figure src={img(`assam/fig${f.n}.png`)} title={`Assam (preview): ${f.title}`} alt={`${f.title} — ${ASSAM_PREVIEW_STATUS_TEXT[f.status]}`} />
+              <p className="plot-type-caption">{ASSAM_PREVIEW_STATUS_TEXT[f.status]}.</p>
             </div>
           ))}
         </div>
