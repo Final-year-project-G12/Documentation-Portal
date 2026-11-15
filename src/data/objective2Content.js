@@ -230,10 +230,16 @@ export const CRITERIA_STUDY = [
   { id: "c2", label: "Everything at minimum", rin: "10 mm", n: "380", pcmKg: "1.4", flow: "0.010", arrangement: "single-layer", gWindow: 2.2, pct: 1, verdict: "Eliminated at Rule A: 380 tiny capsules hold only 1.4 kg of PCM.", water: "30.0 → 31.7 °C", lf: "1.00 → 0.00", heat: 2125 },
 ];
 
+export const CFD_GROUPS = [
+  { id: "openfoam", label: "OpenFOAM", sub: "Rajasthan" },
+  { id: "ansys", label: "ANSYS Fluent", sub: "Tamil Nadu" },
+];
+
 export const CFD_CHECKS = [
   {
     id: "rj",
-    label: "Rajasthan · OpenFOAM",
+    group: "openfoam",
+    label: "Rajasthan case",
     status: "Unvalidated upper bound",
     points: [
       "One chosen capsule (savE® OM55, R = 39.5 mm) is melted at a 70 °C wall in a 2-D axisymmetric OpenFOAM case and compared with the simple capsule model used in the optimisation.",
@@ -246,11 +252,25 @@ export const CFD_CHECKS = [
       { file: "rajasthan/fig40_of_melt_curves.png", title: "OpenFOAM melt curves", caption: "Capsule melt fraction in the OpenFOAM cases." },
       { file: "rajasthan/fig41_of_lumped_vs_cfd.png", title: "Simple model vs CFD", caption: "Simple (lumped) capsule model against the CFD melt curve." },
       { file: "rajasthan/fig42_of_mesh_and_freeze.png", title: "Mesh study and freezing case", caption: "Mesh refinement and a freezing case; the mesh study is not converged." },
+      { file: "rajasthan/openfoam/video_r0_charge.gif", title: "Animation: regime 0 capsule charging at 70 °C", caption: "Melting from a 70 °C wall: liquid fraction (left), temperature (right)." },
+      { file: "rajasthan/openfoam/video_r0_discharge.gif", title: "Animation: regime 0 capsule discharging to mains water", caption: "Freezing while releasing heat: liquid fraction (left), temperature (right)." },
+      { file: "rajasthan/openfoam/calib_r0_n20.png", title: "Capsule melt fraction, 20-cell mesh", caption: "OpenFOAM against the simple capsule model (frozen c = 5, F = 2 and fitted) on the coarse mesh." },
+      { file: "rajasthan/openfoam/calib_r0_n40.png", title: "Capsule melt fraction, 40-cell mesh", caption: "Same comparison on the 40-cell mesh used for the capsule cases." },
+      { file: "rajasthan/openfoam/calib_r0_n80.png", title: "Capsule melt fraction, 80-cell mesh", caption: "Same comparison on the fine mesh; t50 moves by +14.3% from 40 to 80 cells." },
+      { file: "rajasthan/openfoam/of_v0_benchmark.png", title: "Benchmark V0: Tan 2009 sphere", caption: "Liquid fraction of OpenFOAM cases against the Tan 2009 experiment and Fluent; the CFD melts faster than the experiment." },
+      { file: "rajasthan/openfoam/of_v1_benchmark.png", title: "Benchmark V1: Dong 2022 sphere", caption: "Same check against Dong 2022; not reproduced." },
+      { file: "rajasthan/openfoam/preview_r0_charge_70_n40.png", title: "Design capsule, charging (3-D view)", caption: "Temperature in the chosen capsule of regime 0 (savE® OM55) charging at a 70 °C wall, 1,200 s. The 3-D shape is the 2-D axisymmetric result revolved, not a 3-D simulation." },
+      { file: "rajasthan/openfoam/preview_r0_discharge_mains_n40.png", title: "Design capsule, discharging to mains water", caption: "Regime 0 capsule releasing heat to mains-temperature water." },
+      { file: "rajasthan/openfoam/preview_r1_charge_70_n40.png", title: "Design capsule, regime 1 (PureTemp 60)", caption: "Regime 1 capsule charging at a 70 °C wall." },
+      { file: "rajasthan/openfoam/preview_r2_charge_70_n40.png", title: "Design capsule, regime 2 (PureTemp 58)", caption: "Regime 2 capsule charging at a 70 °C wall." },
+      { file: "rajasthan/openfoam/v0_T_001200.png", title: "Benchmark capsule temperature, 1200 s", caption: "Temperature field in the Tan 2009 benchmark sphere." },
+      { file: "rajasthan/openfoam/v0_T_003000.png", title: "Benchmark capsule temperature, 3000 s", caption: "Temperature field in the Tan 2009 benchmark sphere." },
     ],
   },
   {
     id: "tn",
-    label: "Tamil Nadu · ANSYS Fluent",
+    group: "ansys",
+    label: "Tamil Nadu case",
     status: "Model-consistency cross-check",
     points: [
       "Four shortlisted PCMs tested identically (one capsule from 30 °C solid in 70 °C water for 6 h): melt fraction 0.60 (C25) / 0.50 (C26) / 0.47 (RT57HC) / 0.38 (PureTemp 58), with no solver failures.",
@@ -263,19 +283,6 @@ export const CFD_CHECKS = [
       { file: "tamilnadu/fluent/03_pcm_melt_comparison.png", title: "PCM melting comparison", caption: "Four shortlisted PCMs under identical settings." },
       { file: "tamilnadu/fluent/01_system_mesh_zones.png", title: "System model zones", caption: "Tank water, PCM, capsule shell, collector channel, absorber and riser." },
       { file: "tamilnadu/fluent/02_system_temperature_field.png", title: "System temperature field", caption: "Daytime heat path from the absorber into the tank water." },
-    ],
-  },
-  {
-    id: "uk",
-    label: "Uttarakhand · OpenFOAM",
-    status: "1 of 10 cases run",
-    points: [
-      "Same solver set-up as Rajasthan; Rajasthan's findings were applied on 2026-11-13: CFD numbers are an unvalidated upper bound.",
-      "One of the 10 written capsule cases was run; in it the simple model's t90 is 2.05 times the CFD's, again on the cautious side.",
-      "No design value changed.",
-    ],
-    figures: [
-      { file: "uttarakhand/fig40_of_capsule.png", title: "OpenFOAM capsule case", caption: "The one Uttarakhand capsule case that was run." },
     ],
   },
 ];
@@ -304,6 +311,15 @@ export const O2_PLOTS = [
   { num: "fig50", file: "fig50_weather_inputs.png", group: "inputs", title: "Weather inputs", caption: "Weather of each regime's medoid point by year role." },
 ];
 
+export const O2_STATUS_POINTS = [
+  "<strong>Verified:</strong> the 150 s solver step passed its convergence gate, and the multi-node tank moves the paired gain by only 0.15–0.25 percentage points.",
+  "<strong>Search chain done:</strong> screening, 128 Sobol points per pair, surrogates and NSGA-II were run for three states, and every rank-1 pair passes the grid check.",
+  "<strong>Held-out test:</strong> run once per state under a lock; every gain is above the band except Uttarakhand regime 3, and no limit was broken.",
+  "<strong>Controls:</strong> with latent heat set to zero the gain drops below zero, and water-only controls return zero difference.",
+  "<strong>Cross-checks only:</strong> frozen capsule constants match a tank-level experiment to 1.1–1.4 K; OpenFOAM is an unvalidated upper bound and Fluent ordering is consistent.",
+  "<strong>Open:</strong> the plain-tank solar fraction is below the 54–84% literature band, and there is no experimental validation yet.",
+];
+
 export const O2_VERIFICATION = [
   { name: "Time-step convergence", area: "Verification", result: "300 s failed the gate, so the solver step is 150 s.", status: "Done", ok: true },
   { name: "Multi-node tank", area: "Verification", result: "N from 10 to 20 moves the paired gain by 0.15–0.25 percentage points; part of the band.", status: "Done", ok: true },
@@ -321,25 +337,19 @@ export const O2_VERIFICATION = [
 ];
 
 export const O2_LIMITATIONS = [
-  { title: "Boundary-limited", text: "Chosen designs sit at radius 39.5–40 mm and fraction 28–30%. In Rajasthan, raising the fraction from 25% to 30% still adds 16.5–21.1 kWh, above the band, so the 30% cap is still limiting. A diagnostic with radius up to 50 mm and fraction up to 40% still ends on the new bounds; v3 stays the approved box." },
-  { title: "Flow optimum is a model artefact", text: "The collector factor does not depend on flow. A flow-dependent version changes g_window by at most 1.43 kWh and is a sensitivity only." },
-  { title: "Level depends on stack position", text: "Moving the capsule stack from bottom to top changes the chosen Rajasthan designs' gain by 40–68 kWh, about two to three times the band. The sign of the gain does not change, and the best PCM is the same at every position." },
-  { title: "Sizing", text: "50 L with 1.5 m² (33.3 L/m²) is below IS 12976:2023. On the older model a 112.5 L tank passed the 65 °C limit without the shield; only that direction is usable." },
-  { title: "CFD", text: "OpenFOAM reproduces neither Tan 2009 nor Dong 2022 and its mesh study is not grid-independent; Fluent is a 2-D planar proxy. Neither is validation." },
-  { title: "Hold times are model values", text: "Retention hours come from the frozen capsule constants; a faster-capsule bound (c = 7.1) lengthens the 45 °C hold by 0.4–1.7 h, so the frozen values are slightly short rather than optimistic." },
-  { title: "Not modelled", text: "No monthly mains-temperature series, no PCM volume change and no kinetic supercooling delay (a proxy changes the 45 °C hold by under 1 h)." },
-  { title: "Delivery basis", text: "Objective 1 sizes PCMs for 60 °C delivery; Objective 2 scores energy at 45 °C (Uttarakhand 50 °C). Both arms of every paired run use the same metric, so the comparison holds; whether Objective 1 would shortlist differently at 45 °C is open." },
-  { title: "No measurements", text: "The model has not been compared with hardware or field data." },
-  { title: "Not run end to end", text: "The full --stage all chain has not been executed (hours long, and the held-out lock refuses it); stages were run individually." },
+  "Chosen designs sit at the edge of the search box (radius 39.5–40 mm, fraction 28–30%), so they are the best within the declared box, not a proven optimum.",
+  "Sizing is 50 L with 1.5 m² (33.3 L/m²), below IS 12976:2023; the compact tank is a fixed condition of this work.",
+  "The CFD cross-checks are not validation: OpenFOAM reproduces neither Tan 2009 nor Dong 2022, and Fluent is a 2-D planar proxy.",
+  "Hold times come from frozen capsule constants and depend on where the capsule stack sits in the tank.",
+  "Not modelled: monthly mains-temperature series, PCM volume change and supercooling delay.",
+  "No hardware or field measurements exist, and the full end-to-end run (--stage all) has not been executed.",
 ];
 
 export const O3_HANDOFF = [
-  "<strong>Boundary:</strong> Objective 3 chooses the real-time action and nothing else. It cannot change the PCM, capsule geometry, tank volume, safety limits or the physics model.",
-  { text: "<strong>State:</strong> top and bottom tank-node temperatures, a recoverable-energy estimate and minutes since the last draw, plus weather and demand.", details: "The delivery temperature is the top node; the collector inlet is the bottom node. Recoverable energy above 45 °C is an estimate, not a sensor." },
-  { text: "<strong>Action:</strong> a mode (charge, discharge or bypass) with an optional continuous flow rate.", details: "Flow within 0.010–0.050 kg/s; simulator step 150 s." },
-  "<strong>Safety shield:</strong> forces bypass at 72 °C at the top node and 62 °C in the PCM, and clamps flow to the envelope.",
-  "<strong>Reward:</strong> a suggestion built from delivered energy at 45 °C, overheating hours, safety violations and switching; the weights are chosen in Objective 3.",
-  "<strong>Weather:</strong> training 2016–2020, validation 2021–2023. The held-out years (2011–2015; Uttarakhand 2024–2025) were used by Objective 2 and must not be used to tune a controller.",
-  "<strong>Comparison rule:</strong> a controller is compared with the same-flow water-only twin and the passive PCM design.",
-  "<strong>Status:</strong> contract v3 written for Rajasthan, Tamil Nadu and Uttarakhand; Assam's file is not a valid input.",
+  "<strong>Boundary:</strong> Objective 3 chooses only the real-time action; it cannot change the PCM, capsule geometry, tank volume, safety limits or physics model.",
+  "<strong>State:</strong> top and bottom tank-node temperatures, a recoverable-energy estimate, minutes since the last draw, plus weather and demand.",
+  "<strong>Action:</strong> charge, discharge or bypass, with an optional flow of 0.010–0.050 kg/s on a 150 s step.",
+  "<strong>Safety shield:</strong> forces bypass at 72 °C (top node) and 62 °C (PCM), and clamps flow to the envelope.",
+  "<strong>Weather split:</strong> train 2016–2020, validate 2021–2023; the held-out years were used by Objective 2 and must not be used to tune a controller.",
+  "<strong>Status:</strong> contract v3 is written for Rajasthan, Tamil Nadu and Uttarakhand; Assam's file is not a valid input.",
 ];

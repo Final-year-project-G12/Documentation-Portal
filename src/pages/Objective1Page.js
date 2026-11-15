@@ -1021,14 +1021,6 @@ const COMPARISON_ROWS = [
   },
 ];
 
-/* Notes that restate the shared pipeline are dropped from the state tabs. */
-const DROPPED_NOTE_LABELS = ["Ranking", "Preprocessing", "Plots"];
-
-function stateNotes(key) {
-  return (STATES_CONFIG[key].notes || []).filter((n) => !DROPPED_NOTE_LABELS.includes(n.label));
-}
-
-
 /* Plot types shown in the plot grid; a state shows only the types it has. */
 const PLOT_TYPES = [
   { num: "01", title: "Raw vs. preprocessed radiation", caption: "Radiation and temperature before and after preprocessing at a sample point of each state." },
@@ -1125,53 +1117,6 @@ function Objective1Page() {
         <PipelineSection onObjective1 />
       </div>
 
-      {/* ── State comparison ── */}
-      <div className="content-section" id="comparison">
-        <div className="plots-section-header">
-          <h2>State Comparison</h2>
-          <span className="plots-count-badge">4 States</span>
-        </div>
-        <p className="section-desc">
-          The same measures for each state. Click a state's column header to highlight it; the design basis differs by state, so compare rows with care.
-        </p>
-        <div className="section-divider" />
-
-        <div className="data-table-wrapper compare-table-wrapper">
-          <table className="data-table compare-table">
-            <thead>
-              <tr>
-                <th>Measure</th>
-                {STATE_ORDER.map((k) => (
-                  <th
-                    key={k}
-                    className={`col-select ${focusState === k ? "col-active" : ""}`}
-                    onClick={() => setFocusState(focusState === k ? null : k)}
-                    aria-pressed={focusState === k}
-                  >
-                    {STATES_CONFIG[k].name}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {COMPARISON_ROWS.map((row) => (
-                <tr key={row.label}>
-                  <td><Terms text={row.label} /></td>
-                  {STATE_ORDER.map((k) => (
-                    <td key={k} className={focusState === k ? "col-active" : ""}>{row.values[k]}</td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        <Accordion
-          defaultOpen={null}
-          items={(STATES_CONFIG.all.notes || []).map((n) => ({ id: n.label, title: n.label, points: n.points }))}
-        />
-      </div>
-
       {/* ── Preprocessing ── */}
       <div className="content-section" id="preprocessing">
         <div className="plots-section-header">
@@ -1261,7 +1206,7 @@ function Objective1Page() {
             <span className="tag tag-zinc">{current.tag}</span>
           </div>
 
-          <StatTiles compact items={current.stats} />
+          <StatTiles compact oneRow items={current.stats} />
 
           <Callout title={`${current.name} at a glance`}>
             <Bullets items={current.overview} />
@@ -1287,12 +1232,6 @@ function Objective1Page() {
             EG = expanded graphite; RT = Rubitherm® RT series (paraffin-based organic PCM, Rubitherm Technologies GmbH);
             HC = high capacity (higher latent-heat grade); OM = Organic Mixture (savE® series, PLUSS Advanced Technologies).
           </Callout>
-
-          <h3>Notes for {current.name}</h3>
-          <Accordion
-            defaultOpen={0}
-            items={stateNotes(tab).map((n) => ({ id: n.label, title: n.label, badge: `${n.points.length}`, points: n.points }))}
-          />
         </div>
       </div>
 
@@ -1316,7 +1255,7 @@ function Objective1Page() {
           </Callout>
         )}
 
-        <div key={`${plotTab}-${plotGroupId}`} className="plot-grid plot-grid-wide tab-panel">
+        <div key={`${plotTab}-${plotGroupId}`} className="plot-grid plot-grid-wide plot-grid-four tab-panel">
           {visiblePlots.map((pt) => {
             const p = plotFor(plotTab, pt.num);
             const u = plotUrls(plotTab, p);
@@ -1334,6 +1273,53 @@ function Objective1Page() {
             );
           })}
         </div>
+      </div>
+
+      {/* ── State comparison ── */}
+      <div className="content-section" id="comparison">
+        <div className="plots-section-header">
+          <h2>State Comparison</h2>
+          <span className="plots-count-badge">4 States</span>
+        </div>
+        <p className="section-desc">
+          The same measures for each state. Click a state's column header to highlight it; the design basis differs by state, so compare rows with care.
+        </p>
+        <div className="section-divider" />
+
+        <div className="data-table-wrapper compare-table-wrapper">
+          <table className="data-table compare-table">
+            <thead>
+              <tr>
+                <th>Measure</th>
+                {STATE_ORDER.map((k) => (
+                  <th
+                    key={k}
+                    className={`col-select ${focusState === k ? "col-active" : ""}`}
+                    onClick={() => setFocusState(focusState === k ? null : k)}
+                    aria-pressed={focusState === k}
+                  >
+                    {STATES_CONFIG[k].name}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {COMPARISON_ROWS.map((row) => (
+                <tr key={row.label}>
+                  <td><Terms text={row.label} /></td>
+                  {STATE_ORDER.map((k) => (
+                    <td key={k} className={focusState === k ? "col-active" : ""}>{row.values[k]}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <Accordion
+          defaultOpen={null}
+          items={(STATES_CONFIG.all.notes || []).map((n) => ({ id: n.label, title: n.label, points: n.points }))}
+        />
       </div>
     </section>
   );

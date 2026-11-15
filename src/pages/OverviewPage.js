@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Rich, richHtml } from "../components/Cite";
 import Bullets from "../components/Bullets";
 import Figure from "../components/Figure";
-import { METHODS } from "../data/methods";
 import { resetTerms } from "../data/terms";
 import useReveal from "../components/useReveal";
 import { StatTiles, ChipTabs, StepExplorer, ProgressBar, Callout } from "../components/Interactive";
@@ -202,15 +201,13 @@ const INDUSTRY_FILTERS = [
 function OverviewPage({ onNavigate }) {
   resetTerms();
   const [industryFilter, setIndustryFilter] = useState("all");
-  const [methodIdx, setMethodIdx] = useState(0);
   const [objId, setObjId] = useState(OBJECTIVES_ROADMAP[0].id);
   const [stateIdx, setStateIdx] = useState(0);
   const [litId, setLitId] = useState(LITERATURE[0].id);
-  const revealRef = useReveal([industryFilter, methodIdx, objId, stateIdx, litId]);
+  const revealRef = useReveal([industryFilter, objId, stateIdx, litId]);
   const litGroup = LITERATURE.find((g) => g.id === litId);
 
   const companies = INDUSTRY_COMPARISON.filter((c) => industryFilter === "all" || c.pcmUsed === industryFilter);
-  const method = METHODS[methodIdx];
   const obj = OBJECTIVES_ROADMAP.find((o) => o.id === objId);
   const territory = TERRITORIES[stateIdx];
 
@@ -404,33 +401,6 @@ function OverviewPage({ onNavigate }) {
             ]}
           />
         </Callout>
-      </div>
-
-      {/* ── Algorithms ── */}
-      <div className="content-section" id="methods">
-        <div className="plots-section-header">
-          <h2>Algorithms Used</h2>
-          <span className="plots-count-badge">{METHODS.length} Algorithms</span>
-        </div>
-        <p className="section-desc">
-          The statistical and decision methods behind the pipeline. Pick one to see how it works and why it was chosen.
-        </p>
-        <div className="section-divider" />
-
-        <ChipTabs
-          size="lg"
-          ariaLabel="Algorithms"
-          options={METHODS.map((m, i) => ({ id: i, label: m.title.replace(/\s*\(.*\)$/, ""), sub: m.tag }))}
-          value={methodIdx}
-          onChange={setMethodIdx}
-        />
-        <div key={methodIdx} className="ui-panel tab-panel">
-          <div className="ui-panel-head">
-            <h3>{method.title}</h3>
-            <span className="tag tag-zinc">{method.tag}</span>
-          </div>
-          <Bullets items={method.points} />
-        </div>
       </div>
 
       {/* ── Objectives ── */}

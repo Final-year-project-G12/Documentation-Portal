@@ -11,9 +11,9 @@ import { Rich } from "./Cite";
    ───────────────────────────────────────────────────────── */
 
 /* Row of headline numbers. items: [{ value, label }] */
-export function StatTiles({ items, compact = false }) {
+export function StatTiles({ items, compact = false, oneRow = false }) {
   return (
-    <div className={`ui-stat-grid ${compact ? "compact" : ""}`.trim()}>
+    <div className={`ui-stat-grid ${compact ? "compact" : ""} ${oneRow ? "one-row" : ""}`.trim()}>
       {items.map((s) => (
         <div key={s.label} className="ui-stat-tile result-stat-card">
           <div className="ui-stat-value result-stat-value">{s.value}</div>

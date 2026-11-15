@@ -3,8 +3,8 @@ import Bullets from "../components/Bullets";
 import Figure from "../components/Figure";
 import { resetTerms } from "../data/terms";
 import useReveal from "../components/useReveal";
-import { StatTiles, ChipTabs, StepExplorer, Accordion, Callout } from "../components/Interactive";
-import { O3_HERO_STATS, O3_QUESTION, O3_METHOD_STEPS, O3_STATES, O3_FINDINGS, O3_LIMITATIONS } from "../data/objective3Content";
+import { StatTiles, ChipTabs, StepExplorer, Accordion } from "../components/Interactive";
+import { O3_METHOD_STEPS, O3_AGENT_TABLE, O3_STATES, O3_FINDINGS, O3_LIMITATIONS, O3_HANDOFF } from "../data/objective3Content";
 
 /* ─────────────────────────────────────────────────────────
    Objective3Page.js — DRL-Based Adaptive Controller
@@ -34,17 +34,6 @@ function Objective3Page({ onNavigate }) {
         </p>
       </div>
 
-      <StatTiles items={O3_HERO_STATS} />
-
-      {/* ── Question ── */}
-      <div className="content-section" id="scope">
-        <div className="plots-section-header">
-          <h2>The Research Question</h2>
-        </div>
-        <div className="section-divider" />
-        <Callout title="Made measurable">{O3_QUESTION}</Callout>
-      </div>
-
       {/* ── Method ── */}
       <div className="content-section" id="method">
         <div className="plots-section-header">
@@ -57,6 +46,32 @@ function Objective3Page({ onNavigate }) {
           ariaLabel="Objective 3 method"
           steps={O3_METHOD_STEPS.map((s) => ({ title: s.title, render: () => <Bullets items={s.points} /> }))}
         />
+      </div>
+
+      {/* ── Agents ── */}
+      <div className="content-section" id="agents">
+        <div className="plots-section-header">
+          <h2>Agents Compared</h2>
+          <span className="plots-count-badge">6 Algorithms</span>
+        </div>
+        <p className="section-desc">Which learning algorithm was tried in which state, and where it ended up.</p>
+        <div className="section-divider" />
+        <div className="data-table-wrapper">
+          <table className="data-table">
+            <thead>
+              <tr>{O3_AGENT_TABLE.columns.map((c) => <th key={c}>{c}</th>)}</tr>
+            </thead>
+            <tbody>
+              {O3_AGENT_TABLE.rows.map((r) => (
+                <tr key={r[0]}>
+                  {r.map((cell, i) => (
+                    <td key={i} style={i === 0 ? { fontWeight: 600, color: "#ffffff" } : undefined}>{cell}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* ── Results by state ── */}
@@ -109,10 +124,11 @@ function Objective3Page({ onNavigate }) {
 
           <Accordion defaultOpen={0} items={[{ id: "notes", title: `${st.name}: what the results say`, badge: `${st.notes.length}`, points: st.notes }]} />
 
-          {stateId === "rajasthan" && (
+          {st.figures && st.figures.length > 0 && (
             <div className="ui-two-col">
-              <Figure src={img("rajasthan/o3_rj_tradeoff.png")} title="Delivery vs shield trade-off (Rajasthan)" alt="Delivered energy against shield hours for each controller in Rajasthan." caption="Delivered energy against shield hours; the selected DQN keeps 98% of B0 with far fewer shield hours." />
-              <Figure src={img("rajasthan/o3_rj_frontier.png")} title="Shield-weight frontier (Rajasthan)" alt="Delivery and shield reduction as the shield penalty weight changes." caption="Raising the shield penalty buys fewer shield hours at a growing delivery cost." />
+              {st.figures.map((f) => (
+                <Figure key={f.file} src={img(f.file)} title={f.title} alt={f.caption} caption={f.caption} />
+              ))}
             </div>
           )}
         </div>
@@ -148,13 +164,7 @@ function Objective3Page({ onNavigate }) {
           </div>
           <div className="ui-panel">
             <div className="ui-card-kicker">Hand-off</div>
-            <Bullets
-              items={[
-                "Each state exports its frozen controller (SHA-256 recorded), its sensor list and a hardware interface spec.",
-                "The shield is restated as an independent hardware interlock, with a fail-safe to always-charge or bypass.",
-                "Objective 4 replays these exact controllers in a MATLAB digital twin.",
-              ]}
-            />
+            <Bullets items={O3_HANDOFF} />
             {onNavigate && (
               <button className="ui-btn" style={{ marginTop: 14 }} onClick={() => onNavigate("objective4")}>
                 Continue to Objective 4 →

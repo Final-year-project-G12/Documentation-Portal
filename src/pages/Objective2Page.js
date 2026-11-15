@@ -6,8 +6,8 @@ import { resetTerms } from "../data/terms";
 import useReveal from "../components/useReveal";
 import { StatTiles, ChipTabs, StepExplorer, Accordion, ProgressBar, Callout } from "../components/Interactive";
 import {
-  O2_HERO_STATS, O2_STATES, O2_WORKFLOW_STEPS, RESEARCH_QUESTIONS, CRITERIA_STUDY, CFD_CHECKS,
-  O2_PLOT_GROUPS, O2_PLOTS, O2_VERIFICATION, O2_LIMITATIONS, O3_HANDOFF,
+  O2_HERO_STATS, O2_STATES, O2_WORKFLOW_STEPS, RESEARCH_QUESTIONS, CRITERIA_STUDY, CFD_CHECKS, CFD_GROUPS,
+  O2_PLOT_GROUPS, O2_PLOTS, O2_STATUS_POINTS, O2_LIMITATIONS, O3_HANDOFF,
 } from "../data/objective2Content";
 
 /* ─────────────────────────────────────────────────────────
@@ -26,16 +26,16 @@ import {
    ───────────────────────────────────────────────────────── */
 
 const PARAMETER_BOUNDS = [
-  { param: "Capsule inner radius (PCM thickness)", symbol: "inner_radius_m", bounds: "10 – 40 mm", unit: "mm", rationale: "Chosen designs sit at 39.5–40 mm. The widened-bound check found 45 and 50 mm worse at the same fraction. Radii above 40 mm have no capsule-size source in the files read. {{cn}}" },
-  { param: "PCM volume fraction", symbol: "pcm_volume_fraction", bounds: "2 – 30 %", unit: "% of tank", rationale: "Outer capsule volume over tank volume; capsule count is derived. Raised from 20 % on 2026-10-27. Still limiting: at 40 % the gain is 37.9–47.2 kWh higher (bands 14–22). The only literature range read is 10–20 % {{cite:Chen2025TaguchiGRAPCM}}." },
-  { param: "Water mass flow rate", symbol: "flow_rate_kg_s", bounds: "0.010 – 0.050 kg/s", unit: "kg/s", rationale: "Kept from the legacy bounds. The collector factor F_R does not depend on flow, so an optimum at the 0.010 floor is a model artefact." },
-  { param: "Arrangement", symbol: "arrangement", bounds: "Single-layer, staggered, radial", unit: "Category", rationale: "A null on g_window at the centre anchor in all three Rajasthan regimes; it matters only for overheating hours." },
-  { param: "Capsule shell", symbol: "capsule_wall_thickness_m", bounds: "0.8 mm aluminium", unit: "mm", rationale: "Fixed in the shared config; outer radius is inner radius plus shell." },
-  { param: "Target delivery temperature", symbol: "delivery.target_temp_C", bounds: "45 °C (Uttarakhand 50 °C)", unit: "°C", rationale: "Every metric is built on it. Objective 1 sizes PCMs for 60 °C delivery, so the two differ; aligning them needs a shared-config change and a re-run for all states. Not done." },
+  { param: "Capsule inner radius (PCM thickness)", symbol: "inner_radius_m", bounds: "10 – 40 mm", unit: "mm", rationale: "Chosen designs sit at 39.5–40 mm; 45 and 50 mm were worse. No capsule-size source above 40 mm. {{cn}}" },
+  { param: "PCM volume fraction", symbol: "pcm_volume_fraction", bounds: "2 – 30 %", unit: "% of tank", rationale: "Capsule count is derived from it. Still limiting: 40 % gives more gain. Literature range read: 10–20 % {{cite:Chen2025TaguchiGRAPCM}}." },
+  { param: "Water mass flow rate", symbol: "flow_rate_kg_s", bounds: "0.010 – 0.050 kg/s", unit: "kg/s", rationale: "Legacy bounds. An optimum at the 0.010 floor is a model artefact." },
+  { param: "Arrangement", symbol: "arrangement", bounds: "Single-layer, staggered, radial", unit: "Category", rationale: "No effect on g_window; matters only for overheating hours." },
+  { param: "Capsule shell", symbol: "capsule_wall_thickness_m", bounds: "0.8 mm aluminium", unit: "mm", rationale: "Fixed in the shared config." },
+  { param: "Target delivery temperature", symbol: "delivery.target_temp_C", bounds: "45 °C (Uttarakhand 50 °C)", unit: "°C", rationale: "All metrics use it; Objective 1 sizes PCMs for 60 °C, so the two differ." },
   { param: "Maximum water temperature", symbol: "water_peak_limit_C", bounds: "≤ 75 °C", unit: "°C", rationale: "Scald prevention." },
-  { param: "Maximum PCM temperature", symbol: "pcm_peak_limit_C", bounds: "≤ 65 °C", unit: "°C", rationale: "Material-stability limit, from manufacturer datasheets {{cite:RubithermPCM,PlussPCM}}. Infeasible if exceeded in any simulated year." },
-  { param: "Tank model and step", symbol: "n_nodes, timestep_s", bounds: "10 nodes, 150 s", unit: "—", rationale: "300 s failed the time-step gate. Changing N from 10 to 20 moves the paired gain by 0.15–0.25 percentage points." },
-  { param: "Fixed, not optimised", symbol: "fixed_not_optimised", bounds: "Tank, collector, demand, shortlist", unit: "—", rationale: "Rajasthan and Uttarakhand 50 L / 1.5 m² / 300 L/day; Tamil Nadu 100 L / 2.5 m²; Assam (legacy) demand 100 L/day." },
+  { param: "Maximum PCM temperature", symbol: "pcm_peak_limit_C", bounds: "≤ 65 °C", unit: "°C", rationale: "Material limit from datasheets {{cite:RubithermPCM,PlussPCM}}." },
+  { param: "Tank model and step", symbol: "n_nodes, timestep_s", bounds: "10 nodes, 150 s", unit: "—", rationale: "300 s failed the time-step gate; 10 vs 20 nodes changes the gain by under 0.3 points." },
+  { param: "Fixed, not optimised", symbol: "fixed_not_optimised", bounds: "Tank, collector, demand, shortlist", unit: "—", rationale: "50 L / 1.5 m² (Tamil Nadu 100 L / 2.5 m²); demand 300 L/day." },
 ];
 
 const TANK_OPTIONS = [
@@ -52,7 +52,7 @@ function Objective2Page() {
   resetTerms();
   const [stateId, setStateId] = useState("rajasthan");
   const [criteriaId, setCriteriaId] = useState(CRITERIA_STUDY[0].id);
-  const [cfdId, setCfdId] = useState(CFD_CHECKS[0].id);
+  const [cfdId, setCfdId] = useState(CFD_GROUPS[0].id);
   const [plotState, setPlotState] = useState("rajasthan");
   const [plotGroup, setPlotGroup] = useState("all");
   // Geometry checker state: inner radius and count against the v3 box and the packing-free volume share
@@ -63,7 +63,7 @@ function Objective2Page() {
 
   const st = O2_STATES.find((s) => s.id === stateId);
   const crit = CRITERIA_STUDY.find((c) => c.id === criteriaId);
-  const cfd = CFD_CHECKS.find((c) => c.id === cfdId);
+  const cfdCases = CFD_CHECKS.filter((c) => c.group === cfdId);
   const plotStates = O2_STATES.filter((s) => s.current);
   const plots = O2_PLOTS.filter((p) => plotGroup === "all" || p.group === plotGroup);
 
@@ -212,9 +212,9 @@ function Objective2Page() {
       </div>
 
       {/* ── Criteria study ── */}
-      <div className="content-section" id="criteria">
+      <div className="content-section criteria-compact" id="criteria">
         <div className="plots-section-header">
-          <h2>What If the Design Is Not the Optimum?</h2>
+          <h2>Comparison with Different Parameters</h2>
           <span className="plots-count-badge">Tamil Nadu · Regime 0</span>
         </div>
         <p className="section-desc">
@@ -235,7 +235,7 @@ function Objective2Page() {
             <span className="ui-panel-sub">g_window {crit.gWindow.toFixed(1)} kWh/yr</span>
           </div>
           <ProgressBar value={Math.min(100, crit.pct)} label="Share of the optimal gain" />
-          <p style={{ margin: "12px 0 14px" }}><strong>Verdict:</strong> {crit.verdict}</p>
+          <p style={{ margin: "8px 0 10px", fontSize: "0.88rem" }}><strong>Verdict:</strong> {crit.verdict}</p>
           <StatTiles
             compact
             items={[
@@ -243,8 +243,8 @@ function Objective2Page() {
               { value: crit.n, label: "Capsules" },
               { value: `${crit.pcmKg} kg`, label: "PCM mass" },
               { value: `${crit.flow} kg/s`, label: `Flow · ${crit.arrangement}` },
-              { value: crit.water, label: "Fluent: water temperature over the discharge" },
-              { value: crit.lf, label: "Fluent: PCM liquid fraction" },
+              { value: crit.water, label: "Fluent water temp." },
+              { value: crit.lf, label: "Fluent liquid fraction" },
             ]}
           />
         </div>
@@ -278,31 +278,37 @@ function Objective2Page() {
           <h2>CFD Cross-Checks</h2>
           <span className="plots-count-badge">Not Validation</span>
         </div>
-        <p className="section-desc">
-          Three claims are kept apart: simulator verification (done), CFD model-consistency cross-checks (below, incomplete) and
-          experimental validation (not done). Pick a check.
-        </p>
         <div className="section-divider" />
         <ChipTabs
           size="lg"
-          ariaLabel="CFD check"
-          options={CFD_CHECKS.map((c) => ({ id: c.id, label: c.label, sub: c.status }))}
+          ariaLabel="CFD tool"
+          options={CFD_GROUPS.map((g) => ({ id: g.id, label: g.label, sub: g.sub }))}
           value={cfdId}
           onChange={setCfdId}
         />
         <div key={cfdId} className="tab-panel">
-          <div className="ui-panel" style={{ marginBottom: 16 }}>
-            <Bullets items={cfd.points} />
-          </div>
-          <div className="plot-grid plot-grid-wide">
-            {cfd.figures.map((f) => (
-              <div key={f.file} className="plot-type">
-                <h3>{f.title}</h3>
-                <Figure src={img(f.file)} title={f.title} alt={f.caption} />
-                <p className="plot-type-caption">{f.caption}</p>
+          {cfdCases.map((cfd) => (
+            <div key={cfd.id} style={{ marginBottom: 24 }}>
+              {cfdCases.length > 1 && (
+                <div className="ui-panel-head" style={{ marginTop: 8 }}>
+                  <h3>{cfd.label}</h3>
+                  <span className="tag tag-zinc">{cfd.status}</span>
+                </div>
+              )}
+              <div className="ui-panel" style={{ marginBottom: 16 }}>
+                <Bullets items={cfd.points} />
               </div>
-            ))}
-          </div>
+              <div className={`plot-grid plot-grid-wide ${cfdId === "openfoam" ? "plot-grid-four" : ""}`}>
+                {cfd.figures.map((f) => (
+                  <div key={f.file} className="plot-type">
+                    <h3>{f.title}</h3>
+                    <Figure src={img(f.file)} title={f.title} alt={f.caption} />
+                    <p className="plot-type-caption">{f.caption}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -325,7 +331,7 @@ function Objective2Page() {
           onChange={setPlotState}
         />
         <ChipTabs ariaLabel="Figure group" options={O2_PLOT_GROUPS} value={plotGroup} onChange={setPlotGroup} />
-        <div key={`${plotState}-${plotGroup}`} className="plot-grid plot-grid-wide tab-panel">
+        <div key={`${plotState}-${plotGroup}`} className="plot-grid plot-grid-wide plot-grid-four tab-panel">
           {plots.map((p) => (
             <div key={p.num} className="plot-type">
               <h3>{p.title}</h3>
@@ -451,25 +457,17 @@ function Objective2Page() {
       <div className="content-section" id="deliverables">
         <div className="plots-section-header">
           <h2>Verification & Status</h2>
-          <span className="plots-count-badge">{O2_VERIFICATION.filter((v) => v.ok).length} of {O2_VERIFICATION.length} Done</span>
+          <span className="plots-count-badge">Summary</span>
         </div>
         <p className="section-desc">What was checked, how it came out, and what is not done.</p>
         <div className="section-divider" />
-        <div className="ui-qc-grid">
-          {O2_VERIFICATION.map((v) => (
-            <div key={v.name} className="ui-card">
-              <div className="ui-panel-head" style={{ marginBottom: 6 }}>
-                <span className="ui-card-kicker" style={{ margin: 0 }}>{v.area}</span>
-                <span className={`ui-badge ${v.ok ? "" : "amber"}`}>{v.status}</span>
-              </div>
-              <h4>{v.name}</h4>
-              <p>{v.result}</p>
-            </div>
-          ))}
+        <div className="ui-panel">
+          <Bullets items={O2_STATUS_POINTS} />
         </div>
       </div>
 
-      {/* ── Limitations ── */}
+      {/* ── Limitations and hand-off, side by side ── */}
+      <div className="side-by-side-sections">
       <div className="content-section" id="limitations">
         <div className="plots-section-header">
           <h2>Known Limitations</h2>
@@ -477,7 +475,9 @@ function Objective2Page() {
         </div>
         <p className="section-desc">What the results do not support. Write "best design within the declared box", never "optimal design".</p>
         <div className="section-divider" />
-        <Accordion defaultOpen={0} items={O2_LIMITATIONS.map((l) => ({ id: l.title, title: l.title, children: <p style={{ margin: 0 }}>{l.text}</p> }))} />
+        <div className="ui-panel">
+          <Bullets items={O2_LIMITATIONS} />
+        </div>
       </div>
 
       {/* ── Hand-off ── */}
@@ -491,6 +491,7 @@ function Objective2Page() {
         <div className="ui-panel">
           <Bullets items={O3_HANDOFF} />
         </div>
+      </div>
       </div>
     </section>
   );

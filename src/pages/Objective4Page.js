@@ -1,15 +1,15 @@
 import { useState } from "react";
 import Bullets from "../components/Bullets";
-import Figure from "../components/Figure";
+import Figure, { VideoFigure } from "../components/Figure";
 import { resetTerms } from "../data/terms";
 import useReveal from "../components/useReveal";
 import { StatTiles, ChipTabs, StepExplorer, Callout } from "../components/Interactive";
-import { O4_HERO_STATS, O4_CHAIN, O4_ARMS, O4_STATES, O4_LIMITATIONS } from "../data/objective4Content";
+import { O4_CHAIN, O4_ARMS, O4_STATES, O4_LIMITATIONS, O4_HOLD_NOTE } from "../data/objective4Content";
 
 /* ─────────────────────────────────────────────────────────
    Objective4Page.js — Software-in-the-Loop Validation
    Content: src/data/objective4Content.js, from the
-   Objective--4_software-in-loop repository (main, 2026-11-14).
+   Objective--4_software-in-loop repository (main, 2026-11-15).
    ───────────────────────────────────────────────────────── */
 
 function Objective4Page() {
@@ -18,6 +18,7 @@ function Objective4Page() {
   const revealRef = useReveal([stateId]);
   const st = O4_STATES.find((s) => s.id === stateId);
   const img = (p) => `${process.env.PUBLIC_URL}/plots/objective4/${p}`;
+  const vid = img;
 
   return (
     <section className="content animated-page" id="top" ref={revealRef}>
@@ -33,8 +34,6 @@ function Objective4Page() {
           validation; no physical rig was used.
         </p>
       </div>
-
-      <StatTiles items={O4_HERO_STATS} />
 
       {/* ── Signal chain ── */}
       <div className="content-section" id="chain">
@@ -88,19 +87,57 @@ function Objective4Page() {
         <div key={stateId} className="tab-panel">
           <StatTiles compact items={st.setup} />
 
-          {st.armTable && (
-            <>
-              <h3>Three-arm comparison <span className="ui-panel-sub">({st.armTable.caption})</span></h3>
+          <h3>Design parameters by regime</h3>
+          <div className="data-table-wrapper">
+            <table className="data-table">
+              <thead>
+                <tr>{st.params.columns.map((c) => <th key={c}>{c}</th>)}</tr>
+              </thead>
+              <tbody>
+                {st.params.rows.map((r) => (
+                  <tr key={r[0]}>
+                    {r.map((cell, i) => (
+                      <td key={i} style={i === 0 ? { fontWeight: 600, color: "#ffffff" } : undefined}>{cell}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <h3>{st.hold.title}</h3>
+          <div className="data-table-wrapper">
+            <table className="data-table">
+              <thead>
+                <tr>{st.hold.columns.map((c) => <th key={c}>{c}</th>)}</tr>
+              </thead>
+              <tbody>
+                {st.hold.rows.map((r) => (
+                  <tr key={r[0]}>
+                    {r.map((cell, i) => (
+                      <td key={i} style={i === 0 ? { fontWeight: 600, color: "#ffffff" } : undefined}>{cell}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="section-desc" style={{ fontSize: "0.85rem", marginTop: 8 }}>{st.hold.note}</p>
+          <p className="section-desc" style={{ fontSize: "0.8rem" }}>{O4_HOLD_NOTE}</p>
+
+          {st.tables.map((t) => (
+            <div key={t.title}>
+              <h3>{t.title} <span className="ui-panel-sub">({t.caption})</span></h3>
               <div className="data-table-wrapper">
                 <table className="data-table">
                   <thead>
                     <tr>
-                      <th>Arm</th>
-                      {st.armTable.columns.map((c) => <th key={c}>{c}</th>)}
+                      <th>{t.firstCol}</th>
+                      {t.columns.map((c) => <th key={c}>{c}</th>)}
                     </tr>
                   </thead>
                   <tbody>
-                    {st.armTable.rows.map((r) => (
+                    {t.rows.map((r) => (
                       <tr key={r.arm} className={r.best ? "row-best" : ""}>
                         <td style={{ fontWeight: 600, color: "#ffffff" }}>{r.arm}</td>
                         {r.v.map((x, i) => <td key={i}>{x}</td>)}
@@ -109,12 +146,27 @@ function Objective4Page() {
                   </tbody>
                 </table>
               </div>
-            </>
-          )}
+            </div>
+          ))}
 
           <Callout title={`${st.name}: what was verified`}>
             <Bullets items={st.points} />
           </Callout>
+
+          {st.videos.length > 0 && (
+            <>
+              <h3>Simulation videos</h3>
+              <div className="plot-grid plot-grid-wide plot-grid-three">
+                {st.videos.map((v) => (
+                  <div key={v.file} className="plot-type">
+                    <h3>{v.title}</h3>
+                    <VideoFigure src={vid(v.file)} title={`${st.name}: ${v.title}`} caption={v.caption} />
+                    <p className="plot-type-caption">{v.caption}</p>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
 
           {st.figures.length > 0 && (
             <div className="plot-grid plot-grid-wide">

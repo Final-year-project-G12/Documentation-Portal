@@ -53,7 +53,9 @@ function Lightbox({ view, onClose }) {
           </span>
         </div>
         <div className="lightbox-body">
-          {view.kind === "frame" ? (
+          {view.kind === "video" ? (
+            <video src={view.src} className="lightbox-video" controls autoPlay loop playsInline />
+          ) : view.kind === "frame" ? (
             <iframe src={view.src} title={view.title} className="lightbox-frame" />
           ) : (
             <img src={view.src} alt={view.alt || view.title} className="lightbox-image" />
@@ -102,6 +104,25 @@ export default function Figure({ src, interactiveSrc, title, alt, caption, note 
           </span>
         )}
       </figcaption>
+      {view && <Lightbox view={view} onClose={() => setView(null)} />}
+    </figure>
+  );
+}
+
+/* A video thumbnail that opens enlarged in the same lightbox, like Figure does for images. */
+export function VideoFigure({ src, title, caption }) {
+  const [view, setView] = useState(null);
+  return (
+    <figure className="figure">
+      <button
+        type="button"
+        className="figure-open video-open"
+        aria-label={`Enlarge video: ${title}`}
+        onClick={() => setView({ kind: "video", src, title, caption })}
+      >
+        <video src={src} className="o4-video" muted loop playsInline preload="metadata" aria-label={title} />
+        <span className="video-play" aria-hidden="true">▶</span>
+      </button>
       {view && <Lightbox view={view} onClose={() => setView(null)} />}
     </figure>
   );

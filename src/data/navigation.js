@@ -17,7 +17,6 @@ export const PAGES = [
       { id: "gaps", label: "Research Gaps & Problem" },
       { id: "literature", label: "Literature Survey" },
       { id: "architecture", label: "Project Architecture" },
-      { id: "methods", label: "Algorithms Used" },
       { id: "objectives", label: "4-Objective Progress" },
       { id: "territories", label: "4-State Climate Scope" },
       { id: "limitations", label: "Trade-offs & Future Scope" },
@@ -32,10 +31,10 @@ export const PAGES = [
     sections: [
       { id: "top", label: "Objective 1 Results" },
       { id: "pipeline", label: "Objective 1 Pipeline" },
-      { id: "comparison", label: "State Comparison" },
       { id: "preprocessing", label: "Preprocessing & QC" },
       { id: "state-results", label: "Results by State" },
       { id: "plots", label: "Plots Across States" },
+      { id: "comparison", label: "State Comparison" },
     ],
   },
   {
@@ -47,7 +46,7 @@ export const PAGES = [
       { id: "states", label: "Chosen Designs by State" },
       { id: "workflow", label: "Optimization Pipeline" },
       { id: "research-questions", label: "What the Results Answer" },
-      { id: "criteria", label: "Non-Optimal Designs (Fluent)" },
+      { id: "criteria", label: "Comparison with Different Parameters" },
       { id: "cfd", label: "CFD Cross-Checks" },
       { id: "o2-plots", label: "Result Figures" },
       { id: "interactive-explorer", label: "Geometry Checker" },
@@ -63,8 +62,8 @@ export const PAGES = [
     topLabel: "Objective 3",
     sections: [
       { id: "top", label: "Objective 3 Overview" },
-      { id: "scope", label: "Research Question" },
       { id: "method", label: "How the Controller Is Built" },
+      { id: "agents", label: "Agents Compared" },
       { id: "results", label: "Locked-Test Results" },
       { id: "findings", label: "Key Findings" },
       { id: "inputs", label: "Limitations & Hand-off" },

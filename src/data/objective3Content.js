@@ -1,19 +1,10 @@
 /* ─────────────────────────────────────────────────────────
    Objective 3 content. Sources (solar-pcm-control--Objective3, main,
-   2026-11-14): rajasthan/docs/{METHODOLOGY_AND_FINDINGS,CORRECTIONS}.md,
-   tamilnadu/docs/{OBJECTIVE_3_README,DEPLOYMENT_CONTROLLER}.md,
-   uttarakhand/docs/FINDINGS.md. Simulation only; not field validation.
+   commit 2f18a2e, 2026-11-15): rajasthan/docs/{METHODOLOGY_AND_FINDINGS,CORRECTIONS}.md,
+   tamilnadu/docs/{OBJECTIVE_3_README,METHODOLOGY_AND_FINDINGS,CORRECTIONS_OBJECTIVE3,DEPLOYMENT_CONTROLLER}.md,
+   uttarakhand/docs/FINDINGS.md, and the CSV/JSON files under each state's results/.
+   Simulation only; not field validation.
    ───────────────────────────────────────────────────────── */
-
-export const O3_HERO_STATS = [
-  { value: "3 states", label: "Controllers trained for Rajasthan, Tamil Nadu and Uttarakhand" },
-  { value: "6 agents", label: "PPO, DQN, RecurrentPPO, QRDQN, MaskablePPO and SAC compared" },
-  { value: "0", label: "Hard-limit violations in any locked test or robustness run" },
-  { value: "33–62%", label: "Fewer safety-shield activations for the selected learned controllers" },
-];
-
-export const O3_QUESTION =
-  "With Objective 2's design and its safety shield left unchanged, can a policy that chooses the collector-loop action every hour deliver about as much hot water as always-on operation (B0) while triggering the shield far less often, on years it never trained on?";
 
 export const O3_METHOD_STEPS = [
   {
@@ -35,8 +26,8 @@ export const O3_METHOD_STEPS = [
   {
     title: "Observation and action",
     points: [
-      "Observation: sunlight, ambient temperature, top/bottom water and PCM temperatures, melt fraction, demand, time of day and stored energy (11–17 fields by state).",
-      "Generation-2 adds a 1–3 h irradiance forecast and the next-hour draw.",
+      "Observation: sunlight, ambient temperature, top/bottom water and PCM temperatures, melt fraction, demand, time of day and stored energy (11 fields in Tamil Nadu, 13 contract fields in Rajasthan and Uttarakhand).",
+      "Forecast versions add the irradiance forecast for the next 1–3 h and the next-hour draw (15–17 fields).",
       "Action: charge, idle or bypass (Tamil Nadu); loop enabled or bypass in Rajasthan and Uttarakhand, where idle and bypass are the same in O2's kernel. Flow stays at the design value because the collector model does not depend on flow.",
     ],
   },
@@ -45,26 +36,45 @@ export const O3_METHOD_STEPS = [
     points: [
       "Points for hot water delivered; penalties for unmet demand, broken limits, needless switching and every shield activation.",
       "Key finding: with a delivery-only reward every agent learns 'always charge', identical to B0, because nothing penalises the shield. The shield penalty is what makes anticipation pay.",
-      "The shield weight is set per state (Tamil Nadu 10; Rajasthan 1.7–3.9, re-derived from its own baselines).",
+      "The shield weight is set per state: Tamil Nadu 10; Rajasthan 1.7–3.9, re-derived from its own baselines; Uttarakhand by a dominance rule (twice the largest one-hour delivery).",
+    ],
+  },
+  {
+    title: "Forecast realism",
+    points: [
+      "The first forecast was a perfect look-ahead read from the stored year, which no real installation has.",
+      "It was replaced by smart persistence on the clear-sky index (last daytime clear-sky ratio times the clear-sky curve). Measured error is 9.9 / 21.0 / 36.1% at +1 / +2 / +3 h on the Tamil Nadu and Rajasthan files and 8.4 / 12.7 / 16.6% in Uttarakhand, against 32–81% for plain persistence.",
+      "A third mode zeroes the forecast fields, which isolates how much each agent actually relies on the forecast. Next-hour demand is still perfect in all states.",
     ],
   },
   {
     title: "Baselines and agents",
     points: [
-      "B0: always charge (Objective 2's operating point). B1: reactive rules. B2: forecast-aware rules. Water-only tank as the floor.",
-      "Agents: PPO, DQN, RecurrentPPO, QRDQN, MaskablePPO and SAC (Stable-Baselines3), 300k–600k steps, usually 3 seeds.",
-      "Training-time domain randomisation: sunlight ±10%, ambient ±2 °C, demand ±15% per episode.",
+      "B0: always charge (Objective 2's operating point). B1: reactive rules. B2: forecast-aware rules. Water-only tank as the floor. No MPC baseline was built.",
+      "Agents (Stable-Baselines3): PPO, DQN, RecurrentPPO, QRDQN, MaskablePPO and SAC were tried in Tamil Nadu; DQN and SAC in Rajasthan after PPO; PPO, DQN and SAC in Uttarakhand. See the table below.",
+      "Training-time domain randomisation per episode: sunlight ±10%, ambient ±2 °C, demand ±15%.",
     ],
   },
   {
     title: "Split and selection",
     points: [
-      "Train 2016–2020, validate 2021–2023, then one locked test on unseen years behind a lock file.",
-      "Test years: Tamil Nadu 2011–2015; Rajasthan and Uttarakhand 2006–2010 (Objective 2 had already used 2011–2015).",
-      "Selection rule: zero violations, then at least 95% of B0's delivered energy, then the largest shield reduction.",
+      "Train 2016–2020, validate 2021–2023, then one locked test on unseen years behind a lock file. Test years: Tamil Nadu 2011–2015; Rajasthan and Uttarakhand 2006–2010.",
+      "Tamil Nadu and Rajasthan (since 2026-11-13) select by: zero violations, then at least 95% of B0's annual delivery, then the largest shield reduction.",
+      "Rajasthan first used a stricter rule (annual and night-window delivery both at least 95%) and relaxed it after its locked test, so both verdicts are reported. Uttarakhand puts delivery first, so B0 stays best there.",
     ],
   },
 ];
+
+/* Which agent was tried where, and what happened. */
+export const O3_AGENT_TABLE = {
+  columns: ["Agent", "Tamil Nadu", "Rajasthan", "Uttarakhand"],
+  rows: [
+    ["PPO", "Collapses to B0; not retrained after the weather fix", "Ends at B0 (3 seeds, regime 1)", "Frozen controller: about 99% fewer shield hours, 8–11% less delivery"],
+    ["DQN", "Regime 0 only: 96.2% of B0, −62% shields; about B0 in regimes 1–2", "One good seed in regime 1 (locked test 98.0%, −61%); a retrain returned B0", "Behaves like PPO"],
+    ["RecurrentPPO, QRDQN, MaskablePPO", "Stuck at B0; not retrained after the weather fix", "Not trained", "Not trained"],
+    ["SAC", "Selected: 97–99% of B0, −33 to −54% shields in all three regimes", "Passes the annual rule with 70–96% fewer shield hours (validation only)", "Weakest: 84.8% of B0, about 925 switches a year"],
+  ],
+};
 
 /* Locked-test results per state. */
 export const O3_STATES = [
@@ -91,41 +101,57 @@ export const O3_STATES = [
       { regime: "R2", policy: "DQN", a: "2068.8 (= B0)", b: "34,796 (0%)" },
       { regime: "R2", policy: "SAC", a: "2012.6 (97.3%)", b: "23,138 (−33.5%)", best: true },
     ],
+    figures: [
+      { file: "tamilnadu/o3_tn_forecast_ablation.png", title: "SAC under three forecast conditions (Tamil Nadu)", caption: "Shield cut barely depends on the forecast: 26–54% in every case, with delivery at 97–100% of B0." },
+    ],
     notes: [
-      "SAC is the only learned controller that cuts shield activations while keeping at least 97% of B0's delivery in all three regimes; DQN cuts more in regime 0 but collapses to B0 in regimes 1 and 2.",
-      "Deployment controller (frozen 2026-11-14): SAC, regime 0, trained with a realistic smart-persistence forecast. Locked test: 2063.7 kWh/yr (98.4% of B0) with 22,632 shields/yr (−51.8%) and zero violations.",
-      "Sub-hourly control: at a matched training budget, 15-minute control cut shields by 58% for a 4% delivery cost against 60-minute control.",
-      "Dead or stuck pyranometer: delivery falls 14%, but no limit is broken because the shield acts on the true state.",
-      "Inference about 5 ms per decision, 1.4 MB (SAC); DQN about 1 ms, 40 kB.",
-      "Caveat: the Tamil Nadu shield metric counts events per solver sub-step, not hours, and its pass rule is annual delivery only, so verdicts are not directly comparable with Rajasthan.",
+      "SAC is the only learned controller that cuts shield activations while keeping at least 97% of B0's delivery in all three regimes; DQN cuts more in regime 0 but falls back to B0 in regimes 1 and 2.",
+      "Deployment controller (frozen 2026-11-14): SAC, regime 0, trained with the realistic smart-persistence forecast. Locked test: 2063.7 kWh/yr (98.4% of B0) with 22,632 shields/yr (−51.8%) and zero violations. The same recipe gives 99.7% / −26.2% in regime 1 and 98.8% / −35.9% in regime 2.",
+      "Forecast ablation (locked test): SAC keeps a 26–54% shield cut whether the forecast is absent, zeroed or realistic, so its gain does not come from reading the weather. DQN needs a forecast: with the fields zeroed it is exactly B0 (0% cut), with a perfect forecast it gives 28.3% and with a realistic one 18.3%.",
+      "Sensor faults: zero hard-limit violations in every scenario, because the shield acts on the true state. An earlier regime-1 SAC checkpoint lost 99.5% of delivery with a dead pyranometer; the forecast retrains lose only 1–13%, so that failure belonged to one checkpoint. The deployed controller loses 14%.",
+      "Deployment metrics (regime 0): thermal efficiency B0 41.6%, DQN 40.1%, SAC 40.6%; SAC delivers 3.5% more than B1. Inference about 5 ms per decision and 1.4 MB for SAC; DQN about 1 ms and 40 kB.",
+      "Retired: the earlier sub-hourly (58% fewer shields), Pareto-sweep and regime-1/2 extension results came from the repeated-weather-year bug and were not rerun, so none is quoted here. PPO, RecurrentPPO, QRDQN and MaskablePPO were not retrained after the fix.",
+      "Caveats: the forecast study used one seed; the shield metric counts events per solver sub-step, not hours, and its pass rule is annual delivery only, so verdicts are not directly comparable with Rajasthan; the live demo cannot yet use the smart-forecast model.",
     ],
   },
   {
     id: "rajasthan",
     name: "Rajasthan",
-    selected: "DQN",
-    tag: "DQN selected (regime 1) · locked test 2006–2010",
+    selected: "DQN + SAC",
+    tag: "DQN locked-tested (regime 1) · SAC selected on validation years (regimes 0–2)",
     stats: [
-      { value: "98.0%", label: "Of B0's annual delivery (96.9% in the night window)" },
+      { value: "98.0%", label: "Of B0's annual delivery: DQN, locked test 2006–2010, regime 1 (96.9% in the night window)" },
       { value: "−61%", label: "Shield hours vs B0 (464 vs 1,180 h/yr)" },
-      { value: "0", label: "Hard-limit violations" },
-      { value: "+128 kWh", label: "Window gain over the water-only tank (B0: +148)" },
+      { value: "0", label: "Hard-limit violations in any run" },
+      { value: "95–96%", label: "Of B0's delivery for the selected SAC runs, with 71–96% fewer shield hours (validation only)" },
     ],
     columns: ["Delivered kWh/yr (to 45 °C)", "Shield h/yr"],
     rows: [
-      { regime: "R1", policy: "Water-only tank", a: "805.5", b: "900" },
-      { regime: "R1", policy: "B0 always charge", a: "960.6", b: "1,180" },
-      { regime: "R1", policy: "B1 reactive rules", a: "797.9", b: "48" },
-      { regime: "R1", policy: "DQN (selected)", a: "941.0 (98.0%)", b: "464 (−61%)", best: true },
+      { regime: "R1 test", policy: "Water-only tank", a: "805.5", b: "900" },
+      { regime: "R1 test", policy: "B0 always charge", a: "960.6", b: "1,180" },
+      { regime: "R1 test", policy: "B1 reactive rules", a: "797.9", b: "48" },
+      { regime: "R1 test", policy: "DQN (locked test)", a: "941.0 (98.0%)", b: "464 (−61%)", best: true },
+      { regime: "R0 val.", policy: "B0 always charge", a: "961.0", b: "837" },
+      { regime: "R0 val.", policy: "SAC (weight 5.85, seed 123)", a: "915.1 (95.2%)", b: "30 (−96%)", best: true },
+      { regime: "R1 val.", policy: "B0 always charge", a: "925.7", b: "1,043" },
+      { regime: "R1 val.", policy: "SAC (weight 2.55, seed 42)", a: "886.0 (95.7%)", b: "144 (−86%)", best: true },
+      { regime: "R2 val.", policy: "B0 always charge", a: "976.4", b: "1,112" },
+      { regime: "R2 val.", policy: "SAC (weight 0.85, seed 0)", a: "940.8 (96.4%)", b: "321 (−71%)", best: true },
+    ],
+    figures: [
+      { file: "rajasthan/o3_rj_tradeoff.png", title: "Delivery vs shield hours, regime 1 (Rajasthan)", caption: "Original runs: the locked-test DQN keeps 98% of B0 with 61% fewer shield hours; SAC sits far to the left on validation years." },
+      { file: "rajasthan/o3_rj_rerun_tradeoff.png", title: "DQN and SAC after the re-run (Rajasthan)", caption: "Per shield weight, three seeds each. SAC stays above the 95% line with large cuts; DQN only reaches the cuts by giving up delivery." },
     ],
     notes: [
-      "First-generation result: with loop on/off and no forecast, 92 rule policies and PPO on 3 seeds all end at B0, so hourly control has no headroom on delivered energy. This is a reportable result.",
-      "Generation-2 (1–3 h forecast + domain randomisation + DQN) produced the first policy that is not B0. An ablation shows the forecast is what lets DQN leave B0; randomisation was not shown to matter.",
-      "Only regime 1 has a learned controller: in regimes 0 and 2 no shield weight meets the 95% rule, so they fall back to B0.",
-      "Seed spread is large: at the default weight seed 42 gives 98% / 57% fewer shield hours, seed 0 92%, seed 123 collapses to B0. The claim is that such a policy exists and can be found, not that DQN finds it reliably.",
-      "SAC sweep: smooth, seed-consistent trade-off (e.g. 94.5–95.0% delivery for an 87% shield cut) but just misses the window part of the 95% rule.",
-      "The pass rule was relaxed to annual-only on 2026-11-13, after the locked test; both verdicts are reported. A smart-persistence forecast mode is implemented; its four-case study is not yet written up.",
-      "Inference 0.21 ms per decision, 5,507 parameters, 22 kB.",
+      "First generation: with loop on/off and no forecast, 92 rule policies and PPO on 3 seeds all end at B0, so hourly control has no headroom on delivered energy. This is a reportable result.",
+      "Generation 2 (1–3 h forecast, domain randomisation, DQN) gave the first policy that is not B0: 98.2% of B0 with 57% fewer shield hours on validation, held at 98.0% and −61% on the locked test.",
+      "Ablation: the forecast is what lets DQN leave B0 (all three seeds sit exactly on B0 without it). Randomisation was not shown to matter.",
+      "DQN does not reproduce: retrained under the annual-only rule, the same seed and weight returned always-charge (100% / 0%), and no DQN run in any regime passes the rule with a real shield cut (every pass is the always-charge policy). The locked result stands because the original model and its hash are kept, but a retrain cannot be relied on to recreate it.",
+      "SAC passes the annual rule with a real cut in 12 of 18 reduced-grid runs (regime 0: 9 of 9, regime 2: 3 of 9) at 70–96% fewer shield hours. The regime 1 row is the best passing run of the 15 original SAC runs. All SAC numbers are validation years only; the locked test is spent, so none has held-out confirmation. SAC switches the loop about 2,800–3,800 times a year.",
+      "The pass rule was relaxed to annual-only on 2026-11-13, after the locked test and after seeing validation results. Under the original rule (annual and night window both at least 95%) only 6 of the 12 SAC passes remain.",
+      "Imperfect forecast (regime 1, DQN, smart persistence): inconclusive, because two of three seeds sit at B0 in every case. The seed that learns trades about 10 points of delivery for a larger cut with the imperfect forecast. The forecast rule B2 gives identical results with either forecast.",
+      "Sub-hourly control did not help in the one run made: 15-minute steps kept 98.8% of B0 delivery but cut shield hours by only 0.2%.",
+      "Deployment (regime 1, DQN, validation): thermal efficiency 30.8% (B0 31.3%, water-only 26.4%, B1 26.2%); inference 0.21 ms and 22 kB; sensor faults cause no violations. B1 is the weakest rule here. The backup-heater saving depends on an assumed heater efficiency.",
     ],
   },
   {
@@ -144,21 +170,31 @@ export const O3_STATES = [
       { regime: "R0", policy: "B0", a: "636.9", b: "717.7" },
       { regime: "R0", policy: "B1", a: "613.3", b: "305.9" },
       { regime: "R0", policy: "PPO", a: "568.2 ± 3.6", b: "3.0" },
+      { regime: "R0", policy: "PPO + smart forecast (post-lock)", a: "562.7 ± 3.7", b: "0.9" },
       { regime: "R1", policy: "B0", a: "631.6", b: "681.4" },
       { regime: "R1", policy: "B1", a: "623.5", b: "445.0" },
       { regime: "R1", policy: "PPO", a: "569.5 ± 16.4", b: "4.2" },
+      { regime: "R1", policy: "PPO + smart forecast (post-lock)", a: "580.8 ± 4.8", b: "2.3" },
       { regime: "R2", policy: "B0", a: "653.6", b: "573.5" },
       { regime: "R2", policy: "B1", a: "641.2", b: "295.6" },
       { regime: "R2", policy: "PPO", a: "601.6 ± 0.6", b: "1.3" },
+      { regime: "R2", policy: "PPO + smart forecast (post-lock)", a: "600.2 ± 1.8", b: "0.4" },
       { regime: "R3", policy: "B0 (no controller needed)", a: "626.3", b: "180.4" },
     ],
+    figures: [
+      { file: "uttarakhand/o3_uk_agent_choice.png", title: "Choice of agent with a realistic forecast (Uttarakhand)", caption: "PPO delivers the most of the three agents, with the smallest seed spread and the fewest switches." },
+    ],
     notes: [
-      "Headline: no hourly on/off controller beats always-on on delivered energy. PPO removes almost all shield time but gives up 8–11% of window delivery, so under the lexicographic rule B0 remains the best controller.",
-      "Agent choice with a realistic forecast (2026-11-14, regime 1, 3 seeds): PPO 92.2% of B0 with the smallest seed spread and fewest switches; DQN 90.8% with three times the spread; SAC 84.8% with about 925 switches a year. PPO is recommended.",
-      "The smart-persistence forecast has 8.4 / 12.7 / 16.6% error at +1 / +2 / +3 h, against 32–81% for plain persistence; the result does not rest on perfect foresight.",
-      "Lowering the shield penalty shows a cliff, not a curve: with no penalty PPO learns exactly B0, and even a tenth of the penalty removes about 99% of shield time.",
+      "Headline: no hourly on/off controller beats always-on on delivered energy. PPO removes almost all shield time but gives up 8–11% of window delivery, so under the delivery-first rule B0 remains the best controller.",
+      "Headroom gate: bypassing an hour never raises delivery, because the kernel already stops the loop when it would lose heat. The only headroom is fewer shield hours at about equal delivery, so the gate passes on the tie rule only.",
+      "Agent choice with a realistic forecast (regime 1, 3 seeds, validation): PPO 92.2% of B0 with the smallest seed spread and 348 switches a year; DQN 90.8% with three times the spread; SAC 84.8% with about 925 switches. PPO is recommended.",
+      "The post-lock PPO with smart forecast is exploratory: the lock was already spent, so the table rows marked post-lock do not replace the frozen results. It matches the frozen PPO on delivery with fewer overheat hours and switches.",
+      "DQN behaves like PPO here, and the forecast rule B2 lands on B1. Lowering the shield penalty shows a cliff, not a curve: with no penalty PPO learns exactly B0, and even a tenth of the penalty removes about 99% of shield time.",
+      "The smart-persistence forecast costs only 3.4 kWh/yr against a perfect one, and removing the forecast costs about 10 kWh/yr, so the result does not rest on perfect foresight.",
+      "Night service: every controller holds 50 °C for only minutes after 18:00 (B0 about 0.25 h in regime 0), and the PCM tank does not extend evening service at 50 °C compared with the same tank without PCM. A 50 L tank cannot carry 300 L/day into the evening: only 1–4% of window water leaves at or above 50 °C, an Objective 2 sizing limit.",
+      "Deployment: thermal efficiency 40.7–44.5% for PPO against 43.0–46.2% for B0; PPO needs 33–42 kWh/yr more backup heat than B1 (heater efficiency assumed). Inference 0.24 ms and 42 kB. Sensor faults cause no violations, but PPO relies on the pyranometer and falls back to B0-like behaviour when it fails.",
       "Regime 3 (cold, high altitude) has no controller: the PCM tank delivers less than water alone.",
-      "A 50 L tank cannot carry 300 L/day at 50 °C into the evening: only 1–4% of window water leaves at or above 50 °C, an Objective 2 sizing limit, not a controller defect.",
+      "The Objective 4 hand-off and twin still carry the frozen PPO; switching to the smart-forecast agent needs a re-export.",
     ],
   },
 ];
@@ -166,16 +202,25 @@ export const O3_STATES = [
 export const O3_FINDINGS = [
   { title: "Reward design decides the outcome", text: "With a delivery-only reward every agent learns always-charge, identical to B0. Only a shield penalty makes anticipation pay, and its weight sets where a policy lands on the delivery-versus-shield trade-off." },
   { title: "No controller beats always-on on delivery", text: "With Objective 2's shield inside the plant, no rule or learned policy delivers more energy than B0 in any state. Every policy that reduces shield activity pays some delivery." },
-  { title: "The gain is the same delivery with far fewer shield activations", text: "Selected controllers keep 92–98% of B0's delivery while cutting shield activity by 33–62% (Tamil Nadu, Rajasthan) or about 99% (Uttarakhand), with zero violations." },
-  { title: "Forecasts help, but differently by state", text: "In Rajasthan the forecast is what lets DQN leave B0; in Tamil Nadu removing it sends the agent back to always-charge; in Uttarakhand it adds only about 7–10 kWh/yr. Realistic smart-persistence forecasts replace the perfect look-ahead for deployment." },
-  { title: "The best agent differs by state", text: "SAC in Tamil Nadu, DQN in Rajasthan (regime 1 only) and PPO in Uttarakhand. The states also use different shield metrics and pass rules, so their verdicts are not directly comparable." },
+  { title: "Same delivery, far fewer shield activations", text: "Tamil Nadu SAC keeps 97–99% of B0 with 33–54% fewer activations; Rajasthan's locked-test DQN keeps 98% with 61% fewer shield hours; Rajasthan's SAC runs keep 95–96% with 71–96% fewer (validation only). Uttarakhand's PPO cuts about 99% but gives up 8–11% of delivery. All with zero violations." },
+  { title: "Forecasts help, but differently by state", text: "In Rajasthan the forecast is what lets DQN leave B0. In Tamil Nadu SAC does not depend on it while DQN collapses to B0 without it. In Uttarakhand it adds only about 7–10 kWh/yr. Realistic smart-persistence forecasts replace the perfect look-ahead everywhere for deployment." },
+  { title: "The best agent differs by state", text: "SAC in Tamil Nadu, DQN (locked test) and SAC (validation) in Rajasthan, and PPO in Uttarakhand. The states use different shield metrics and pass rules, so their verdicts are not directly comparable." },
+  { title: "One seed or one retrain is fragile", text: "Rajasthan's DQN headline did not reproduce on retraining, an earlier Tamil Nadu sensor-fault collapse belonged to a single checkpoint, and several Rajasthan runs end at B0. Results are reported over seeds, and a retrain needs re-checking before it is cited." },
 ];
 
 export const O3_LIMITATIONS = [
   "Simulation only; PCM temperature, melt fraction and stored energy are simulator states that a real tank would need an estimator for.",
-  "Train and validation years were used by Objective 2 to choose the design, so gains against B0 there are optimistic; the test is a hold-out by year at the same sites, not by location.",
-  "Shield hours have no physical cost in the simulator; if shield operation causes real wear or pump cycling, that cost must be modelled before the value of a controller can be shown.",
-  "Rajasthan's learned controller covers regime 1 only; Rajasthan's pass rule was relaxed after its locked test, and both verdicts are reported.",
-  "No MPC baseline was built, although the literature suggests MPC is the strongest baseline.",
+  "Train and validation years were used by Objective 2 to choose the design, so gains against B0 there are optimistic. The test is a hold-out by year at the same sites, not by location, and Tamil Nadu's test years 2011–2015 were also Objective 2's held-out years.",
+  "Shield hours have no physical cost in the simulator; if shield operation causes real wear or pump cycling, that cost must be modelled. Rajasthan's SAC switches the loop about 3,000 times a year.",
+  "Rajasthan's pass rule was relaxed after its locked test, and its SAC selections have no held-out confirmation because the test is spent; both verdicts are reported.",
+  "Learned results are seed-sensitive: Rajasthan's DQN did not reproduce, the Tamil Nadu forecast study used one seed, and PPO, RecurrentPPO, QRDQN and MaskablePPO were not retrained after the Tamil Nadu weather fix.",
+  "No MPC baseline was built, although the literature suggests MPC is the strongest baseline. Next-hour demand is perfect in the forecast observation.",
   "Pump energy is not modelled, and backup-heater savings rely on an assumed heater efficiency.",
+];
+
+export const O3_HANDOFF = [
+  "Each state exports its frozen controller (SHA-256 recorded), its sensor list and a hardware interface spec.",
+  "Tamil Nadu's deployment controller is SAC, regime 0, trained with the smart-persistence forecast. Rajasthan carries DQN in regime 1 plus a SAC arm; Uttarakhand carries the frozen PPO.",
+  "The shield is restated as an independent hardware interlock, with a fail-safe to always-charge or bypass.",
+  "Objective 4 replays these exact controllers in a software-in-the-loop co-simulation.",
 ];
