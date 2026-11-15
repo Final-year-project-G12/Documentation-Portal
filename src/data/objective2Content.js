@@ -222,7 +222,7 @@ export const CRITERIA_STUDY = [
 
 export const CFD_GROUPS = [
   { id: "openfoam", label: "OpenFOAM", sub: "Rajasthan" },
-  { id: "ansys", label: "ANSYS Fluent", sub: "Tamil Nadu" },
+  { id: "ansys", label: "ANSYS Fluent", sub: "Tamil Nadu, Assam" },
 ];
 
 export const CFD_CHECKS = [
@@ -292,6 +292,22 @@ export const CFD_CHECKS = [
       { file: "tamilnadu/fluent/criteria_6_50pct_of_optimal.mp4", title: "50% of the capsules", caption: "52 capsules." },
       { file: "tamilnadu/fluent/criteria_4_only_30_capsules.mp4", title: "Only 30 capsules", caption: "30 capsules." },
       { file: "tamilnadu/fluent/criteria_5_10pct_of_optimal.mp4", title: "10% of the capsules", caption: "10 capsules." },
+    ],
+  },
+  {
+    id: "as",
+    group: "ansys",
+    label: "Assam case",
+    status: "Unvalidated cross-check",
+    points: [
+      "One capsule of the selected design (savE® OM46, Ø 46.1 / 45.5 / 42.1 mm for regimes 0 / 1 / 2) is melted in ANSYS Fluent 2026 R1 (2-D planar half-slice, about 2,700 cells, enthalpy-porosity melting, buoyancy off): 30 °C solid capsule, 55 °C water at 3.3e-4 m/s, solidus 46 °C with a 5 K mushy band, 1 h at dt = 2 s. The PCM properties are read from the Objective 1 database record.",
+      "After 60 min the capsule is 27% / 28% / 30% melted (regimes 0 / 1 / 2). The simple capsule model used in the optimisation, given the same duty, reaches 90% melt in 44.1 / 43.1 / 37.1 min, so it charges the PCM much faster than the CFD does.",
+      "Sensitivity (regime 0, 10× inlet velocity): the melt fraction at 60 min is 0.27, the same as the base case. The slow melt is limited by conduction inside the PCM (k = 0.35 W/m·K), not by the water-side flow, so the simple model's faster charging comes from its PCM-side resistance.",
+      "Limits: a 2-D planar slice (a cylinder, not a sphere) with buoyancy off and a very low free-stream velocity, so the CFD is a conduction-limited lower bound on melt rate, not a prediction of the tank. A first attempt (dt = 5 s, 2 K band, 51 °C water) diverged at 240 s and was discarded. The frozen capsule constants were not changed.",
+      "Consequence: if real capsules charge more slowly than the simple model, the roughly 2.4% PCM gain in Assam's Objective 2 result, and the Objective 3 gains on top of it, may be optimistic.",
+    ],
+    figures: [
+      { file: "assam/fig70_cfd_vs_lumped_melt.png", title: "Simple model vs ANSYS Fluent (Assam)", caption: "Capsule liquid fraction over 60 min for regimes 0, 1 and 2: the simple capsule model against Fluent, and the 10× velocity case for regime 0." },
     ],
   },
 ];
