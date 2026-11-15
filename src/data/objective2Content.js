@@ -9,7 +9,7 @@
    ───────────────────────────────────────────────────────── */
 
 export const O2_HERO_STATS = [
-  { value: "3 + 1", label: "States on the current method, plus Assam on a legacy chain" },
+  { value: "3 + 1", label: "States with tested designs, plus Assam being rebuilt" },
   { value: "~1,150", label: "Designs simulated per state in the Sobol DOE" },
   { value: "9 / 9", label: "Tamil Nadu held-out designs that beat the plain tank" },
   { value: "≤ 64.2 °C", label: "Highest PCM temperature in any held-out run (limit 65 °C)" },
