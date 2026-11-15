@@ -138,11 +138,11 @@ const TERRITORIES = [
     gridPoints: 80,
     survivors: "9 / 9 / 9",
     regimes: "k=3 GMM Regimes",
-    primaryPCM: "RT54HC (all clusters)",
+    primaryPCM: "RT44HC (all clusters)",
     summary: [
       "Brahmaputra and Barak valleys; cluster-mean relative humidity is 76–79%.",
       "80 points in three regimes (27 / 28 / 25).",
-      "Latest ranking: RT54HC first in every cluster (Kendall's W 0.95); the ranking may change while the feasibility filter is corrected, and no physics comparison yet.",
+      "Latest ranking: RT44HC first in every cluster (Kendall's W 0.95); the ranking may change while the feasibility filter is corrected, and no physics comparison yet.",
     ],
   },
   {
