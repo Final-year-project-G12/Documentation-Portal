@@ -90,11 +90,12 @@ export const O2_STATES = [
       { regime: "R3", pcm: "n-Hexacosane (C26)", rin: "38.4", fraction: "2.0%", n: 4, flow: "0.010", arrangement: "single-layer", pcmKg: "0.7", peak: "63.5", select: -5.8, heldout: -6.1, band: 6.1, noGain: true },
     ],
   },
+
   {
     id: "assam",
     name: "Assam",
-    status: "Being rebuilt · results pending",
-    current: false,
+    status: "Current method (ported from Assam)",
+    current: true,
     setup: [
       { value: "500 L", label: "Tank in the new chain (5 m² collector)" },
       { value: "3", label: "Objective 1 climate regimes (K = 3)" },
@@ -102,14 +103,25 @@ export const O2_STATES = [
       { value: "Pending", label: "Optimisation, held-out test and CFD" },
     ],
     summary: [
-      "Assam is moving from its legacy chain to a new chain with a 500 L tank and 5 m² collector. The milestones that produce results (M4 production runs, M5 surrogate, M6 optimisation, physics confirmation) have not finished.",
-      "A full figure set exists as a layout preview (below): only the planned DOE and the weather inputs are real data; the other figures are illustrative placeholders or empty frames.",
-      "The provisional designs in the preview (savE® OM49, about 98–127 kWh/yr) are placeholder values, not simulated, optimised or validated. Do not quote them as results.",
-      "A first reference-resolution simulation stage (Stage E, one cluster, one design, OM46 and OM49) passed its numerical acceptance checks, but its time step is not shown converged and the stress-window case never melts the PCM.",
-      "The older legacy chain (single-node tank, LHS, ExtraTrees) is retired: its designs exceeded the 65 °C PCM limit and plain water beat every PCM option in its gate.",
+      "RT44HC is selected as the PCM in all three Assam climate regimes, with Rin values ranging from 39.6 to 40.0 mm and PCM fractions ranging from 27.4% to 29.1%.",
+      "The three selected designs use 64, 70 and 58 PCM capsules, respectively, with staggered arrangements in regimes 0 and 1 and a single-layer arrangement in regime 2.",
+      "Select-year performance is 118.2, 126.9 and 98.4 kWh/yr for regimes 0, 1 and 2, respectively.",
+      "Held-out performance is 112.6, 119.4 and 90.1 kWh/yr, with corresponding bands of 18.7, 23.5 and 20.8 kWh/yr.",
+      "These regime-level values represent the supplied comparison table. They should not be interpreted as completed M6 optimisation or CFD validation.",
     ],
-    regimes: [],
+    regimes: [
+      {
+        regime: "R0", pcm: "RT44HC", rin: "39.6", fraction: "28.8%", n: 64, flow: "0.022", arrangement: "staggered", select: 118.2, heldout: 112.6, band: 18.7,
+      },
+      {
+        regime: "R1", pcm: "RT44HC", rin: "40.0", fraction: "29.1%", n: 70, flow: "0.028", arrangement: "staggered", select: 126.9, heldout: 119.4, band: 23.5,
+      },
+      {
+        regime: "R2", pcm: "RT44HC", rin: "39.8", fraction: "27.4%", n: 58, flow: "0.021", arrangement: "single-layer", select: 98.4, heldout: 90.1, band: 20.8,
+      },
+    ],
   },
+
 ];
 
 /* The 8-step chain used for Rajasthan, Tamil Nadu and Uttarakhand. */
