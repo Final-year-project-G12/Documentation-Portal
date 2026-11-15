@@ -343,3 +343,14 @@ export const O3_HANDOFF = [
   "<strong>Comparison rule:</strong> a controller is compared with the same-flow water-only twin and the passive PCM design.",
   "<strong>Status:</strong> contract v3 written for Rajasthan, Tamil Nadu and Uttarakhand; Assam's file is not a valid input.",
 ];
+
+/* Assam Objective 2 figure set — a LAYOUT PREVIEW, not results.
+   Source: the Assam figure-set README (run_all_assam.py ->
+   make_dummy_plots_assam.py). status: real | illustrative | pending. */
+export const ASSAM_PREVIEW_FILTERS = [
+  { id: "all", label: "All 40 figures" },
+  { id: "real", label: "Real input data (2)" },
+  { id: "illustrative", label: "Illustrative (20)" },
+  { id: "pending", label: "Pending (18)" },
+];
+
