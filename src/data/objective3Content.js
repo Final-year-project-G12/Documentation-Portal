@@ -58,7 +58,7 @@ export const O3_METHOD_STEPS = [
   {
     title: "Split and selection",
     points: [
-      "Train 2016–2020, validate 2021–2023, then one locked test on unseen years behind a lock file. Test years: Tamil Nadu 2011–2015; Rajasthan and Uttarakhand 2006–2010.",
+      "Train 2016–2020, validate 2021–2023, then one locked test on unseen years behind a lock file. Test years: Tamil Nadu 2011–2015; Rajasthan and Uttarakhand 2006–2010; Assam 2024–2025 (Assam's 2011–2015 were Objective 2's one-shot held-out years and were not used).",
       "Tamil Nadu and Rajasthan (since 2026-11-13) select by: zero violations, then at least 95% of B0's annual delivery, then the largest shield reduction.",
       "Rajasthan first used a stricter rule (annual and night-window delivery both at least 95%) and relaxed it after its locked test, so both verdicts are reported. Uttarakhand puts delivery first, so B0 stays best there.",
     ],
@@ -67,12 +67,12 @@ export const O3_METHOD_STEPS = [
 
 /* Which agent was tried where, and what happened. */
 export const O3_AGENT_TABLE = {
-  columns: ["Agent", "Tamil Nadu", "Rajasthan", "Uttarakhand"],
+  columns: ["Agent", "Tamil Nadu", "Rajasthan", "Uttarakhand", "Assam"],
   rows: [
-    ["PPO", "Collapses to B0; not retrained after the weather fix", "Ends at B0 (3 seeds, regime 1)", "Frozen controller: about 99% fewer shield hours, 8–11% less delivery"],
-    ["DQN", "Regime 0 only: 96.2% of B0, −62% shields; about B0 in regimes 1–2", "One good seed in regime 1 (locked test 98.0%, −61%); a retrain returned B0", "Behaves like PPO"],
-    ["RecurrentPPO, QRDQN, MaskablePPO", "Stuck at B0; not retrained after the weather fix", "Not trained", "Not trained"],
-    ["SAC", "Selected: 97–99% of B0, −33 to −54% shields in all three regimes", "Passes the annual rule with 70–96% fewer shield hours (validation only)", "Weakest: 84.8% of B0, about 925 switches a year"],
+    ["PPO", "Collapses to B0; not retrained after the weather fix", "Ends at B0 (3 seeds, regime 1)", "Frozen controller: about 99% fewer shield hours, 8–11% less delivery", "Selected in all 3 regimes (2 seeds each): +1.0% delivery over the passive PCM tank, −16 to −26% shield sub-steps, 0 violations (test 2024–2025)"],
+    ["DQN", "Regime 0 only: 96.2% of B0, −62% shields; about B0 in regimes 1–2", "One good seed in regime 1 (locked test 98.0%, −61%); a retrain returned B0", "Behaves like PPO", "Not trained"],
+    ["RecurrentPPO, QRDQN, MaskablePPO", "Stuck at B0; not retrained after the weather fix", "Not trained", "Not trained", "Not trained"],
+    ["SAC", "Selected: 97–99% of B0, −33 to −54% shields in all three regimes", "Passes the annual rule with 70–96% fewer shield hours (validation only)", "Weakest: 84.8% of B0, about 925 switches a year", "Not trained"],
   ],
 };
 
