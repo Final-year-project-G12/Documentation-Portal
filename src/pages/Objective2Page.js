@@ -8,6 +8,7 @@ import { StatTiles, ChipTabs, StepExplorer, Accordion, ProgressBar, Callout } fr
 import {
   O2_HERO_STATS, O2_STATES, O2_WORKFLOW_STEPS, RESEARCH_QUESTIONS, CRITERIA_STUDY, CFD_CHECKS,
   O2_PLOT_GROUPS, O2_PLOTS, O2_VERIFICATION, O2_LIMITATIONS, O3_HANDOFF,
+  ASSAM_PREVIEW_FILTERS, ASSAM_PREVIEW_FIGS, ASSAM_PREVIEW_STATUS_TEXT,
 } from "../data/objective2Content";
 
 /* ─────────────────────────────────────────────────────────
@@ -20,8 +21,8 @@ import {
    objective2-tamilnadu/{OVERVIEW.md, docs/04_RESULTS.md},
    objective2-uttarakhand/{README.md, docs/PROGRESS.md} and
    objective2-assam/{README.md, docs/00_MASTER_OVERVIEW.md}.
-   Rajasthan is the reference state. Assam is still the legacy chain
-   (the 500 L Assam designs in the Review 4 slides are not in the repo).
+   Rajasthan is the reference state. Assam is being rebuilt (500 L,
+   5 m²); its figure set is a labelled preview, not results.
    Where the sources give no citation, the text says so with [citation needed].
    ───────────────────────────────────────────────────────── */
 
