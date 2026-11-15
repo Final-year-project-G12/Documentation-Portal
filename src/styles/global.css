@@ -3202,3 +3202,6 @@ h3 {
 /* Objectives 3 & 4 — highlight the selected controller / arm row */
 .data-table tr.row-best td { background: rgba(136, 19, 55, 0.18); color: #ffffff; }
 .data-table tr.row-best td:first-child { box-shadow: inset 3px 0 0 var(--accent-ruby); }
+
+/* Neutral badge for pending items */
+.ui-badge.muted { background: rgba(255, 255, 255, 0.06); color: var(--neutral-400); border-color: var(--surface-border-strong); }
