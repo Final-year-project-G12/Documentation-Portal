@@ -36,12 +36,13 @@ const PARAMETER_BOUNDS = [
   { param: "Maximum water temperature", symbol: "water_peak_limit_C", bounds: "≤ 75 °C", unit: "°C", rationale: "Scald prevention." },
   { param: "Maximum PCM temperature", symbol: "pcm_peak_limit_C", bounds: "≤ 65 °C", unit: "°C", rationale: "Material-stability limit, from manufacturer datasheets {{cite:RubithermPCM,PlussPCM}}. Infeasible if exceeded in any simulated year." },
   { param: "Tank model and step", symbol: "n_nodes, timestep_s", bounds: "10 nodes, 150 s", unit: "—", rationale: "300 s failed the time-step gate. Changing N from 10 to 20 moves the paired gain by 0.15–0.25 percentage points." },
-  { param: "Fixed, not optimised", symbol: "fixed_not_optimised", bounds: "Tank, collector, demand, shortlist", unit: "—", rationale: "Rajasthan and Uttarakhand 50 L / 1.5 m² / 300 L/day; Tamil Nadu 100 L / 2.5 m²; Assam (legacy) demand 100 L/day." },
+  { param: "Fixed, not optimised", symbol: "fixed_not_optimised", bounds: "Tank, collector, demand, shortlist", unit: "—", rationale: "Rajasthan and Uttarakhand 50 L / 1.5 m² / 300 L/day; Tamil Nadu 100 L / 2.5 m²; Assam's new chain uses a 500 L tank and 5 m² collector (results pending)." },
 ];
 
 const TANK_OPTIONS = [
-  { label: "50 L (Rajasthan, Uttarakhand, Assam legacy)", litres: 50 },
+  { label: "50 L (Rajasthan, Uttarakhand)", litres: 50 },
   { label: "100 L (Tamil Nadu)", litres: 100 },
+  { label: "500 L (Assam, new chain)", litres: 500 },
 ];
 const WALL_MM = 0.8;
 
@@ -112,7 +113,7 @@ function Objective2Page() {
         <ChipTabs
           size="lg"
           ariaLabel="State"
-          options={O2_STATES.map((s) => ({ id: s.id, label: s.name, sub: s.current ? "Current method" : "Legacy chain" }))}
+          options={O2_STATES.map((s) => ({ id: s.id, label: s.name, sub: s.current ? "Current method" : "Being rebuilt" }))}
           value={stateId}
           onChange={setStateId}
         />
