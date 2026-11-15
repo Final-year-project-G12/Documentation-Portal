@@ -123,7 +123,7 @@ export const STATE_DIFFERENCES = [
   "Rajasthan and Tamil Nadu use the 60 °C delivery basis (Tm_target 67 °C).",
   "Uttarakhand uses the 57 °C basis (kept by decision) and Assam the 56 °C basis (capped to about 49–50 °C); neither was moved to 60 °C, which needs a full re-run.",
   "Uttarakhand uses K = 4 regimes and a 55-row PCM database; Assam uses a 58-row database.",
-  "Assam's ranking (RT54HC first) is provisional: its feasibility filter is being corrected and its physics comparison is not yet reported.",
+  "Assam's ranking (RT54HC first) may change: its feasibility filter is being corrected and its physics comparison is not yet reported.",
   "Objective 2 scores delivery at 45 °C (Uttarakhand 50 °C), not at the Objective 1 basis.",
   "Tamil Nadu's physics script uses its own 50 °C delivery constant; aligning it with the 60 °C basis is the next step.",
   "Tamil Nadu adds a ninth ranking criterion, thermal margin.",

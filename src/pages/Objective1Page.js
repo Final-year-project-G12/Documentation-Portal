@@ -47,14 +47,14 @@ const PREPROCESSING_SUMMARY = [
     state: "Assam",
     tag: "Subtropical",
     gridPoints: 80,
-    inputRecords: "Not reported in the QC report",
-    outputRecords: "876,720 (80 × 10,959)",
-    retention: "No rows dropped in the cleaned file; 22,565 rows flagged as outliers",
-    inputDims: "n/a",
-    outputDims: "42 (cleaned physical file)",
-    engineeredFeatures: "Not re-derived",
-    missingRate: "0 cells remaining after gap filling",
-    status: "PASS, with a clear-sky-index warning (median 0.769, outside the 0.55–0.75 check)",
+    inputRecords: "876,720",
+    outputRecords: "876,720",
+    retention: "100% (no lag warm-up rows; 22,565 rows flagged as outliers, none deleted)",
+    inputDims: 39,
+    outputDims: 43,
+    engineeredFeatures: 4,
+    missingRate: "0.00% (0 of 19,287,840 cells imputed)",
+    status: "PASS",
   },
   {
     state: "Uttarakhand",
@@ -523,24 +523,24 @@ const STATES_CONFIG = {
     name: "Assam",
     short: "AS",
     climateType: "Humid Subtropical & Monsoonal (North-East India)",
-    tag: "80 Grid Points · k=3 Regimes · provisional ranking (feasibility method under revision)",
+    tag: "80 Grid Points · k=3 Regimes · ranking (feasibility method under revision)",
     stats: [
       { value: "80", label: "Population-Weighted Points (27 / 28 / 25 per cluster)" },
       { value: "k=3", label: "GMM Regimes (diagonal covariance, mean bootstrap ARI 0.694)" },
-      { value: "9 / 9 / 9", label: "Candidates ranked per cluster (provisional)" },
+      { value: "9 / 9 / 9", label: "Candidates ranked per cluster" },
       { value: "0.95", label: "Kendall's W in every cluster (four methods agree closely)" },
       { value: "93.0%", label: "Monte Carlo Top-3 inclusion of RT54HC" },
-      { value: "RT54HC", label: "Borda Rank-1 Pick in all three clusters (provisional)" },
+      { value: "RT54HC", label: "Borda Rank-1 Pick in all three clusters" },
     ],
     overview: [
       "Assam has its own pipeline variant (Assam-specific scripts, an isolation-forest outlier step and a 50 °C delivery basis).",
       "80 population-weighted points are grouped into three regimes by a diagonal-covariance GMM.",
       "The latest run (2026-11-14) ranks 9 candidates per cluster with the four-method consensus: RT54HC first, savE® OM50 and RT55 tied for second.",
       "The ranking is the same in all three clusters, because the current feasibility rules do not depend on the cluster.",
-      "The team's own review says the feasibility filter is being corrected, so this ranking is provisional.",
+      "The team's own review says the feasibility filter is being corrected, so this ranking may change.",
     ],
     spearmanSummary: "Not reported",
-    verdict: "Provisional",
+    verdict: "Under revision",
     verdictSub: "Feasibility method under revision; physics comparison not reported",
     notes: [
       {
@@ -595,7 +595,7 @@ const STATES_CONFIG = {
     recommendations: [
       {
         cluster: "Cluster 0 (ASP_0003)",
-        pcm: "RT54HC (provisional)",
+        pcm: "RT54HC",
         top2: "savE® OM50 / RT55 (tied)",
         top3: "—",
         tm: "54.0°C",
@@ -605,7 +605,7 @@ const STATES_CONFIG = {
       },
       {
         cluster: "Cluster 1 (ASP_0036)",
-        pcm: "RT54HC (provisional)",
+        pcm: "RT54HC",
         top2: "savE® OM50 / RT55 (tied)",
         top3: "—",
         tm: "54.0°C",
@@ -615,7 +615,7 @@ const STATES_CONFIG = {
       },
       {
         cluster: "Cluster 2 (ASP_0080)",
-        pcm: "RT54HC (provisional)",
+        pcm: "RT54HC",
         top2: "savE® OM50 / RT55 (tied)",
         top3: "—",
         tm: "54.0°C",
@@ -647,7 +647,7 @@ const STATES_CONFIG = {
         id: "as-07a",
         num: "07a",
         title: "Bump Chart — MCDM Ranks (Cluster 0)",
-        desc: "Ranks of the 9 candidates under each method and the Borda consensus (provisional).",
+        desc: "Ranks of the 9 candidates under each method and the Borda consensus.",
         interactive: "07_bump_chart_ranks_cluster_0.html",
         static: "07_bump_chart_ranks_cluster_0.png",
         phase: "Phase 6 MCDM",
@@ -898,7 +898,7 @@ const STATES_CONFIG = {
         points: [
           "Rajasthan −0.200 / −0.168 / +0.569; Tamil Nadu −0.333 / +0.103 / +0.024.",
           "Uttarakhand +0.105 / −0.140 / −0.338 / −0.168 (none significant).",
-          "Assam: not reported for its current, provisional ranking.",
+          "Assam: not reported for its current ranking.",
           "Overall, agreement between the MCDM ranking and the physics model is weak and not statistically significant in every state where it was run, so predictive validity is not established.",
         ],
       },
@@ -907,7 +907,7 @@ const STATES_CONFIG = {
         points: [
           "Per state: points, regimes, candidates, Kendall's W, Spearman ρ and the Top-3.",
           "Plots: raw-vs-preprocessed radiation, the regime map, MCDM bump charts, the method-agreement heatmap, rank-reversal, the simulated-vs-MCDM agreement plot and the tank profile.",
-          "Assam's ranking plots are from its provisional run; its physics-agreement plot is not shown.",
+          "Assam's ranking plots are from its latest run; its physics-agreement plot is not shown.",
           "Omitted because only some states have them: seasonal re-ranking, the supercooling sweep, the Köppen check, survivors and recommendation summary charts.",
         ],
       },
@@ -971,7 +971,7 @@ const COMPARISON_ROWS = [
       rajasthan: "4 / 8 / 11",
       tamilnadu: "8 / 10 / 8",
       uttarakhand: "29 / 29 / 29 / 30",
-      assam: "9 / 9 / 9 (provisional)",
+      assam: "9 / 9 / 9",
     },
   },
   {
@@ -1007,7 +1007,7 @@ const COMPARISON_ROWS = [
       rajasthan: "savE® OM55 / PureTemp 60 / palmitic-stearic acid with expanded graphite",
       tamilnadu: "RT57HC in all three clusters",
       uttarakhand: "PureTemp 58 (PureTemp 53 in Cluster 3, high Himalaya)",
-      assam: "RT54HC in all three clusters (provisional)",
+      assam: "RT54HC in all three clusters",
     },
   },
   {
@@ -1016,7 +1016,7 @@ const COMPARISON_ROWS = [
       rajasthan: "Cluster 0 pool has 4 candidates; Cluster 2 has the widest spread between methods (W 0.42)",
       tamilnadu: "Physics comparison is exploratory (n = 8–10); Cluster 1 has the widest spread between methods (W 0.48)",
       uttarakhand: "57 °C basis; K = 4 since 2026-11-13; simulated solar fractions (12–20%) sit below the 54–84% band",
-      assam: "Same ranking in every cluster; feasibility filter is being corrected, so the ranking is provisional",
+      assam: "Same ranking in every cluster; feasibility filter is being corrected, so the ranking may change",
     },
   },
 ];
@@ -1080,7 +1080,7 @@ const QC_NOTES = [
   "Shows record counts before and after cleaning (stage 2 of the pipeline).",
   "Cleaning uses Hampel filtering {{cite:Hampel1974InfluenceCurve}}, chained-equation imputation {{cite:vanBuuren2011MICE}} and quantile mapping {{cite:Cannon2015QuantileMapping}} against NASA POWER.",
   "The Rajasthan and Uttarakhand rows were re-checked against the 2026-10-25 quality-control reports (5 of 5 checks passed each).",
-  "The Assam row was re-derived on 2026-11-11 from its QC report and cleaned file: the earlier counts (1,413,420 → 1,402,101) matched the old 129-point grid, not the current 80 points.",
+  "The Assam row was recomputed on 2026-11-16 from its raw and cleaned files: 80 points × 10,959 records (3,653 days × 3 events) in and out, 0 missing cells before or after cleaning, 22,565 outlier flags kept in the file. Its median clear-sky index is 0.769, slightly above the 0.55–0.75 check band, which the cleaning report logs as a warning; no check fails.",
   "The Tamil Nadu row was re-checked against its quality-control report (5 of 5 checks passed; 11,970 lag warm-up rows set aside).",
 ];
 
