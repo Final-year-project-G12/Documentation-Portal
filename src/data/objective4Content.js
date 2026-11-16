@@ -708,7 +708,7 @@ export const O4_STATES = [
       "Sensor faults (20 seeds, PPO, 10-day window): a dead or stuck pyranometer or a 12 h blackout changes delivery by at most 0.17 kWh with 0 hard violations over all fault runs. The Assam PPO hardly relies on the irradiance reading (its actions change in only a few hours), unlike Tamil Nadu's SAC; the interlock still falls back to a safe action on stale readings.",
       "PCM swap with the capsule geometry fixed (flow ×1.0, mean of the three regimes, PPO trained for savE OM46 only): n-Tricosane 1,343 kWh/yr; savE OM49 1,337 kWh/yr; savE OM46 1,330 kWh/yr; RT50 1,307 kWh/yr. Flow ×0.7–1.3 changes delivery by at most 0.05%.",
       "Hold time: PPO and SAC do not extend the hold, they only change how full the tank is at 18:00; the PCM benefit comes from the tank, not the controller.",
-      "Not produced for Assam: the Simulink model, generated C code, the published-experiment benchmark (Amanowicz and Turski 2025) and the simulation videos; the twin is a single-node MATLAB port of Objective 2's plant, driven by networks exported from Objective 3."
+      "Not produced for Assam: the Simulink model, generated C code, and the published-experiment benchmark (Amanowicz and Turski 2025); the videos are rendered from the MATLAB twin's hourly outputs. The twin is a single-node MATLAB port of Objective 2's plant, driven by networks exported from Objective 3."
     ],
     figures: [
       {
@@ -737,7 +737,13 @@ export const O4_STATES = [
         caption: "PPO delivery under dead and stuck pyranometer and a 12 h blackout."
       }
     ],
-    videos: []
+    videos: [
+      { file: "assam/video/o4_three_arm_days_120_2023.mp4", title: "Three arms, three days", caption: "Plain tank, PCM + always charge and PCM + PPO side by side on days 120–122 of 2023 (regime 0): tank colour is water temperature, capsule colour is melt fraction." },
+      { file: "assam/video/edge_clear.mp4", title: "Edge case: clear sky", caption: "Three arms through clear-sky days (950 W/m² peak)." },
+      { file: "assam/video/edge_heat_wave.mp4", title: "Edge case: heat wave", caption: "Ambient +8 °C and sunlight +15 %: the water reaches the shield temperature." },
+      { file: "assam/video/edge_rain_cloud.mp4", title: "Edge case: rain and cloud", caption: "Sunlight cut to 20 %: little energy is collected and the tank stays cool." },
+      { file: "assam/video/edge_sensor_blackout.mp4", title: "Edge case: 12 h sensor blackout", caption: "All sensors are lost for 12 h; after 2 stale hours the interlock puts both PCM tanks in fail-safe (pump on, PCM bypassed)." },
+    ]
   },
 ];
 
@@ -749,6 +755,6 @@ export const O4_LIMITATIONS = [
   "Controllers depend on working sensors: delivery falls by 14–22% in Tamil Nadu if the pyranometer fails, Rajasthan's SAC loses most of its shield benefit, and Uttarakhand's PPO misbehaves when mains temperature drifts or the pyranometer fails. Safety holds in every case.",
   "Hold times are model values: the lumped capsule model runs slow against published capsules (a 38.5% error in the Tamil Nadu tank benchmark), so read them as upper bounds. They are compared within a regime only.",
   "Tamil Nadu regimes 1–2 hold times were computed for this page, and Simulink and generated C exist for Rajasthan and Uttarakhand only, not Tamil Nadu's retrained SAC.",
-  "Assam: the twin is a single-node MATLAB port of Objective 2's plant driven by networks exported from Objective 3; it was validated against the Python simulator and checked for restart and energy balance, but it has no Simulink model, generated C code, published-experiment benchmark or videos, and its capsule melt rate was not tuned (the ANSYS check in Objective 2 shows the lumped capsule charges faster than CFD), so hold times are upper bounds.",
+  "Assam: the twin is a single-node MATLAB port of Objective 2's plant driven by networks exported from Objective 3; it was validated against the Python simulator and checked for restart and energy balance, but it has no Simulink model, generated C code or published-experiment benchmark, and its capsule melt rate was not tuned (the ANSYS check in Objective 2 shows the lumped capsule charges faster than CFD), so hold times are upper bounds.",
   "Next: real hardware (Raspberry Pi / ESP32), bench interlock, shadow mode, hardware-in-the-loop, then a long field trial.",
 ];
