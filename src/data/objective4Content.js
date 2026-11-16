@@ -739,10 +739,22 @@ export const O4_STATES = [
     ],
     videos: [
       { file: "assam/video/o4_three_arm_days_120_2023.mp4", title: "Three arms, three days", caption: "Plain tank, PCM + always charge and PCM + PPO side by side on days 120–122 of 2023 (regime 0): tank colour is water temperature, capsule colour is melt fraction." },
+      { file: "assam/video/schematic_ppo_normal_day.mp4", title: "Schematic: normal day", caption: "Collector, pump, tank, capsules and draw-off on days 165–167 of 2023 (regime 0, PPO controller)." },
+      { file: "assam/video/schematic_ppo_heat_wave.mp4", title: "Schematic: heat wave", caption: "The same schematic through a heat wave (ambient +8 °C, sunlight +15 %), PPO controller." },
+      { file: "assam/video/schematic_ppo_rain_cloud.mp4", title: "Schematic: rain and cloud", caption: "The same schematic through rain and cloud (sunlight × 0.2), PPO controller." },
+      { file: "assam/video/schematic_ppo_sensor_blackout.mp4", title: "Schematic: sensor fault", caption: "The same schematic with a 12 h sensor blackout and the interlock fail-safe, PPO controller." },
+      { file: "assam/video/schematic_sac_normal_day.mp4", title: "Schematic (SAC): normal day", caption: "Showcase days with the SAC controller in place of PPO." },
+      { file: "assam/video/schematic_sac_heat_wave.mp4", title: "Schematic (SAC): heat wave", caption: "SAC through the heat wave." },
+      { file: "assam/video/schematic_sac_rain_cloud.mp4", title: "Schematic (SAC): rain and cloud", caption: "SAC through the rain-and-cloud days." },
+      { file: "assam/video/schematic_sac_sensor_blackout.mp4", title: "Schematic (SAC): sensor fault", caption: "SAC with the sensor blackout and fail-safe." },
       { file: "assam/video/edge_clear.mp4", title: "Edge case: clear sky", caption: "Three arms through clear-sky days (950 W/m² peak)." },
       { file: "assam/video/edge_heat_wave.mp4", title: "Edge case: heat wave", caption: "Ambient +8 °C and sunlight +15 %: the water reaches the shield temperature." },
       { file: "assam/video/edge_rain_cloud.mp4", title: "Edge case: rain and cloud", caption: "Sunlight cut to 20 %: little energy is collected and the tank stays cool." },
       { file: "assam/video/edge_sensor_blackout.mp4", title: "Edge case: 12 h sensor blackout", caption: "All sensors are lost for 12 h; after 2 stale hours the interlock puts both PCM tanks in fail-safe (pump on, PCM bypassed)." },
+      { file: "assam/video/hold_72h_regime0.mp4", title: "72 h hold, regime 0", caption: "Tank temperature over 72 h after charging stops (18:00, day 165, no sun, no draw): plain tank, PCM + always charge, PPO and SAC." },
+      { file: "assam/video/hold_72h_regime1.mp4", title: "72 h hold, regime 1", caption: "Tank temperature over 72 h after charging stops, regime 1." },
+      { file: "assam/video/hold_72h_regime2.mp4", title: "72 h hold, regime 2", caption: "Tank temperature over 72 h after charging stops, regime 2." },
+      { file: "assam/video/campaign_72h_retention.mp4", title: "Campaign: 72 h retention", caption: "Retention curves building over 72 h for 12 start days through the year, in all three regimes (thin lines: single days; thick lines: means)." },
     ]
   },
 ];
