@@ -49,7 +49,7 @@ const PREPROCESSING_SUMMARY = [
     gridPoints: 80,
     inputRecords: "876,720",
     outputRecords: "876,720",
-    retention: "100% (no lag warm-up rows; 22,565 rows flagged as outliers, none deleted)",
+    retention: "100% (Assam builds no lag or rolling features, so no warm-up rows are dropped; 22,565 rows flagged as outliers, none deleted)",
     inputDims: 39,
     outputDims: 43,
     engineeredFeatures: 4,
@@ -582,6 +582,8 @@ const STATES_CONFIG = {
           "Outliers are flagged by a multivariate isolation forest instead of the Hampel filter {{cite:Liu2008IsolationForest}}.",
           "ERA5 {{cite:Hersbach2020ERA5}} agreed with NASA POWER {{cite:Stackhouse2021POWER}} closely enough that quantile mapping was judged unnecessary.",
           "This follows the project's cross-region notes (see bias_decision_assam.txt).",
+          "Unlike the other states, Assam's preprocessing has no Hampel, chained-equation imputation, lag, rolling or delta steps: gaps are filled by interpolation and same-hour climatological means, and outliers are flagged but never deleted.",
+          "So no lag warm-up rows are dropped and the record count is unchanged (876,720 in and out); the regime signatures are computed directly from the cleaned physical values.",
         ],
       },
       {
@@ -1093,7 +1095,7 @@ const QC_NOTES = [
   "Shows record counts before and after cleaning (stage 2 of the pipeline).",
   "Cleaning uses Hampel filtering {{cite:Hampel1974InfluenceCurve}}, chained-equation imputation {{cite:vanBuuren2011MICE}} and quantile mapping {{cite:Cannon2015QuantileMapping}} against NASA POWER.",
   "The Rajasthan and Uttarakhand rows were re-checked against the 2026-10-25 quality-control reports (5 of 5 checks passed each).",
-  "The Assam row was recomputed on 2026-11-16 from its raw and cleaned files: 80 points × 10,959 records (3,653 days × 3 events) in and out, 0 missing cells before or after cleaning, 22,565 outlier flags kept in the file. Its median clear-sky index is 0.769, slightly above the 0.55–0.75 check band, which the cleaning report logs as a warning; no check fails.",
+  "The Assam row was recomputed on 2026-11-16 from its raw and cleaned files: 80 points × 10,959 records (3,653 days × 3 events) in and out (equal, because Assam builds no lag or rolling features and so drops no warm-up rows), 0 missing cells before or after cleaning, 22,565 outlier flags kept in the file. Its median clear-sky index is 0.769, slightly above the 0.55–0.75 check band, which the cleaning report logs as a warning; no check fails.",
   "The Tamil Nadu row was re-checked against its quality-control report (5 of 5 checks passed; 11,970 lag warm-up rows set aside).",
 ];
 
